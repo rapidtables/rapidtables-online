@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPX Super Admin Gateway - RapidTables.online</title>
+
+  <!-- Strict Search Engine Prohibition -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('cpx_theme') || 'dark';
+        document.documentElement.setAttribute('data-cpx-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --cpx-bg: #0B0F19;
+      --cpx-card: #111827;
+      --cpx-border: #1F2937;
+      --cpx-primary: #2563EB;
+      --cpx-accent: #38BDF8;
+      --cpx-text: #F9FAFB;
+      --cpx-muted: #9CA3AF;
+    }
+    [data-cpx-theme="light"] {
+      --cpx-bg: #F8FAFC;
+      --cpx-card: #FFFFFF;
+      --cpx-border: #E2E8F0;
+      --cpx-primary: #2563EB;
+      --cpx-text: #0F172A;
+      --cpx-muted: #64748B;
+    }
+    body.cpx-login-body {
+      background-color: var(--cpx-bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%);
+      color: var(--cpx-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+    }
+    .cpx-card {
+      background: var(--cpx-card);
+      border: 1px solid var(--cpx-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+    .cpx-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .cpx-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #2563EB, #38BDF8);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .cpx-brand-text h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      color: var(--cpx-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cpx-badge {
+      font-size: 11px;
+      background: rgba(37, 99, 235, 0.15);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+    .cpx-subtitle {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--cpx-muted);
+    }
+    .cpx-alert {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.5;
+    }
+    .cpx-alert.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #F87171;
+    }
+    .cpx-alert.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34D399;
+    }
+    .cpx-form-group {
+      margin-bottom: 20px;
+    }
+    .cpx-form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--cpx-text);
+    }
+    .cpx-input-wrap {
+      position: relative;
+    }
+    .cpx-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--cpx-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: var(--cpx-text);
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .cpx-input:focus {
+      border-color: var(--cpx-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+      background: rgba(0, 0, 0, 0.35);
+    }
+    [data-cpx-theme="light"] .cpx-input {
+      background: #F8FAFC;
+    }
+    [data-cpx-theme="light"] .cpx-input:focus {
+      background: #FFFFFF;
+    }
+    .cpx-toggle-pass {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--cpx-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .cpx-toggle-pass:hover {
+      color: var(--cpx-text);
+    }
+    .cpx-btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #FFFFFF;
+      border: none;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+    }
+    .cpx-btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+    }
+    .cpx-btn-submit:active {
+      transform: translateY(0);
+    }
+    .cpx-footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--cpx-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--cpx-muted);
+    }
+    .cpx-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #10B981;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    .cpx-theme-btn {
+      background: none;
+      border: 1px solid var(--cpx-border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: var(--cpx-muted);
+      cursor: pointer;
+    }
+    .cpx-theme-btn:hover {
+      color: var(--cpx-text);
+      border-color: var(--cpx-text);
+    }
+  </style>
+</head>
+<body class="cpx-login-body">
+  <div class="cpx-card">
+    <div class="cpx-brand">
+      <div class="cpx-logo-icon">&#9889;</div>
+      <div class="cpx-brand-text">
+        <h1>RapidTables <span class="cpx-badge">CPX Control</span></h1>
+        <p class="cpx-subtitle">Master Site Administration &bull; RapidTables.online</p>
+      </div>
+    </div>
+
+    <div id="cpx_alert" class="cpx-alert"></div>
+
+    <form id="cpx_login_form">
+      <div class="cpx-form-group">
+        <label for="cpx_email">Super Admin Email</label>
+        <div class="cpx-input-wrap">
+          <input 
+            type="email" 
+            id="cpx_email" 
+            class="cpx-input" 
+            value="rapidtabless@gmail.com" 
+            required 
+            autocomplete="username"
+            autofocus
+          >
+        </div>
+      </div>
+
+      <div class="cpx-form-group">
+        <label for="cpx_password">Master Key / Password</label>
+        <div class="cpx-input-wrap">
+          <input 
+            type="password" 
+            id="cpx_password" 
+            class="cpx-input" 
+            placeholder="Enter master password" 
+            required 
+            autocomplete="current-password"
+          >
+          <button type="button" class="cpx-toggle-pass" id="cpx_toggle_pass">Show</button>
+        </div>
+      </div>
+
+      <button type="submit" class="cpx-btn-submit" id="cpx_submit_btn">
+        <span>🔐 Authenticate &amp; Open Control Panel</span>
+      </button>
+    </form>
+
+    <div class="cpx-footer">
+      <div>
+        <span class="cpx-dot"></span>
+        <span>Isolated Gateway &bull; 256-bit Encrypted</span>
+      </div>
+      <button type="button" class="cpx-theme-btn" id="cpx_theme_toggle">🌓 Theme</button>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('cpx_theme_toggle');
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-cpx-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-cpx-theme', next);
+      localStorage.setItem('cpx_theme', next);
+    });
+
+    // Password visibility toggle
+    const passInput = document.getElementById('cpx_password');
+    const passToggle = document.getElementById('cpx_toggle_pass');
+    passToggle.addEventListener('click', () => {
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        passToggle.textContent = 'Hide';
+      } else {
+        passInput.type = 'password';
+        passToggle.textContent = 'Show';
+      }
+    });
+
+    // Default Super Admin Configuration
+    const DEFAULT_ADMIN = {
+      email: 'rapidtabless@gmail.com',
+      // Default initial password: RapidTables@Admin2026!
+      defaultPass: 'RapidTables@Admin2026!'
+    };
+
+    const alertBox = document.getElementById('cpx_alert');
+    function showAlert(msg, isSuccess = false) {
+      alertBox.className = 'cpx-alert ' + (isSuccess ? 'success' : 'error');
+      alertBox.textContent = msg;
+      alertBox.style.display = 'block';
+    }
+
+    // Auto-check existing session
+    (function checkExistingSession() {
+      const token = localStorage.getItem('cpx_token');
+      const user = localStorage.getItem('cpx_user');
+      if (token && user) {
+        window.location.href = 'cpx-dashboard.html';
+      }
+    })();
+
+    // Rate Limiting (Prevent Brute Force)
+    function checkRateLimit() {
+      const attempts = parseInt(localStorage.getItem('cpx_attempts') || '0', 10);
+      const lockUntil = parseInt(localStorage.getItem('cpx_lock_until') || '0', 10);
+      const now = Date.now();
+
+      if (lockUntil && now < lockUntil) {
+        const mins = Math.ceil((lockUntil - now) / 60000);
+        return { allowed: false, error: `Security Lockout: Too many failed attempts. Try again in ${mins} minute(s).` };
+      }
+      return { allowed: true, attempts };
+    }
+
+    function recordFailedAttempt() {
+      let attempts = parseInt(localStorage.getItem('cpx_attempts') || '0', 10) + 1;
+      localStorage.setItem('cpx_attempts', attempts);
+      if (attempts >= 5) {
+        localStorage.setItem('cpx_lock_until', Date.now() + 15 * 60 * 1000); // 15 mins lock
+        return 'Too many failed attempts. Account locked out for 15 minutes.';
+      }
+      return `Invalid credentials. (${5 - attempts} attempts remaining before lockout)`;
+    }
+
+    function resetRateLimit() {
+      localStorage.removeItem('cpx_attempts');
+      localStorage.removeItem('cpx_lock_until');
+    }
+
+    // Login Form Submission
+    const form = document.getElementById('cpx_login_form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.style.display = 'none';
+
+      const rate = checkRateLimit();
+      if (!rate.allowed) {
+        showAlert(rate.error);
+        return;
+      }
+
+      const email = document.getElementById('cpx_email').value.trim().toLowerCase();
+      const pass = document.getElementById('cpx_password').value;
+
+      // Check stored custom password or default master password
+      const storedAdminEmail = (localStorage.getItem('cpx_admin_email') || DEFAULT_ADMIN.email).toLowerCase();
+      const storedCustomPass = localStorage.getItem('cpx_admin_pass');
+
+      let isValid = false;
+      if (email === storedAdminEmail) {
+        if (storedCustomPass) {
+          isValid = (pass === storedCustomPass);
+        } else {
+          isValid = (pass === DEFAULT_ADMIN.defaultPass);
+        }
+      }
+
+      if (isValid) {
+        resetRateLimit();
+        const sessionToken = 'cpx_' + Array.from(crypto.getRandomValues(new Uint8Array(24))).map(b => b.toString(16).padStart(2, '0')).join('');
+        localStorage.setItem('cpx_token', sessionToken);
+        localStorage.setItem('cpx_user', email);
+        localStorage.setItem('cpx_login_time', Date.now().toString());
+
+        showAlert('Authenticated successfully. Opening Super Admin Control Panel...', true);
+        setTimeout(() => {
+          window.location.href = 'cpx-dashboard.html';
+        }, 500);
+      } else {
+        const errorMsg = recordFailedAttempt();
+        showAlert(errorMsg);
+      }
+    });
+  </script>
+</body>
+</html>

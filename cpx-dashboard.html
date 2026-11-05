@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPX Control Panel - RapidTables.online Super Admin</title>
+
+  <!-- Strict Search Engine Prohibition -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    (function() {
+      // Check authentication
+      const token = localStorage.getItem('cpx_token');
+      const user = localStorage.getItem('cpx_user');
+      if (!token || !user) {
+        window.location.replace('cpx-login.html');
+      }
+      try {
+        const theme = localStorage.getItem('cpx_theme') || 'dark';
+        document.documentElement.setAttribute('data-cpx-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --cpx-bg: #0B0F19;
+      --cpx-sidebar: #111827;
+      --cpx-card: #182234;
+      --cpx-border: #243046;
+      --cpx-primary: #2563EB;
+      --cpx-primary-hover: #1D4ED8;
+      --cpx-accent: #38BDF8;
+      --cpx-text: #F9FAFB;
+      --cpx-muted: #94A3B8;
+      --cpx-success: #10B981;
+      --cpx-danger: #EF4444;
+      --cpx-warning: #F59E0B;
+    }
+    [data-cpx-theme="light"] {
+      --cpx-bg: #F1F5F9;
+      --cpx-sidebar: #FFFFFF;
+      --cpx-card: #FFFFFF;
+      --cpx-border: #E2E8F0;
+      --cpx-primary: #2563EB;
+      --cpx-primary-hover: #1D4ED8;
+      --cpx-accent: #0284C7;
+      --cpx-text: #0F172A;
+      --cpx-muted: #64748B;
+      --cpx-success: #059669;
+      --cpx-danger: #DC2626;
+      --cpx-warning: #D97706;
+    }
+    body.cpx-dashboard-body {
+      background-color: var(--cpx-bg);
+      color: var(--cpx-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    /* Top Header */
+    .cpx-topbar {
+      height: 64px;
+      background: var(--cpx-sidebar);
+      border-bottom: 1px solid var(--cpx-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .cpx-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cpx-topbar-logo {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--cpx-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .cpx-badge {
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--cpx-accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .cpx-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--cpx-success);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .cpx-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cpx-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--cpx-border);
+      background: var(--cpx-card);
+      color: var(--cpx-text);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .cpx-btn:hover {
+      border-color: var(--cpx-primary);
+      background: var(--cpx-primary);
+      color: #fff;
+    }
+    .cpx-btn-primary {
+      background: var(--cpx-primary);
+      color: #fff;
+      border-color: var(--cpx-primary);
+    }
+    .cpx-btn-primary:hover {
+      background: var(--cpx-primary-hover);
+    }
+    .cpx-btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--cpx-danger);
+    }
+    .cpx-btn-danger:hover {
+      background: var(--cpx-danger);
+      color: #fff;
+      border-color: var(--cpx-danger);
+    }
+
+    /* Main Layout */
+    .cpx-layout {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 64px);
+    }
+    /* Sidebar */
+    .cpx-sidebar {
+      width: 250px;
+      background: var(--cpx-sidebar);
+      border-right: 1px solid var(--cpx-border);
+      padding: 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .cpx-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--cpx-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .cpx-nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cpx-text);
+    }
+    .cpx-nav-item.active {
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--cpx-accent);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+    }
+    /* Content Area */
+    .cpx-content {
+      flex: 1;
+      padding: 32px 36px;
+      max-width: 1200px;
+      overflow-y: auto;
+    }
+    .cpx-tab-panel {
+      display: none;
+    }
+    .cpx-tab-panel.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cpx-section-header {
+      margin-bottom: 24px;
+    }
+    .cpx-section-header h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cpx-text);
+    }
+    .cpx-section-header p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--cpx-muted);
+    }
+
+    /* KPI Cards */
+    .cpx-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .cpx-kpi-card {
+      background: var(--cpx-card);
+      border: 1px solid var(--cpx-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .cpx-kpi-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--cpx-muted);
+      margin-bottom: 6px;
+    }
+    .cpx-kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--cpx-text);
+    }
+    .cpx-kpi-sub {
+      font-size: 12px;
+      color: var(--cpx-success);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Card Panels */
+    .cpx-panel {
+      background: var(--cpx-card);
+      border: 1px solid var(--cpx-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .cpx-panel h3 {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--cpx-text);
+    }
+    .cpx-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 768px) {
+      .cpx-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .cpx-field {
+      margin-bottom: 16px;
+    }
+    .cpx-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--cpx-text);
+    }
+    .cpx-input,
+    .cpx-select,
+    .cpx-textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--cpx-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--cpx-text);
+      box-sizing: border-box;
+      outline: none;
+      transition: border 0.15s;
+    }
+    [data-cpx-theme="light"] .cpx-input,
+    [data-cpx-theme="light"] .cpx-select,
+    [data-cpx-theme="light"] .cpx-textarea {
+      background: #F8FAFC;
+    }
+    .cpx-input:focus,
+    .cpx-select:focus,
+    .cpx-textarea:focus {
+      border-color: var(--cpx-primary);
+    }
+    .cpx-textarea {
+      min-height: 90px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .cpx-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--cpx-border);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .cpx-toggle-row label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--cpx-text);
+      cursor: pointer;
+    }
+    .cpx-toggle-row p {
+      font-size: 12px;
+      color: var(--cpx-muted);
+      margin: 2px 0 0;
+    }
+
+    /* Switch */
+    .cpx-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .cpx-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .cpx-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    .cpx-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .cpx-slider {
+      background-color: var(--cpx-primary);
+    }
+    input:checked + .cpx-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Tools Table */
+    .cpx-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--cpx-border);
+      border-radius: 8px;
+    }
+    .cpx-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .cpx-table th, .cpx-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--cpx-border);
+    }
+    .cpx-table th {
+      background: rgba(0,0,0,0.25);
+      font-weight: 700;
+      color: var(--cpx-muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    [data-cpx-theme="light"] .cpx-table th {
+      background: #F1F5F9;
+    }
+    .cpx-table tr:hover {
+      background: rgba(255,255,255,0.03);
+    }
+    .cpx-status-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .cpx-status-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--cpx-success);
+    }
+
+    /* Notification Toast */
+    .cpx-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--cpx-card);
+      border: 1px solid var(--cpx-border);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 13.5px;
+      color: var(--cpx-text);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+    }
+    .cpx-toast.show {
+      display: flex;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @media (max-width: 900px) {
+      .cpx-layout {
+        flex-direction: column;
+      }
+      .cpx-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--cpx-border);
+        box-sizing: border-box;
+      }
+      .cpx-content {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body class="cpx-dashboard-body">
+
+  <!-- Topbar -->
+  <header class="cpx-topbar">
+    <div class="cpx-topbar-left">
+      <a href="cpx-dashboard.html" class="cpx-topbar-logo">
+        <span style="color:#38BDF8;">&#9889;</span>
+        <span>RapidTables <span class="cpx-badge">CPX Super Admin</span></span>
+      </a>
+      <div class="cpx-user-pill">
+        <span>🛡️</span>
+        <span id="active_admin_display">rapidtabless@gmail.com</span>
+      </div>
+    </div>
+    <div class="cpx-topbar-right">
+      <button class="cpx-btn" id="theme_toggle_btn">🌓 Theme</button>
+      <a href="./" target="_blank" class="cpx-btn">🌐 View Live Website</a>
+      <button class="cpx-btn cpx-btn-danger" onclick="logoutAdmin()">🚪 Logout</button>
+    </div>
+  </header>
+
+  <div class="cpx-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="cpx-sidebar">
+      <div class="cpx-nav-item active" data-tab="overview">
+        <span>📊</span> <span>Overview &amp; Health</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="tools">
+        <span>🛠️</span> <span>Tools &amp; Directory (100+)</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="seo">
+        <span>🌐</span> <span>Site Meta &amp; SEO</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="announcement">
+        <span>📢</span> <span>Announcement Banner</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="ads">
+        <span>💰</span> <span>AdSense &amp; Ads Control</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="scripts">
+        <span>⚡</span> <span>Analytics &amp; Custom Scripts</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="security">
+        <span>🔒</span> <span>Super Admin &amp; Security</span>
+      </div>
+      <div class="cpx-nav-item" data-tab="backup">
+        <span>💾</span> <span>Backup &amp; Export</span>
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="cpx-content">
+
+      <!-- TAB 1: OVERVIEW -->
+      <section class="cpx-tab-panel active" id="tab_overview">
+        <div class="cpx-section-header">
+          <h2>Master System Overview</h2>
+          <p>Real-time infrastructure and content status for RapidTables.online</p>
+        </div>
+
+        <div class="cpx-kpi-grid">
+          <div class="cpx-kpi-card">
+            <div class="cpx-kpi-title">Total Active Tools</div>
+            <div class="cpx-kpi-value" id="kpi_tools_count">105</div>
+            <div class="cpx-kpi-sub">✓ 25+ PDF Suite, 80+ Web Tools</div>
+          </div>
+          <div class="cpx-kpi-card">
+            <div class="cpx-kpi-title">Indexed HTML Pages</div>
+            <div class="cpx-kpi-value">131</div>
+            <div class="cpx-kpi-sub">✓ Full XML Sitemap Generated</div>
+          </div>
+          <div class="cpx-kpi-card">
+            <div class="cpx-kpi-title">System Health &amp; SLA</div>
+            <div class="cpx-kpi-value" style="color:var(--cpx-success);">100%</div>
+            <div class="cpx-kpi-sub">✓ Standalone Client-Side Execution</div>
+          </div>
+          <div class="cpx-kpi-card">
+            <div class="cpx-kpi-title">Super Admin Level</div>
+            <div class="cpx-kpi-value" style="font-size:22px; color:var(--cpx-accent);">Root Master</div>
+            <div class="cpx-kpi-sub">✓ Full Write &amp; Config Access</div>
+          </div>
+        </div>
+
+        <div class="cpx-panel">
+          <h3>⚡ Quick Master Actions</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="cpx-btn cpx-btn-primary" onclick="saveAllSettings()">💾 Save All Site Configurations</button>
+            <button class="cpx-btn" onclick="exportBackupJSON()">📥 Export JSON Site Backup</button>
+            <button class="cpx-btn" onclick="switchTab('tools')">🔍 Browse All 100+ Tools</button>
+            <button class="cpx-btn" onclick="switchTab('announcement')">📢 Update Announcement Banner</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: TOOLS MANAGEMENT -->
+      <section class="cpx-tab-panel" id="tab_tools">
+        <div class="cpx-section-header">
+          <h2>Tools &amp; Pages Directory</h2>
+          <p>Browse, inspect, and manage all calculators, PDF tools, and web utilities</p>
+        </div>
+
+        <div class="cpx-panel">
+          <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+            <input type="text" id="tool_search_input" class="cpx-input" placeholder="🔍 Search tools by name or keyword..." style="flex:1; min-width:240px;" oninput="filterToolsTable()">
+            <select id="tool_category_filter" class="cpx-select" style="width:200px;" onchange="filterToolsTable()">
+              <option value="all">All Categories</option>
+              <option value="PDF">PDF Suite (25+)</option>
+              <option value="Tools">Web &amp; Dev Tools</option>
+              <option value="Math">Math &amp; Statistics</option>
+              <option value="Finance">Financial &amp; Tax</option>
+              <option value="Converters">Unit Converters</option>
+              <option value="Electric">Electricity &amp; Electronics</option>
+              <option value="Tables">Reference Tables</option>
+            </select>
+          </div>
+
+          <div class="cpx-table-wrap">
+            <table class="cpx-table" id="cpx_tools_table">
+              <thead>
+                <tr>
+                  <th>Tool Name</th>
+                  <th>Category</th>
+                  <th>Path / URL</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tools_table_body">
+                <!-- Dynamically populated via search-index.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SITE META & SEO -->
+      <section class="cpx-tab-panel" id="tab_seo">
+        <div class="cpx-section-header">
+          <h2>Global Site Meta &amp; SEO</h2>
+          <p>Configure search engine meta tags, site title, and webmaster verifications</p>
+        </div>
+
+        <div class="cpx-panel">
+          <h3>Site Identity</h3>
+          <div class="cpx-form-grid">
+            <div class="cpx-field">
+              <label for="seo_site_name">Brand Name</label>
+              <input type="text" id="seo_site_name" class="cpx-input" value="RapidTables.online">
+            </div>
+            <div class="cpx-field">
+              <label for="seo_tagline">Hero Tagline</label>
+              <input type="text" id="seo_tagline" class="cpx-input" value="100% free, fast, and easy to use with no registration required.">
+            </div>
+          </div>
+
+          <div class="cpx-field">
+            <label for="seo_description">Global Meta Description</label>
+            <textarea id="seo_description" class="cpx-textarea">Over 100+ free online calculators, unit converters, PDF suite tools, and everyday web utilities. Fast, client-side, and private with sub-second accuracy.</textarea>
+          </div>
+
+          <div class="cpx-form-grid">
+            <div class="cpx-field">
+              <label for="seo_google_verify">Google Search Console Verification Tag</label>
+              <input type="text" id="seo_google_verify" class="cpx-input" placeholder="google-site-verification=XXXXXXXXXXXXXXXX">
+            </div>
+            <div class="cpx-field">
+              <label for="seo_bing_verify">Bing Webmaster Verification Code</label>
+              <input type="text" id="seo_bing_verify" class="cpx-input" placeholder="msvalidate.01=XXXXXXXXXXXXXXXX">
+            </div>
+          </div>
+
+          <button class="cpx-btn cpx-btn-primary" onclick="saveSeoSettings()">💾 Save SEO Settings</button>
+        </div>
+      </section>
+
+      <!-- TAB 4: ANNOUNCEMENT BANNER -->
+      <section class="cpx-tab-panel" id="tab_announcement">
+        <div class="cpx-section-header">
+          <h2>Site-Wide Announcement Banner</h2>
+          <p>Display a prominent notification or announcement at the top of every page</p>
+        </div>
+
+        <div class="cpx-panel">
+          <div class="cpx-toggle-row">
+            <div>
+              <label for="announcement_enabled">Enable Top Announcement Banner</label>
+              <p>When turned on, banner appears at the very top of all pages</p>
+            </div>
+            <label class="cpx-switch">
+              <input type="checkbox" id="announcement_enabled">
+              <span class="cpx-slider"></span>
+            </label>
+          </div>
+
+          <div class="cpx-field">
+            <label for="announcement_text">Banner Message / Announcement</label>
+            <input type="text" id="announcement_text" class="cpx-input" value="🎉 Welcome to RapidTables.online! Over 100+ high-precision tools now available!">
+          </div>
+
+          <div class="cpx-form-grid">
+            <div class="cpx-field">
+              <label for="announcement_theme">Banner Theme / Color</label>
+              <select id="announcement_theme" class="cpx-select">
+                <option value="blue">Electric Blue (Primary)</option>
+                <option value="green">Emerald Green (Success / News)</option>
+                <option value="amber">Warm Amber (Notice / Maintenance)</option>
+                <option value="purple">Royal Purple (Special Promotion)</option>
+              </select>
+            </div>
+            <div class="cpx-field">
+              <label for="announcement_link">Action Link URL (Optional)</label>
+              <input type="text" id="announcement_link" class="cpx-input" placeholder="/pdf/ or /tools/">
+            </div>
+          </div>
+
+          <button class="cpx-btn cpx-btn-primary" onclick="saveAnnouncementSettings()">💾 Save Banner Settings</button>
+        </div>
+      </section>
+
+      <!-- TAB 5: ADSENSE & ADS -->
+      <section class="cpx-tab-panel" id="tab_ads">
+        <div class="cpx-section-header">
+          <h2>Google AdSense &amp; Monetization</h2>
+          <p>Control site ads, publisher ID, and automatic ad placements</p>
+        </div>
+
+        <div class="cpx-panel">
+          <div class="cpx-toggle-row">
+            <div>
+              <label for="ads_master_toggle">Enable Site Monetization / Ads</label>
+              <p>Master switch to turn ads on or off across the entire site</p>
+            </div>
+            <label class="cpx-switch">
+              <input type="checkbox" id="ads_master_toggle">
+              <span class="cpx-slider"></span>
+            </label>
+          </div>
+
+          <div class="cpx-field">
+            <label for="adsense_pub_id">Google AdSense Publisher ID</label>
+            <input type="text" id="adsense_pub_id" class="cpx-input" placeholder="ca-pub-XXXXXXXXXXXXXXXX">
+          </div>
+
+          <div class="cpx-toggle-row">
+            <div>
+              <label for="ad_top_banner">Header / Top Banner Slot</label>
+              <p>728x90 Leaderboard banner directly beneath top navigation</p>
+            </div>
+            <label class="cpx-switch">
+              <input type="checkbox" id="ad_top_banner">
+              <span class="cpx-slider"></span>
+            </label>
+          </div>
+
+          <div class="cpx-toggle-row">
+            <div>
+              <label for="ad_sidebar">Sidebar Sticky Ad Slot</label>
+              <p>300x250 Medium rectangle in desktop right sidebar</p>
+            </div>
+            <label class="cpx-switch">
+              <input type="checkbox" id="ad_sidebar">
+              <span class="cpx-slider"></span>
+            </label>
+          </div>
+
+          <button class="cpx-btn cpx-btn-primary" onclick="saveAdsSettings()">💾 Save AdSense Settings</button>
+        </div>
+      </section>
+
+      <!-- TAB 6: CUSTOM SCRIPTS -->
+      <section class="cpx-tab-panel" id="tab_scripts">
+        <div class="cpx-section-header">
+          <h2>Google Analytics &amp; Custom Scripts</h2>
+          <p>Inject GA4 tracking tags, meta pixels, or custom CSS styles</p>
+        </div>
+
+        <div class="cpx-panel">
+          <div class="cpx-field">
+            <label for="ga4_id">Google Analytics 4 (GA4) Measurement ID</label>
+            <input type="text" id="ga4_id" class="cpx-input" placeholder="G-XXXXXXXXXX">
+          </div>
+
+          <div class="cpx-field">
+            <label for="custom_head_scripts">Custom &lt;head&gt; Scripts (Tracking pixels, verification tags)</label>
+            <textarea id="custom_head_scripts" class="cpx-textarea" placeholder="<!-- Add custom head code here -->"></textarea>
+          </div>
+
+          <div class="cpx-field">
+            <label for="custom_footer_scripts">Custom &lt;body&gt; Footer Scripts (Chat widgets, analytics)</label>
+            <textarea id="custom_footer_scripts" class="cpx-textarea" placeholder="<!-- Add custom footer scripts here -->"></textarea>
+          </div>
+
+          <button class="cpx-btn cpx-btn-primary" onclick="saveCustomScripts()">💾 Save Custom Scripts</button>
+        </div>
+      </section>
+
+      <!-- TAB 7: SECURITY & CREDENTIALS -->
+      <section class="cpx-tab-panel" id="tab_security">
+        <div class="cpx-section-header">
+          <h2>Super Admin Security &amp; Credentials</h2>
+          <p>Manage administrator email and master access key</p>
+        </div>
+
+        <div class="cpx-panel">
+          <h3>Super Admin Account Details</h3>
+          <div class="cpx-form-grid">
+            <div class="cpx-field">
+              <label for="admin_email">Super Admin Email</label>
+              <input type="email" id="admin_email" class="cpx-input" value="rapidtabless@gmail.com">
+            </div>
+            <div class="cpx-field">
+              <label for="admin_new_pass">Change Master Password</label>
+              <input type="password" id="admin_new_pass" class="cpx-input" placeholder="Enter new master password">
+            </div>
+          </div>
+
+          <div class="cpx-field">
+            <label for="admin_confirm_pass">Confirm New Master Password</label>
+            <input type="password" id="admin_confirm_pass" class="cpx-input" placeholder="Re-enter new master password" style="max-width:400px;">
+          </div>
+
+          <div style="margin-top:20px; display:flex; gap:12px;">
+            <button class="cpx-btn cpx-btn-primary" onclick="saveAdminCredentials()">🔐 Update Admin Credentials</button>
+            <button class="cpx-btn cpx-btn-danger" onclick="logoutAdmin()">🚪 Sign Out Of Session</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: BACKUP & EXPORT -->
+      <section class="cpx-tab-panel" id="tab_backup">
+        <div class="cpx-section-header">
+          <h2>Backup, Restore &amp; System Export</h2>
+          <p>Download full site settings and restore configurations</p>
+        </div>
+
+        <div class="cpx-panel">
+          <h3>Site Backup &amp; Recovery</h3>
+          <p style="color:var(--cpx-muted); font-size:13px; line-height:1.6;">
+            Save a backup file of all site configurations (SEO settings, AdSense IDs, announcement bar state, custom scripts, and admin preferences).
+          </p>
+          <div style="display:flex; gap:12px; margin-top:16px;">
+            <button class="cpx-btn cpx-btn-primary" onclick="exportBackupJSON()">📥 Download Backup (JSON)</button>
+            <label class="cpx-btn" style="cursor:pointer;">
+              📤 Restore From JSON Backup
+              <input type="file" id="restore_file_input" accept=".json" style="display:none;" onchange="importBackupJSON(event)">
+            </label>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="cpx_toast" class="cpx-toast">
+    <span id="cpx_toast_icon">✅</span>
+    <span id="cpx_toast_msg">Settings saved successfully!</span>
+  </div>
+
+  <!-- Search index for tools -->
+  <script src="assets/js/search-index.js"></script>
+
+  <script>
+    // Tab switching
+    const navItems = document.querySelectorAll('.cpx-nav-item');
+    const tabPanels = document.querySelectorAll('.cpx-tab-panel');
+
+    function switchTab(tabId) {
+      navItems.forEach(n => {
+        n.classList.toggle('active', n.dataset.tab === tabId);
+      });
+      tabPanels.forEach(p => {
+        p.classList.toggle('active', p.id === 'tab_' + tabId);
+      });
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        switchTab(item.dataset.tab);
+      });
+    });
+
+    // Theme toggle
+    const themeBtn = document.getElementById('theme_toggle_btn');
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-cpx-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-cpx-theme', next);
+      localStorage.setItem('cpx_theme', next);
+    });
+
+    // Toast notification
+    function showToast(msg, icon = '✅') {
+      const toast = document.getElementById('cpx_toast');
+      document.getElementById('cpx_toast_msg').textContent = msg;
+      document.getElementById('cpx_toast_icon').textContent = icon;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Populate active admin email
+    const currentUser = localStorage.getItem('cpx_user') || 'rapidtabless@gmail.com';
+    document.getElementById('active_admin_display').textContent = currentUser;
+    document.getElementById('admin_email').value = currentUser;
+
+    // Load Settings
+    function loadSavedSettings() {
+      try {
+        const raw = localStorage.getItem('cpx_site_settings');
+        if (raw) {
+          const cfg = JSON.parse(raw);
+          if (cfg.seo) {
+            document.getElementById('seo_site_name').value = cfg.seo.siteName || 'RapidTables.online';
+            document.getElementById('seo_tagline').value = cfg.seo.tagline || '';
+            document.getElementById('seo_description').value = cfg.seo.description || '';
+            document.getElementById('seo_google_verify').value = cfg.seo.googleVerify || '';
+            document.getElementById('seo_bing_verify').value = cfg.seo.bingVerify || '';
+          }
+          if (cfg.announcement) {
+            document.getElementById('announcement_enabled').checked = !!cfg.announcement.enabled;
+            document.getElementById('announcement_text').value = cfg.announcement.text || '';
+            document.getElementById('announcement_theme').value = cfg.announcement.theme || 'blue';
+            document.getElementById('announcement_link').value = cfg.announcement.link || '';
+          }
+          if (cfg.ads) {
+            document.getElementById('ads_master_toggle').checked = !!cfg.ads.masterToggle;
+            document.getElementById('adsense_pub_id').value = cfg.ads.pubId || '';
+            document.getElementById('ad_top_banner').checked = !!cfg.ads.topBanner;
+            document.getElementById('ad_sidebar').checked = !!cfg.ads.sidebar;
+          }
+          if (cfg.scripts) {
+            document.getElementById('ga4_id').value = cfg.scripts.ga4Id || '';
+            document.getElementById('custom_head_scripts').value = cfg.scripts.head || '';
+            document.getElementById('custom_footer_scripts').value = cfg.scripts.footer || '';
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Collect all settings
+    function getAllSettings() {
+      return {
+        updatedAt: new Date().toISOString(),
+        updatedBy: localStorage.getItem('cpx_user') || 'rapidtabless@gmail.com',
+        seo: {
+          siteName: document.getElementById('seo_site_name').value,
+          tagline: document.getElementById('seo_tagline').value,
+          description: document.getElementById('seo_description').value,
+          googleVerify: document.getElementById('seo_google_verify').value,
+          bingVerify: document.getElementById('seo_bing_verify').value
+        },
+        announcement: {
+          enabled: document.getElementById('announcement_enabled').checked,
+          text: document.getElementById('announcement_text').value,
+          theme: document.getElementById('announcement_theme').value,
+          link: document.getElementById('announcement_link').value
+        },
+        ads: {
+          masterToggle: document.getElementById('ads_master_toggle').checked,
+          pubId: document.getElementById('adsense_pub_id').value,
+          topBanner: document.getElementById('ad_top_banner').checked,
+          sidebar: document.getElementById('ad_sidebar').checked
+        },
+        scripts: {
+          ga4Id: document.getElementById('ga4_id').value,
+          head: document.getElementById('custom_head_scripts').value,
+          footer: document.getElementById('custom_footer_scripts').value
+        }
+      };
+    }
+
+    // Save Handlers
+    function saveAllSettings() {
+      const cfg = getAllSettings();
+      localStorage.setItem('cpx_site_settings', JSON.stringify(cfg));
+      showToast('All settings saved successfully!');
+    }
+
+    function saveSeoSettings() {
+      saveAllSettings();
+      showToast('SEO & Identity settings updated!');
+    }
+
+    function saveAnnouncementSettings() {
+      saveAllSettings();
+      showToast('Announcement banner settings saved!');
+    }
+
+    function saveAdsSettings() {
+      saveAllSettings();
+      showToast('AdSense & Monetization settings updated!');
+    }
+
+    function saveCustomScripts() {
+      saveAllSettings();
+      showToast('Analytics & Scripts updated!');
+    }
+
+    // Admin Credentials
+    function saveAdminCredentials() {
+      const email = document.getElementById('admin_email').value.trim();
+      const newPass = document.getElementById('admin_new_pass').value;
+      const confirmPass = document.getElementById('admin_confirm_pass').value;
+
+      if (!email) {
+        showToast('Please enter a valid admin email.', '⚠️');
+        return;
+      }
+
+      if (newPass) {
+        if (newPass !== confirmPass) {
+          showToast('New passwords do not match!', '❌');
+          return;
+        }
+        if (newPass.length < 8) {
+          showToast('Password must be at least 8 characters.', '⚠️');
+          return;
+        }
+        localStorage.setItem('cpx_admin_pass', newPass);
+      }
+
+      localStorage.setItem('cpx_admin_email', email);
+      localStorage.setItem('cpx_user', email);
+      document.getElementById('active_admin_display').textContent = email;
+      document.getElementById('admin_new_pass').value = '';
+      document.getElementById('admin_confirm_pass').value = '';
+
+      showToast('Super Admin credentials updated successfully!');
+    }
+
+    // Logout
+    function logoutAdmin() {
+      localStorage.removeItem('cpx_token');
+      localStorage.removeItem('cpx_user');
+      window.location.href = 'cpx-login.html';
+    }
+
+    // Backup & Restore
+    function exportBackupJSON() {
+      const data = getAllSettings();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rapidtables-cpx-backup-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup JSON exported successfully!');
+    }
+
+    function importBackupJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const cfg = JSON.parse(evt.target.result);
+          localStorage.setItem('cpx_site_settings', JSON.stringify(cfg));
+          loadSavedSettings();
+          showToast('Configuration restored successfully from backup!');
+        } catch (err) {
+          showToast('Invalid backup file JSON.', '❌');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Render Tools Directory from SITE_TOOLS_INDEX
+    let allTools = [];
+    function renderTools() {
+      const tbody = document.getElementById('tools_table_body');
+      if (typeof SITE_TOOLS_INDEX !== 'undefined') {
+        allTools = SITE_TOOLS_INDEX;
+        document.getElementById('kpi_tools_count').textContent = allTools.length;
+      } else {
+        allTools = [];
+      }
+      filterToolsTable();
+    }
+
+    function filterToolsTable() {
+      const tbody = document.getElementById('tools_table_body');
+      const query = (document.getElementById('tool_search_input')?.value || '').toLowerCase();
+      const cat = document.getElementById('tool_category_filter')?.value || 'all';
+
+      const filtered = allTools.filter(t => {
+        const matchesQuery = !query || t.title.toLowerCase().includes(query) || (t.keywords && t.keywords.toLowerCase().includes(query));
+        const matchesCat = cat === 'all' || (t.category && t.category.toLowerCase() === cat.toLowerCase());
+        return matchesQuery && matchesCat;
+      });
+
+      tbody.innerHTML = filtered.map(t => `
+        <tr>
+          <td><strong style="color:var(--cpx-text);">${t.title}</strong></td>
+          <td><span class="cpx-badge">${t.category || 'Tool'}</span></td>
+          <td><code style="color:var(--cpx-accent); font-size:12px;">${t.url}</code></td>
+          <td><span class="cpx-status-tag cpx-status-active">● Active</span></td>
+          <td>
+            <a href="${t.url.startsWith('/') ? '.' + t.url : t.url}" target="_blank" class="cpx-btn" style="padding:4px 8px; font-size:11.5px;">🔗 Test Tool</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Initialize
+    loadSavedSettings();
+    renderTools();
+  </script>
+</body>
+</html>

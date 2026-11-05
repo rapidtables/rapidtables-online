@@ -29,6 +29,11 @@
   RewriteCond %{REQUEST_URI} !(/$)
   RewriteRule (.*) %{REQUEST_URI}/ [R=301,L]
 
+  # 4b. CPX Super Admin Routing (/cpx, /cpx/login, /cpx/dashboard)
+  RewriteRule ^cpx/login/?$ /cpx-login.html [L]
+  RewriteRule ^cpx/dashboard/?$ /cpx-dashboard.html [L]
+  RewriteRule ^cpx/?$ /cpx-dashboard.html [L]
+
   # 5. Clean Extensionless URLs (e.g. /about/privacy -> /about/privacy.html)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}\.html -f

@@ -1,4 +1,8 @@
 User-agent: *
+Disallow: /cpx
+Disallow: /cpx/
+Disallow: /cpx-login.html
+Disallow: /cpx-dashboard.html
 Allow: /
 
 Sitemap: https://www.rapidtables.online/sitemap.xml

@@ -51,6 +51,13 @@ const server = http.createServer((req, res) => {
     parsedUrl = '/index.html';
   }
 
+  // CPX Admin Gateway routing
+  if (parsedUrl === '/cpx' || parsedUrl === '/cpx/' || parsedUrl === '/cpx/dashboard' || parsedUrl === '/cpx-dashboard') {
+    parsedUrl = '/cpx-dashboard.html';
+  } else if (parsedUrl === '/cpx/login' || parsedUrl === '/cpx-login') {
+    parsedUrl = '/cpx-login.html';
+  }
+
   let filePath = path.join(PUBLIC_DIR, parsedUrl);
 
   // If directory requested, check index.html inside it
