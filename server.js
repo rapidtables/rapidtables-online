@@ -278,10 +278,23 @@ const server = http.createServer(async (req, res) => {
     parsedUrl = '/index.html';
   }
 
-  // CPX Admin Gateway routing
-  if (parsedUrl === '/cpx' || parsedUrl === '/cpx/' || parsedUrl === '/cpx/dashboard' || parsedUrl === '/cpx-dashboard') {
+  // Asset fallback for /cpx/assets/...
+  if (parsedUrl.startsWith('/cpx/assets/')) {
+    parsedUrl = parsedUrl.replace('/cpx/assets/', '/assets/');
+  }
+
+  // CPX Admin Gateway routing & redirects
+  if (parsedUrl === '/cpx/cpx-dashboard.html' || parsedUrl === '/cpx/dashboard' || parsedUrl === '/cpx/dashboard.html') {
+    res.writeHead(301, { 'Location': '/cpx-dashboard.html' });
+    return res.end();
+  }
+  if (parsedUrl === '/cpx/cpx-login.html' || parsedUrl === '/cpx/login' || parsedUrl === '/cpx/login.html') {
+    res.writeHead(301, { 'Location': '/cpx-login.html' });
+    return res.end();
+  }
+  if (parsedUrl === '/cpx' || parsedUrl === '/cpx/' || parsedUrl.includes('cpx-dashboard')) {
     parsedUrl = '/cpx-dashboard.html';
-  } else if (parsedUrl === '/cpx/login' || parsedUrl === '/cpx-login') {
+  } else if (parsedUrl.includes('cpx-login')) {
     parsedUrl = '/cpx-login.html';
   }
 

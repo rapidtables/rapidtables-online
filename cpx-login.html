@@ -12,6 +12,10 @@
   <link rel="stylesheet" href="/assets/css/style.css">
   <script>
     (function() {
+      if (window.location.pathname.includes('/cpx/') && window.location.pathname.endsWith('.html')) {
+        window.location.replace('/cpx-login.html');
+        return;
+      }
       try {
         const theme = localStorage.getItem('cpx_theme') || 'dark';
         document.documentElement.setAttribute('data-cpx-theme', theme);

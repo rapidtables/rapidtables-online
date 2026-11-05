@@ -14,6 +14,10 @@
   <script src="/assets/js/real_pages_seo.js"></script>
   <script>
     (function() {
+      if (window.location.pathname.includes('/cpx/') && window.location.pathname.endsWith('.html')) {
+        window.location.replace('/cpx-dashboard.html');
+        return;
+      }
       const token = localStorage.getItem('cpx_token');
       const user = localStorage.getItem('cpx_user');
       if (!token || !user) {

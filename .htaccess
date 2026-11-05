@@ -29,9 +29,12 @@
   RewriteCond %{REQUEST_URI} !(/$)
   RewriteRule (.*) %{REQUEST_URI}/ [R=301,L]
 
-  # 4b. CPX Super Admin Routing (/cpx, /cpx/login, /cpx/dashboard)
-  RewriteRule ^cpx/login/?$ /cpx-login.html [L]
-  RewriteRule ^cpx/dashboard/?$ /cpx-dashboard.html [L]
+  # 4b. CPX Super Admin Routing & Auto-Redirects
+  RewriteRule ^cpx/assets/(.*)$ /assets/$1 [L]
+  RewriteRule ^cpx/cpx-dashboard\.html$ /cpx-dashboard.html [R=301,L]
+  RewriteRule ^cpx/cpx-login\.html$ /cpx-login.html [R=301,L]
+  RewriteRule ^cpx/dashboard(\.html)?$ /cpx-dashboard.html [R=301,L]
+  RewriteRule ^cpx/login(\.html)?$ /cpx-login.html [R=301,L]
   RewriteRule ^cpx/?$ /cpx-dashboard.html [L]
 
   # 4c. CPX Super Admin Backend API Handlers
