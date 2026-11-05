@@ -1,0 +1,20 @@
+{
+  "name": "rapidtables-online",
+  "version": "1.0.0",
+  "description": "RapidTables.online - Free Online Calculators, Unit Converters & Web Developer Tools",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "node -e \"console.log('Build complete')\""
+  },
+  "keywords": [
+    "calculators",
+    "converters",
+    "tools",
+    "unit-converter",
+    "rapidtables"
+  ],
+  "author": "RapidTables.online",
+  "license": "MIT"
+}
