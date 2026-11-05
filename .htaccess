@@ -1,4 +1,3 @@
-# Custom Error Documents
 ErrorDocument 404 /404.html
 
 # Canonical Clean URLs & 301 Redirection
@@ -23,10 +22,10 @@ ErrorDocument 404 /404.html
   RewriteRule ^about/terms(\.html)?$ /terms.html [R=301,L]
   RewriteRule ^about/contact(\.html)?$ /contact.html [R=301,L]
 
+
   # 2b. Redirect Category Suite directories to clean .html hubs
   RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(pdf|calc|tools|convert)/index\.html\ HTTP/ [NC]
   RewriteRule ^(pdf|calc|tools|convert)/index\.html$ /$1.html [R=301,L]
-
   RewriteRule ^(pdf|calc|tools|convert)/?$ /$1.html [R=301,L]
 
   # 3. Redirect /folder/index.html to /folder/
