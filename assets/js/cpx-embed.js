@@ -15,8 +15,9 @@
   function applyPageSeo(seoData) {
     if (!seoData) return;
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+    const relPath = currentPath.replace(/^\//, '');
     const filename = window.location.pathname.split('/').pop() || 'index.html';
-    const matched = seoData[currentPath] || seoData[filename] || seoData['/' + filename] || seoData[window.location.pathname];
+    const matched = seoData[currentPath] || seoData[relPath] || seoData[filename] || seoData['/' + filename] || seoData[window.location.pathname];
     if (matched) {
       if (matched.title) document.title = matched.title;
       if (matched.description) {
@@ -218,16 +219,27 @@
     if (localSettings.announcement) applyAnnouncement(localSettings.announcement);
     applyScriptsAndAds(localSettings);
 
-    // 2. Fetch live settings from server API (asynchronous update)
-    fetch('/api/site-settings')
+    // 2. Fetch live settings from static JSON file (guaranteed on all static CDNs/hosts)
+    fetch('/data/site-settings.json?t=' + Date.now())
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data && (data.success || data.announcement || data.scripts || data.ads)) {
-          applyAnnouncement(data.announcement);
+        if (data) {
+          if (data.announcement) applyAnnouncement(data.announcement);
           applyScriptsAndAds(data);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        // Fallback to API if static JSON not found
+        fetch('/api/site-settings')
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && (data.success || data.announcement || data.scripts || data.ads)) {
+              if (data.announcement) applyAnnouncement(data.announcement);
+              applyScriptsAndAds(data);
+            }
+          })
+          .catch(() => {});
+      });
   } catch (err) {
     // Fail-safe silent error handler
   }

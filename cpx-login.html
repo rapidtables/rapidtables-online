@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
 
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
   <script>
     (function() {
       try {
@@ -329,7 +329,7 @@
       const token = localStorage.getItem('cpx_token');
       const user = localStorage.getItem('cpx_user');
       if (token && user) {
-        window.location.href = 'cpx-dashboard.html';
+        window.location.href = '/cpx-dashboard.html';
       }
     })();
 
@@ -392,7 +392,7 @@
 
           showAlert('Authenticated successfully. Opening Super Admin Control Panel...', true);
           setTimeout(() => {
-            window.location.href = 'cpx-dashboard.html';
+            window.location.href = '/cpx-dashboard.html';
           }, 400);
           return;
         } else if (res.status === 401) {
@@ -426,7 +426,7 @@
 
         showAlert('Authenticated successfully. Opening Super Admin Control Panel...', true);
         setTimeout(() => {
-          window.location.href = 'cpx-dashboard.html';
+          window.location.href = '/cpx-dashboard.html';
         }, 500);
       } else {
         const errorMsg = recordFailedAttempt();

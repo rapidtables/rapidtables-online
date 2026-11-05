@@ -10,14 +10,14 @@
   <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script src="assets/js/real_pages_seo.js"></script>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script src="/assets/js/real_pages_seo.js"></script>
   <script>
     (function() {
       const token = localStorage.getItem('cpx_token');
       const user = localStorage.getItem('cpx_user');
       if (!token || !user) {
-        window.location.replace('cpx-login.html');
+        window.location.replace('/cpx-login.html');
       }
       try {
         const theme = localStorage.getItem('cpx_theme') || 'dark';
@@ -1237,7 +1237,7 @@ Sitemap: https://www.rapidtables.online/sitemap.xml</textarea>
   <!-- Toast Message -->
   <div class="cpx-toast-msg" id="cpx_toast">Saved successfully!</div>
 
-  <script src="assets/js/search-index.js"></script>
+  <script src="/assets/js/search-index.js"></script>
   <script>
     // Tab switching (SaveClip Exact)
     document.querySelectorAll('.cpx-nav-item').forEach(item => {
@@ -1273,7 +1273,7 @@ Sitemap: https://www.rapidtables.online/sitemap.xml</textarea>
       if (confirm('Log out from CPX Super Admin?')) {
         localStorage.removeItem('cpx_token');
         localStorage.removeItem('cpx_user');
-        window.location.replace('cpx-login.html');
+        window.location.replace('/cpx-login.html');
       }
     }
 
