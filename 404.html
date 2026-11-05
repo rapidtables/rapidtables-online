@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Page Not Found - RapidTables.online</title>
+  <meta name="description" content="The requested page could not be found. Browse free online calculators, PDF document tools, unit converters, and web developer utilities on RapidTables.online.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .error-hero {
+      max-width: 960px;
+      margin: 40px auto 60px;
+      padding: 40px 24px;
+      text-align: center;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+    .error-badge-404 {
+      font-size: 88px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #0284c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .error-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+    .error-msg {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+    .error-search-box {
+      max-width: 540px;
+      margin: 0 auto 32px;
+      position: relative;
+    }
+    .error-search-wrapper {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    }
+    .error-search-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text-main);
+    }
+    .error-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .btn-action-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #ffffff !important;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-action-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    .btn-action-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-alt);
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-action-secondary:hover {
+      background: var(--bg-card);
+      border-color: var(--primary);
+    }
+    .directory-categories {
+      text-align: left;
+      border-top: 1px solid var(--border-color);
+      padding-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .cat-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .cat-col-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cat-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cat-col li a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: var(--radius-xs);
+      transition: background var(--transition), transform var(--transition);
+    }
+    .cat-col li a:hover {
+      background: var(--bg-alt);
+      color: var(--primary);
+      transform: translateX(3px);
+    }
+  </style>
+  <!-- Google-Compliant Favicon & App Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/img/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon-192x192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#2563EB">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="/" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="/pdf.html" class="header-nav-link">PDF Suite</a>
+        <a href="/calc.html" class="header-nav-link">Calculators</a>
+        <a href="/convert.html" class="header-nav-link">Converters</a>
+        <a href="/tools.html" class="header-nav-link">Web Tools</a>
+        <a href="/tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="/tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav">
+    <a href="/">Home</a>
+    <span class="sep">&gt;</span>
+    <span>404 Page Not Found</span>
+  </nav>
+
+  <!-- Main Error Presentation -->
+  <div class="layout-container">
+    <main class="main-content" style="max-width: 100%;">
+      <div class="error-hero">
+        <div class="error-badge-404">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-msg">
+          The requested URL was not found on this server. The link might be mistyped, outdated, or the tool has been moved.
+        </p>
+
+        <!-- Inline Center Search -->
+        <div class="error-search-box">
+          <div class="error-search-wrapper">
+            <span style="font-size: 18px; color: var(--primary);">🔍</span>
+            <input type="text" id="inline-404-search" class="error-search-input" placeholder="Search for calculators, PDF tools, or converters..." autocomplete="off">
+          </div>
+          <div id="inline-search-results" class="search-dropdown" style="display: none; width: 100%; top: 100%; margin-top: 6px; text-align: left;"></div>
+        </div>
+
+        <!-- Quick Jump Buttons -->
+        <div class="error-actions">
+          <a href="/" class="btn-action-primary">
+            <span>🏠</span> Back to Homepage
+          </a>
+          <a href="/pdf.html" class="btn-action-secondary">
+            <span>📑</span> PDF Tools Suite
+          </a>
+          <a href="/calc.html" class="btn-action-secondary">
+            <span>📐</span> Calculators Directory
+          </a>
+          <a href="/tools.html" class="btn-action-secondary">
+            <span>🛠️</span> Web &amp; Dev Tools
+          </a>
+          <a href="/convert.html" class="btn-action-secondary">
+            <span>🔄</span> Unit Converters
+          </a>
+        </div>
+
+        <!-- Categorized Tool Directory Sections (Modeled after RapidTables & Major Platforms) -->
+        <div class="directory-categories">
+          <!-- Column 1: Popular Calculators -->
+          <div class="cat-col">
+            <div class="cat-col-title">
+              <span>📐</span> Math &amp; Finance Calculators
+            </div>
+            <ul>
+              <li><a href="/calc/math/scientific-calculator.html">🧮 Scientific Calculator</a></li>
+              <li><a href="/calc/math/percentage-calculator.html">📊 Percentage Calculator</a></li>
+              <li><a href="/calc/finance/mortgage-calculator.html">🏡 Mortgage Calculator</a></li>
+              <li><a href="/calc/finance/loan-calculator.html">💳 Loan EMI Calculator</a></li>
+              <li><a href="/calc/finance/compound-interest-calculator.html">📈 Compound Interest</a></li>
+              <li><a href="/calc/grade/gpa-calculator.html">🎓 GPA Calculator</a></li>
+              <li><a href="/calc.html"><strong>View All 30+ Calculators &rarr;</strong></a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2: PDF Document Suite -->
+          <div class="cat-col">
+            <div class="cat-col-title">
+              <span>📑</span> PDF Document Suite
+            </div>
+            <ul>
+              <li><a href="/pdf/pdf-to-word.html">📄 PDF to Word (DOCX)</a></li>
+              <li><a href="/pdf/compress-pdf.html">🗜️ Compress PDF (Reduce Size)</a></li>
+              <li><a href="/pdf/merge-pdf.html">📑 Merge Multiple PDFs</a></li>
+              <li><a href="/pdf/split-pdf.html">✂️ Split PDF Pages</a></li>
+              <li><a href="/pdf/sign-pdf.html">✍️ Sign PDF Online</a></li>
+              <li><a href="/pdf/pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+              <li><a href="/pdf.html"><strong>View All 33+ PDF Tools &rarr;</strong></a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3: Web & Everyday Tools -->
+          <div class="cat-col">
+            <div class="cat-col-title">
+              <span>🛠️</span> Web &amp; Developer Tools
+            </div>
+            <ul>
+              <li><a href="/tools/notepad.html">📝 Online Notepad (Autosave)</a></li>
+              <li><a href="/tools/qr-code-generator.html">📱 Custom QR Designer</a></li>
+              <li><a href="/tools/image-compressor.html">🖼️ Image Compressor (KB)</a></li>
+              <li><a href="/tools/diff-checker.html">🔍 Text Diff Checker</a></li>
+              <li><a href="/tools/csv-json-converter.html">🔄 CSV ⇄ JSON Converter</a></li>
+              <li><a href="/tools/stopwatch.html">⏱️ Online Stopwatch &amp; Timer</a></li>
+              <li><a href="/tools.html"><strong>View All 36+ Web Tools &rarr;</strong></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. 100% free, fast, and easy to use with no registration required.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/pdf.html">PDF Tools Suite</a>
+          <a href="/calc.html">Calculators</a>
+          <a href="/convert.html">Converters</a>
+          <a href="/tools.html">Web Tools</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="/about.html">About Us</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+          <a href="/contact.html">Contact Us</a>
+          <a href="/sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/search-index.js"></script>
+  <script src="/assets/js/app.js"></script>
+  <script>
+    // Wire inline center search to search index
+    const inlineInput = document.getElementById('inline-404-search');
+    const inlineResults = document.getElementById('inline-search-results');
+    if (inlineInput && inlineResults && typeof SEARCH_INDEX !== 'undefined') {
+      inlineInput.addEventListener('input', function() {
+        const val = this.value.trim().toLowerCase();
+        if (val.length < 2) {
+          inlineResults.style.display = 'none';
+          inlineResults.innerHTML = '';
+          return;
+        }
+        const matches = SEARCH_INDEX.filter(item => 
+          item.title.toLowerCase().includes(val) || 
+          (item.keywords && item.keywords.toLowerCase().includes(val)) ||
+          (item.category && item.category.toLowerCase().includes(val))
+        ).slice(0, 6);
+
+        if (matches.length > 0) {
+          inlineResults.innerHTML = matches.map(m => `
+            <a href="${m.url.startsWith('/') ? m.url : '/' + m.url}" class="search-result-item" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border-color);text-decoration:none;color:var(--text-main);">
+              <div>
+                <strong style="color:var(--text-main);font-size:14px;">${m.title}</strong>
+                <div style="font-size:12px;color:var(--text-muted);">${m.description || ''}</div>
+              </div>
+              <span style="font-size:11px;background:var(--bg-alt);padding:3px 8px;border-radius:4px;color:var(--text-muted);">${m.category || 'Tool'}</span>
+            </a>
+          `).join('');
+          inlineResults.style.display = 'block';
+        } else {
+          inlineResults.innerHTML = '<div style="padding:14px;color:var(--text-muted);font-size:13px;text-align:center;">No matching tools found. Try another keyword.</div>';
+          inlineResults.style.display = 'block';
+        }
+      });
+      document.addEventListener('click', function(e) {
+        if (!inlineInput.contains(e.target) && !inlineResults.contains(e.target)) {
+          inlineResults.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

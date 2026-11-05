@@ -330,8 +330,8 @@ const server = http.createServer(async (req, res) => {
 
   // Check if file exists
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-    // 404 fallback to root index.html
-    const notFoundPage = path.join(PUBLIC_DIR, 'index.html');
+    // 404 fallback to dedicated 404.html
+    const notFoundPage = path.join(PUBLIC_DIR, '404.html');
     if (fs.existsSync(notFoundPage)) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
       return fs.createReadStream(notFoundPage).pipe(res);

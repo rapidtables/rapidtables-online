@@ -1,3 +1,6 @@
+# Custom Error Documents
+ErrorDocument 404 /404.html
+
 # Canonical Clean URLs & 301 Redirection
 <IfModule mod_rewrite.c>
   RewriteEngine On
