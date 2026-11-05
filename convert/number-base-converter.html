@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Base Converter (Binary, Dec, Hex, Octal) - RapidTables.online</title>
+  <meta name="description" content="Free online number system converter. Convert between Decimal, Binary, Hexadecimal, Octal, and ASCII text in real time with live input synchronization.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Number Base Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Number Base Converter</h1>
+        <p class="subtitle">Convert numbers instantly between Decimal (Base 10), Binary (Base 2), Hexadecimal (Base 16), Octal (Base 8), and ASCII characters.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="form-group">
+          <label for="b_dec">Decimal (Base 10)</label>
+          <div class="input-row">
+            <input type="text" id="b_dec" class="input-control" value="255" oninput="fromDec(this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('b_dec')">Copy</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="b_bin">Binary (Base 2)</label>
+          <div class="input-row">
+            <input type="text" id="b_bin" class="input-control" oninput="fromBin(this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('b_bin')">Copy</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="b_hex">Hexadecimal (Base 16)</label>
+          <div class="input-row">
+            <input type="text" id="b_hex" class="input-control" oninput="fromHex(this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('b_hex')">Copy</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="b_oct">Octal (Base 8)</label>
+          <div class="input-row">
+            <input type="text" id="b_oct" class="input-control" oninput="fromOct(this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('b_oct')">Copy</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="b_ascii">ASCII Character / Symbol</label>
+          <div class="input-row">
+            <input type="text" id="b_ascii" class="input-control" readonly style="background:var(--bg-alt);">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('b_ascii')">Copy</button>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="document.querySelectorAll('.input-control').forEach(i => i.value='');">Clear All</button>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Number Base Systems Overview</h2>
+        <ul>
+          <li><strong>Decimal (Base 10):</strong> Standard number system using digits 0 through 9.</li>
+          <li><strong>Binary (Base 2):</strong> Used in computing, consisting exclusively of 0s and 1s.</li>
+          <li><strong>Hexadecimal (Base 16):</strong> Uses digits 0–9 and letters A–F to represent byte values compactly.</li>
+          <li><strong>Octal (Base 8):</strong> Uses digits 0 through 7, historically used in computing and file permissions.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Reference Tables</div>
+        <ul class="sidebar-list">
+          <li><a href="../tables/ascii-table.html">ASCII Character Table</a></li>
+          <li><a href="../tables/roman-numerals.html">Roman Numerals Chart</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateBases(decBigInt, source) {
+      if (decBigInt === null) return;
+      const dec = decBigInt.toString(10);
+      const bin = decBigInt.toString(2);
+      const hex = decBigInt.toString(16).toUpperCase();
+      const oct = decBigInt.toString(8);
+
+      let asciiChar = "";
+      if (decBigInt >= 32n && decBigInt <= 126n) {
+        asciiChar = String.fromCharCode(Number(decBigInt));
+      } else {
+        asciiChar = "[Non-printable]";
+      }
+
+      if (source !== 'dec') document.getElementById('b_dec').value = dec;
+      if (source !== 'bin') document.getElementById('b_bin').value = bin;
+      if (source !== 'hex') document.getElementById('b_hex').value = hex;
+      if (source !== 'oct') document.getElementById('b_oct').value = oct;
+      document.getElementById('b_ascii').value = asciiChar;
+    }
+
+    function fromDec(val) {
+      val = val.trim();
+      if (!val || !/^\d+$/.test(val)) return;
+      try { updateBases(BigInt(val), 'dec'); } catch (e) {}
+    }
+
+    function fromBin(val) {
+      val = val.trim();
+      if (!val || !/^[01]+$/.test(val)) return;
+      try { updateBases(BigInt('0b' + val), 'bin'); } catch (e) {}
+    }
+
+    function fromHex(val) {
+      val = val.trim();
+      if (!val || !/^[0-9a-fA-F]+$/.test(val)) return;
+      try { updateBases(BigInt('0x' + val), 'hex'); } catch (e) {}
+    }
+
+    function fromOct(val) {
+      val = val.trim();
+      if (!val || !/^[0-7]+$/.test(val)) return;
+      try { updateBases(BigInt('0o' + val), 'oct'); } catch (e) {}
+    }
+
+    fromDec('255');
+  </script>
+</body>
+</html>

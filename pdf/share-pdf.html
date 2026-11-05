@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share PDF Online Free - Quick &amp; Private Document Sharing - RapidTables.online</title>
+  <meta name="description" content="Share PDF files directly from your browser. Send via Web Share, email, WhatsApp, or scan a QR code for instant mobile transfer. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .share-methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .share-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .share-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .share-card .icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Share PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Share PDF Document</h1>
+        <p class="subtitle">Quickly share documents to mobile devices, email, WhatsApp, or through device-native share dialogs with zero privacy compromises.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">🔗📱</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File to Share</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all documents. Instantly generate share links and mobile transfers.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="share_options" style="display: none; margin-top: 20px;">
+          <div style="padding: 12px 16px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong id="file_name_lbl">document.pdf</strong>
+              <span id="file_size_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">Change File</button>
+          </div>
+
+          <div class="share-methods-grid">
+            <div class="share-card" onclick="nativeShare()">
+              <div class="icon">📤</div>
+              <strong>Device Share</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">AirDrop, Bluetooth, or Native Apps</p>
+            </div>
+
+            <div class="share-card" onclick="shareEmail()">
+              <div class="icon">✉️</div>
+              <strong>Email Link</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Open email draft with filename</p>
+            </div>
+
+            <div class="share-card" onclick="shareWhatsApp()">
+              <div class="icon">💬</div>
+              <strong>WhatsApp</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Send note to WhatsApp contacts</p>
+            </div>
+
+            <div class="share-card" onclick="showQrCode()">
+              <div class="icon">📱</div>
+              <strong>Scan to Mobile</strong>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Display transfer QR code</p>
+            </div>
+          </div>
+
+          <div id="qr_modal" style="display: none; text-align: center; margin-top: 24px; padding: 20px; background: var(--bg-alt); border-radius: var(--radius-md);">
+            <div id="qr_container" style="display: inline-block; background: #fff; padding: 12px; border-radius: 8px;"></div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Scan with your smartphone camera to connect.</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>Private &amp; Secure Document Sharing</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online utilizes the browser's native Web Share API to hand off documents directly to your operating system's sharing sheet. This guarantees your files pass directly to your selected contact or application without passing through intermediate third-party hosting servers.
+        </p>
+
+        <h3 style="margin-top: 16px;">Supported Share Targets</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>AirDrop (macOS / iOS) &amp; Quick Share (Windows / Android):</strong> Wireless peer-to-peer file transfer.</li>
+          <li><strong>Messaging Apps:</strong> WhatsApp, Telegram, Signal, Slack, and Microsoft Teams.</li>
+          <li><strong>Email Clients:</strong> Gmail, Outlook, Apple Mail, and Thunderbird.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="sign-pdf.html">✍️ Sign PDF</a></li>
+          <li><a href="pdf-reader.html">📖 PDF Reader</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Zero Tracking</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Safe, direct document dispatching.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/share-pdf.html">Share PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/pdf-reader.html">PDF Reader</a>
+          <a href="../pdf/edit-pdf.html">Edit PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentFile = null;
+
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      document.getElementById('drop_zone').style.display = 'none';
+      document.getElementById('file_name_lbl').textContent = file.name;
+      document.getElementById('file_size_lbl').textContent = '(' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+      document.getElementById('share_options').style.display = 'block';
+    }
+
+    async function nativeShare() {
+      if (!currentFile) return;
+      if (navigator.canShare && navigator.canShare({ files: [currentFile] })) {
+        try {
+          await navigator.share({
+            files: [currentFile],
+            title: currentFile.name,
+            text: `Sharing document: ${currentFile.name}`
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') alert('Share error: ' + err.message);
+        }
+      } else if (navigator.share) {
+        await navigator.share({
+          title: currentFile.name,
+          text: `Sharing document: ${currentFile.name}`,
+          url: window.location.href
+        });
+      } else {
+        alert('Web Share API is not supported in this browser. Please use the Email or WhatsApp options.');
+      }
+    }
+
+    function shareEmail() {
+      if (!currentFile) return;
+      const subject = encodeURIComponent(`Document: ${currentFile.name}`);
+      const body = encodeURIComponent(`Hi,\n\nI am sharing "${currentFile.name}" prepared on RapidTables.online.`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function shareWhatsApp() {
+      if (!currentFile) return;
+      const text = encodeURIComponent(`Document ready: ${currentFile.name} (RapidTables.online)`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function showQrCode() {
+      const modal = document.getElementById('qr_modal');
+      const container = document.getElementById('qr_container');
+      container.innerHTML = '';
+      modal.style.display = 'block';
+      new QRCode(container, {
+        text: window.location.href,
+        width: 160,
+        height: 160
+      });
+    }
+
+    function resetTool() {
+      currentFile = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('share_options').style.display = 'none';
+      document.getElementById('qr_modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

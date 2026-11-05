@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator - RapidTables.online</title>
+  <meta name="description" content="Free online Body Mass Index (BMI) calculator for adults. Supports both Metric (cm/kg) and Imperial (feet/inches/pounds) units with health classification.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .bmi-bar {
+      height: 18px;
+      border-radius: 9px;
+      background: linear-gradient(to right, #3b82f6 0%, #10b981 35%, #f59e0b 65%, #ef4444 100%);
+      margin: 16px 0 8px;
+      position: relative;
+    }
+    .bmi-pointer {
+      position: absolute;
+      top: -6px;
+      width: 4px;
+      height: 30px;
+      background: #000;
+      border: 1px solid #fff;
+      transform: translateX(-50%);
+      transition: left 0.3s;
+    }
+    [data-theme="dark"] .bmi-pointer {
+      background: #fff;
+      border-color: #000;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#health-calculators">Health</a>
+    <span class="sep">&gt;</span>
+    <span>BMI Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Body Mass Index (BMI) Calculator</h1>
+        <p class="subtitle">Calculate your BMI score, category, and healthy weight range using metric or standard US imperial units.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="margin-bottom: 16px;">
+          <label style="font-weight: 600; margin-right: 14px;">Unit System:</label>
+          <label><input type="radio" name="bmi_unit" value="metric" checked onchange="switchUnit('metric')"> Metric (cm, kg)</label>
+          &nbsp;&nbsp;
+          <label><input type="radio" name="bmi_unit" value="imperial" onchange="switchUnit('imperial')"> US Imperial (ft, in, lbs)</label>
+        </div>
+
+        <div id="metric_inputs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="height_cm">Height (cm)</label>
+            <input type="number" id="height_cm" class="input-control" value="175" step="0.5">
+          </div>
+          <div class="form-group">
+            <label for="weight_kg">Weight (kg)</label>
+            <input type="number" id="weight_kg" class="input-control" value="70" step="0.5">
+          </div>
+        </div>
+
+        <div id="imperial_inputs" style="display: none; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="height_ft">Height (Feet)</label>
+            <input type="number" id="height_ft" class="input-control" value="5">
+          </div>
+          <div class="form-group">
+            <label for="height_in">Height (Inches)</label>
+            <input type="number" id="height_in" class="input-control" value="9">
+          </div>
+          <div class="form-group">
+            <label for="weight_lbs">Weight (Pounds)</label>
+            <input type="number" id="weight_lbs" class="input-control" value="155">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="calcBMI()">Calculate BMI</button>
+        </div>
+
+        <div id="res_bmi" class="result-card hidden">
+          <h3>Your BMI Result</h3>
+          <div class="result-value" id="bmi_score">22.9 kg/m²</div>
+          <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="bmi_status">Normal Weight</div>
+          
+          <div class="bmi-bar">
+            <div id="bmi_pointer" class="bmi-pointer" style="left: 45%;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
+            <span>&lt; 18.5 (Underweight)</span>
+            <span>18.5 - 24.9 (Normal)</span>
+            <span>25.0 - 29.9 (Overweight)</span>
+            <span>≥ 30.0 (Obese)</span>
+          </div>
+
+          <div class="result-details" id="bmi_healthy_range" style="margin-top: 14px;">
+            <!-- range -->
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>BMI Categories for Adults (WHO Standard)</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Classification</th>
+                <th>BMI Range (kg/m²)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Underweight</td>
+                <td>&lt; 18.5</td>
+              </tr>
+              <tr>
+                <td>Normal Weight</td>
+                <td>18.5 – 24.9</td>
+              </tr>
+              <tr>
+                <td>Overweight</td>
+                <td>25.0 – 29.9</td>
+              </tr>
+              <tr>
+                <td>Obesity (Class I, II, III)</td>
+                <td>≥ 30.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Health Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="calorie-calculator.html">Calorie &amp; BMR Calculator</a></li>
+          <li><a href="../../convert/weight-converter.html">Weight Converter</a></li>
+          <li><a href="../../convert/length-converter.html">Length Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    let currentUnit = 'metric';
+
+    function switchUnit(unit) {
+      currentUnit = unit;
+      document.getElementById('metric_inputs').style.display = unit === 'metric' ? 'grid' : 'none';
+      document.getElementById('imperial_inputs').style.display = unit === 'imperial' ? 'grid' : 'none';
+      calcBMI();
+    }
+
+    function calcBMI() {
+      let bmi = 0;
+      let minNormalWeight = 0;
+      let maxNormalWeight = 0;
+      let weightUnit = 'kg';
+
+      if (currentUnit === 'metric') {
+        const cm = parseFloat(document.getElementById('height_cm').value) || 0;
+        const kg = parseFloat(document.getElementById('weight_kg').value) || 0;
+        if (cm <= 0 || kg <= 0) return;
+        const m = cm / 100;
+        bmi = kg / (m * m);
+        minNormalWeight = (18.5 * m * m).toFixed(1);
+        maxNormalWeight = (24.9 * m * m).toFixed(1);
+        weightUnit = 'kg';
+      } else {
+        const ft = parseFloat(document.getElementById('height_ft').value) || 0;
+        const inch = parseFloat(document.getElementById('height_in').value) || 0;
+        const lbs = parseFloat(document.getElementById('weight_lbs').value) || 0;
+        const totalInches = (ft * 12) + inch;
+        if (totalInches <= 0 || lbs <= 0) return;
+        bmi = (lbs / (totalInches * totalInches)) * 703;
+        minNormalWeight = ((18.5 * totalInches * totalInches) / 703).toFixed(1);
+        maxNormalWeight = ((24.9 * totalInches * totalInches) / 703).toFixed(1);
+        weightUnit = 'lbs';
+      }
+
+      let category = "";
+      let color = "";
+      if (bmi < 18.5) {
+        category = "Underweight";
+        color = "#3b82f6";
+      } else if (bmi < 25) {
+        category = "Normal Weight";
+        color = "#10b981";
+      } else if (bmi < 30) {
+        category = "Overweight";
+        color = "#f59e0b";
+      } else {
+        category = "Obesity";
+        color = "#ef4444";
+      }
+
+      // Pointer position: 10 to 40 scale
+      let pct = ((bmi - 12) / (40 - 12)) * 100;
+      pct = Math.max(2, Math.min(98, pct));
+
+      document.getElementById('bmi_score').textContent = `${bmi.toFixed(1)} kg/m²`;
+      const statusEl = document.getElementById('bmi_status');
+      statusEl.textContent = category;
+      statusEl.style.color = color;
+      document.getElementById('bmi_pointer').style.left = pct + '%';
+      document.getElementById('bmi_healthy_range').innerHTML = `
+        <strong>Recommended Healthy Weight Range:</strong> ${minNormalWeight} ${weightUnit} - ${maxNormalWeight} ${weightUnit}
+      `;
+      document.getElementById('res_bmi').classList.remove('hidden');
+    }
+
+    calcBMI();
+  </script>
+</body>
+</html>

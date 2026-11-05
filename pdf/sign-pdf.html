@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign PDF Online - RapidTables.online</title>
+  <meta name="description" content="Sign PDF documents online for free. Create your digital handwritten signature or type it, place it onto your PDF, and download immediately. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 30px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .signature-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .sig-tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .sig-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .sig-pad-wrapper {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      touch-action: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    #signature_canvas {
+      width: 100%;
+      height: 180px;
+      cursor: crosshair;
+    }
+    .sig-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .type-signature-preview {
+      font-family: 'Brush Script MT', 'Dancing Script', cursive, sans-serif;
+      font-size: 38px;
+      color: #0f172a;
+      padding: 30px 20px;
+      text-align: center;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Sign PDF Online</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Sign PDF Online</h1>
+        <p class="subtitle">Draw or type your signature and stamp it securely onto any page of your PDF document. Free, easy, and completely private.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 40px; margin-bottom: 8px;">✍️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Choose the PDF contract, form, or document you want to sign.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="file_info_bar" style="display: none; margin-top: 14px; padding: 10px 14px; background: var(--bg-alt); border-radius: var(--radius-sm); font-size: 14px;">
+          📄 Document: <strong id="loaded_filename"></strong> (<span id="loaded_pages_count"></span> pages)
+        </div>
+
+        <h3 style="margin-top: 24px; font-size: 16px;">1. Create Your Signature</h3>
+
+        <div class="signature-tabs">
+          <button type="button" class="sig-tab-btn active" id="tab_draw" onclick="switchSigTab('draw')">✏️ Draw Signature</button>
+          <button type="button" class="sig-tab-btn" id="tab_type" onclick="switchSigTab('type')">🔤 Type Signature</button>
+        </div>
+
+        <!-- Draw Signature Pane -->
+        <div id="pane_draw">
+          <div class="sig-pad-wrapper">
+            <canvas id="signature_canvas" width="600" height="180"></canvas>
+          </div>
+          <div class="sig-controls-bar">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <label style="font-size: 13px; font-weight: 600;">Ink Color:</label>
+              <select id="pen_color" onchange="updatePenSettings()" style="padding: 4px 8px; font-size: 13px;">
+                <option value="#0f172a" selected>Black Ink</option>
+                <option value="#1e40af">Royal Blue Ink</option>
+              </select>
+              <label style="font-size: 13px; font-weight: 600; margin-left: 10px;">Thickness:</label>
+              <select id="pen_width" onchange="updatePenSettings()" style="padding: 4px 8px; font-size: 13px;">
+                <option value="2">Fine</option>
+                <option value="3" selected>Medium</option>
+                <option value="4">Bold</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="clearSignatureCanvas()">🗑️ Clear Pad</button>
+          </div>
+        </div>
+
+        <!-- Type Signature Pane -->
+        <div id="pane_type" style="display: none;">
+          <div class="calc-input-group">
+            <label for="typed_name_input">Enter Your Full Name</label>
+            <input type="text" id="typed_name_input" placeholder="e.g. John Doe" value="John Doe" oninput="updateTypedPreview()">
+          </div>
+          <div class="type-signature-preview" id="typed_sig_preview">
+            John Doe
+          </div>
+        </div>
+
+        <h3 style="margin-top: 24px; font-size: 16px;">2. Placement Settings</h3>
+        <div class="calc-grid-2">
+          <div class="calc-input-group">
+            <label for="sig_target_page">Place Signature On</label>
+            <select id="sig_target_page">
+              <option value="last" selected>Last Page (Recommended for contracts)</option>
+              <option value="first">First Page</option>
+              <option value="all">Every Page</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="sig_position">Position On Page</label>
+            <select id="sig_position">
+              <option value="bottom-right" selected>Bottom Right</option>
+              <option value="bottom-left">Bottom Left</option>
+              <option value="bottom-center">Bottom Center</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="sig_size">Signature Size</label>
+            <select id="sig_size">
+              <option value="130">Small (130 px)</option>
+              <option value="180" selected>Medium (180 px)</option>
+              <option value="230">Large (230 px)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="sign_btn" onclick="applySignatureToPdf()">✍️ Sign Document &amp; Download</button>
+          <button class="btn btn-secondary" onclick="resetTool()">Reset</button>
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Sign a PDF Document Online</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Select your agreement, invoice, or PDF document.</li>
+          <li><strong>Create Signature:</strong> Draw your signature using your mouse, trackpad, or touchscreen. Alternatively, switch to "Type Signature" for a cursive signature.</li>
+          <li><strong>Choose Placement:</strong> Pick whether to sign the last page, first page, or all pages, and choose the alignment.</li>
+          <li><strong>Download:</strong> Click "Sign Document &amp; Download" to generate the signed PDF immediately.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">Safe, Fast, and Completely Private</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Most online signature tools upload your confidential legal documents to third-party cloud servers. RapidTables.online processes everything directly in your browser. Your signature and PDF are never transmitted over the internet or saved on any remote database.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="watermark-pdf.html">🏷️ Add Watermark to PDF</a></li>
+          <li><a href="page-numbers.html">🔢 Add Page Numbers</a></li>
+          <li><a href="organize-pdf.html">📂 Organize &amp; Delete Pages</a></li>
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF Pages</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Electronic Signatures</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Easily sign leases, non-disclosure agreements, contracts, and school forms in seconds without printing and scanning.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let selectedFile = null;
+    let loadedPdfBytes = null;
+    let loadedPdfDoc = null;
+    let activeTab = 'draw';
+
+    // Signature Canvas Drawing Logic
+    const canvas = document.getElementById('signature_canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let hasDrawn = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      let clientX, clientY;
+
+      if (e.touches && e.touches[0]) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      isDrawing = true;
+      const pos = getCanvasCoordinates(e);
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getCanvasCoordinates(e);
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+
+      lastX = pos.x;
+      lastY = pos.y;
+      hasDrawn = true;
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function updatePenSettings() {
+      ctx.strokeStyle = document.getElementById('pen_color').value;
+      ctx.lineWidth = parseInt(document.getElementById('pen_width').value, 10);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    window.addEventListener('mouseup', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    window.addEventListener('touchend', stopDrawing);
+
+    updatePenSettings();
+
+    function clearSignatureCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasDrawn = false;
+      showToast('Signature pad cleared');
+    }
+
+    function switchSigTab(tab) {
+      activeTab = tab;
+      document.getElementById('tab_draw').classList.toggle('active', tab === 'draw');
+      document.getElementById('tab_type').classList.toggle('active', tab === 'type');
+      document.getElementById('pane_draw').style.display = tab === 'draw' ? 'block' : 'none';
+      document.getElementById('pane_type').style.display = tab === 'type' ? 'block' : 'none';
+    }
+
+    function updateTypedPreview() {
+      const name = document.getElementById('typed_name_input').value || 'Signature';
+      document.getElementById('typed_sig_preview').textContent = name;
+    }
+
+    // PDF Upload handling
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--primary)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'var(--border-color)';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPdfFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(event) {
+      if (event.target.files && event.target.files[0]) {
+        loadPdfFile(event.target.files[0]);
+      }
+    }
+
+    async function loadPdfFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      selectedFile = file;
+      document.getElementById('status_msg').textContent = 'Loading document...';
+
+      try {
+        loadedPdfBytes = await file.arrayBuffer();
+        loadedPdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+
+        document.getElementById('file_info_bar').style.display = 'block';
+        document.getElementById('loaded_filename').textContent = file.name;
+        document.getElementById('loaded_pages_count').textContent = loadedPdfDoc.getPageCount();
+        document.getElementById('status_msg').textContent = `✅ Ready to sign "${file.name}".`;
+        showToast('PDF loaded successfully!');
+      } catch (err) {
+        alert("Failed to load PDF: " + err.message);
+        document.getElementById('status_msg').textContent = 'Error reading PDF document.';
+      }
+    }
+
+    async function getSignaturePngBytes() {
+      if (activeTab === 'draw') {
+        if (!hasDrawn) {
+          throw new Error('Please draw your signature first on the signature pad.');
+        }
+        const dataUrl = canvas.toDataURL('image/png');
+        const res = await fetch(dataUrl);
+        return await res.arrayBuffer();
+      } else {
+        // Create canvas from typed text
+        const text = document.getElementById('typed_name_input').value.trim() || 'Signature';
+        const typeCanvas = document.createElement('canvas');
+        typeCanvas.width = 600;
+        typeCanvas.height = 180;
+        const tCtx = typeCanvas.getContext('2d');
+        tCtx.font = 'italic 52px "Brush Script MT", "Dancing Script", cursive, sans-serif';
+        tCtx.fillStyle = '#0f172a';
+        tCtx.textAlign = 'center';
+        tCtx.textBaseline = 'middle';
+        tCtx.fillText(text, 300, 90);
+
+        const dataUrl = typeCanvas.toDataURL('image/png');
+        const res = await fetch(dataUrl);
+        return await res.arrayBuffer();
+      }
+    }
+
+    async function applySignatureToPdf() {
+      if (!loadedPdfBytes) {
+        alert('Please select a PDF file first.');
+        return;
+      }
+
+      const statusMsg = document.getElementById('status_msg');
+      const signBtn = document.getElementById('sign_btn');
+      statusMsg.textContent = 'Embedding signature into document...';
+      signBtn.disabled = true;
+
+      try {
+        const sigPngBytes = await getSignaturePngBytes();
+        const pdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+        const embeddedSigImg = await pdfDoc.embedPng(sigPngBytes);
+
+        const sigWidth = parseFloat(document.getElementById('sig_size').value) || 180;
+        const sigHeight = sigWidth * (180 / 600); // maintain aspect ratio
+
+        const targetPageSetting = document.getElementById('sig_target_page').value;
+        const position = document.getElementById('sig_position').value;
+        const pages = pdfDoc.getPages();
+        const totalPages = pages.length;
+
+        for (let i = 0; i < totalPages; i++) {
+          if (targetPageSetting === 'last' && i !== totalPages - 1) continue;
+          if (targetPageSetting === 'first' && i !== 0) continue;
+
+          const page = pages[i];
+          const { width, height } = page.getSize();
+
+          const margin = 36;
+          let x = 0;
+          let y = margin; // bottom margin
+
+          if (position === 'bottom-left') {
+            x = margin;
+          } else if (position === 'bottom-center') {
+            x = (width - sigWidth) / 2;
+          } else { // bottom-right
+            x = width - margin - sigWidth;
+          }
+
+          page.drawImage(embeddedSigImg, {
+            x: x,
+            y: y,
+            width: sigWidth,
+            height: sigHeight
+          });
+        }
+
+        const newPdfBytes = await pdfDoc.save();
+        const blob = new Blob([newPdfBytes], { type: 'application/pdf' });
+        const a = document.createElement('a');
+        const originalName = selectedFile ? selectedFile.name.replace(/\.pdf$/i, '') : 'document';
+        a.href = URL.createObjectURL(blob);
+        a.download = `${originalName}_signed.pdf`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        statusMsg.textContent = '✅ Document signed and download ready!';
+        showToast('Signed PDF downloaded!');
+      } catch (err) {
+        alert("Signature error: " + err.message);
+        statusMsg.textContent = 'Failed to sign document.';
+      } finally {
+        signBtn.disabled = false;
+      }
+    }
+
+    function resetTool() {
+      selectedFile = null;
+      loadedPdfBytes = null;
+      loadedPdfDoc = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('file_info_bar').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      clearSignatureCanvas();
+      document.getElementById('typed_name_input').value = 'John Doe';
+      updateTypedPreview();
+      switchSigTab('draw');
+    }
+  </script>
+</body>
+</html>

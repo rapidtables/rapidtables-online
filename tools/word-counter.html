@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word &amp; Character Counter - RapidTables.online</title>
+  <meta name="description" content="Free online word counter and character counter. Count words, characters with/without spaces, sentences, paragraphs, and estimate reading time.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .stat-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-badge {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-badge .stat-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-badge .stat-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Word &amp; Character Counter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Word &amp; Character Counter</h1>
+        <p class="subtitle">Analyze text length, count words, characters, sentences, paragraphs, and reading time in real time.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="stat-badge-grid">
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_words">0</div>
+            <div class="stat-lbl">Words</div>
+          </div>
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_chars">0</div>
+            <div class="stat-lbl">Characters</div>
+          </div>
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_chars_nospaces">0</div>
+            <div class="stat-lbl">No Spaces</div>
+          </div>
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_sentences">0</div>
+            <div class="stat-lbl">Sentences</div>
+          </div>
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_paragraphs">0</div>
+            <div class="stat-lbl">Paragraphs</div>
+          </div>
+          <div class="stat-badge">
+            <div class="stat-num" id="cnt_reading">0m</div>
+            <div class="stat-lbl">Reading Time</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <textarea id="wc_text" class="input-control" rows="8" placeholder="Type or paste your text here..." oninput="analyzeText()"></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="copyText('wc_text')">Copy Text</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('wc_text').value=''; analyzeText();">Clear Text</button>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>About Word &amp; Character Counting</h2>
+        <p>A word counter is vital for bloggers, writers, students, and SEO marketers adhering to character limits on Twitter/X, Meta ads, academic essays, or blog articles.</p>
+        <ul>
+          <li><strong>Average Reading Speed:</strong> ~200 - 250 words per minute.</li>
+          <li><strong>Average Speaking Speed:</strong> ~130 - 150 words per minute.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Text Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="case-converter.html">Case Converter</a></li>
+          <li><a href="json-formatter.html">JSON Formatter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function analyzeText() {
+      const text = document.getElementById('wc_text').value;
+      const words = (text.match(/\b\S+\b/g) || []).length;
+      const chars = text.length;
+      const charsNoSpaces = text.replace(/\s/g, '').length;
+      const sentences = (text.match(/[^.!?]+[.!?]+(\s|$)/g) || []).length || (text.trim() ? 1 : 0);
+      const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0).length;
+      const readingMinutes = Math.ceil(words / 225);
+
+      document.getElementById('cnt_words').textContent = words;
+      document.getElementById('cnt_chars').textContent = chars;
+      document.getElementById('cnt_chars_nospaces').textContent = charsNoSpaces;
+      document.getElementById('cnt_sentences').textContent = text.trim() ? sentences : 0;
+      document.getElementById('cnt_paragraphs').textContent = paragraphs;
+      document.getElementById('cnt_reading').textContent = `${readingMinutes}m`;
+    }
+  </script>
+</body>
+</html>

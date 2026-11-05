@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Web &amp; Developer Tools - RapidTables.online</title>
+  <meta name="description" content="Free online developer tools and utilities: QR code generator, notepad, diff checker, voice recorder, text to speech, image compressor, regex tester, subnet calculator, JSON formatter and more.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <span>Web Tools</span>
+  </nav>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    <main class="main-content">
+      
+      <div class="page-title-section">
+        <h1>Online Web &amp; Developer Tools</h1>
+        <p class="subtitle">Complete toolkit for web developers, content creators, system administrators, and everyday internet users. Fast, modern, and free.</p>
+      </div>
+
+      <div class="quick-tools-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+        <a href="qr-code-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0f2fe; color:#0284c7;">📱</div>
+          <div class="quick-tool-info">
+            <h4>Custom QR Designer</h4>
+            <span>Custom shapes, gradients, frames &amp; logo</span>
+          </div>
+        </a>
+
+        <a href="barcode-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#ede9fe; color:#6d28d9;">🏷️</div>
+          <div class="quick-tool-info">
+            <h4>Barcode Generator</h4>
+            <span>Code 128, EAN-13, UPC, Code 39 vector export</span>
+          </div>
+        </a>
+
+        <a href="notepad.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef3c7; color:#d97706;">📝</div>
+          <div class="quick-tool-info">
+            <h4>Online Notepad</h4>
+            <span>Multi-note sidebar with browser autosave</span>
+          </div>
+        </a>
+
+        <a href="image-compressor.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f3e8ff; color:#7e22ce;">🗜️</div>
+          <div class="quick-tool-info">
+            <h4>Image Compressor</h4>
+            <span>Reduce KB, resize &amp; optimize JPG/PNG</span>
+          </div>
+        </a>
+
+        <a href="diff-checker.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0e7ff; color:#4338ca;">🔍</div>
+          <div class="quick-tool-info">
+            <h4>Text Diff Checker</h4>
+            <span>Side-by-side text &amp; source code comparison</span>
+          </div>
+        </a>
+
+        <a href="voice-recorder.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fee2e2; color:#dc2626;">🎙️</div>
+          <div class="quick-tool-info">
+            <h4>Voice Recorder</h4>
+            <span>Audio waveform visualizer &amp; WebM export</span>
+          </div>
+        </a>
+
+        <a href="text-to-speech.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#eff6ff; color:#2563eb;">🔊</div>
+          <div class="quick-tool-info">
+            <h4>Text to Speech (TTS)</h4>
+            <span>Natural voice audio reader with rate controls</span>
+          </div>
+        </a>
+
+        <a href="subnet-calculator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#ecfdf5; color:#059669;">🌐</div>
+          <div class="quick-tool-info">
+            <h4>Subnet CIDR Calculator</h4>
+            <span>IPv4 network, broadcast &amp; usable range</span>
+          </div>
+        </a>
+
+        <a href="color-contrast-checker.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fdf2f8; color:#be185d;">🎨</div>
+          <div class="quick-tool-info">
+            <h4>Color Contrast Checker</h4>
+            <span>WCAG 2.1 AA/AAA compliance &amp; live preview</span>
+          </div>
+        </a>
+
+        <a href="regex-tester.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fffbeb; color:#b45309;">🔣</div>
+          <div class="quick-tool-info">
+            <h4>Regex Live Tester</h4>
+            <span>Match highlighter, capture groups &amp; flags</span>
+          </div>
+        </a>
+
+        <a href="meta-tag-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdf4; color:#16a34a;">🔍</div>
+          <div class="quick-tool-info">
+            <h4>SEO Meta Tag Generator</h4>
+            <span>Meta tags, Google SERP &amp; Open Graph preview</span>
+          </div>
+        </a>
+
+        <a href="csv-json-converter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#eff6ff; color:#1d4ed8;">⇄</div>
+          <div class="quick-tool-info">
+            <h4>CSV ⇄ JSON Converter</h4>
+            <span>Bidirectional table and API data parser</span>
+          </div>
+        </a>
+
+        <a href="base64-image-converter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdfa; color:#0d9488;">🖼️</div>
+          <div class="quick-tool-info">
+            <h4>Base64 Image Converter</h4>
+            <span>Image to Data URI string &amp; image decoder</span>
+          </div>
+        </a>
+
+        <a href="json-formatter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#eff6ff; color:#2563eb;">{ }</div>
+          <div class="quick-tool-info">
+            <h4>JSON Formatter</h4>
+            <span>Prettify, validate, format &amp; minify JSON</span>
+          </div>
+        </a>
+
+        <a href="color-picker.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fdf2f8; color:#be185d;">🎨</div>
+          <div class="quick-tool-info">
+            <h4>Color Picker &amp; Palette</h4>
+            <span>HEX, RGB, HSL converter &amp; shade explorer</span>
+          </div>
+        </a>
+
+        <a href="password-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdf4; color:#16a34a;">🔑</div>
+          <div class="quick-tool-info">
+            <h4>Password Generator</h4>
+            <span>Secure cryptographically random passwords</span>
+          </div>
+        </a>
+
+        <a href="uuid-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0e7ff; color:#4338ca;">🆔</div>
+          <div class="quick-tool-info">
+            <h4>UUID / GUID v4</h4>
+            <span>Bulk unique identifier generator</span>
+          </div>
+        </a>
+
+        <a href="url-encoder-decoder.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef3c7; color:#d97706;">🔗</div>
+          <div class="quick-tool-info">
+            <h4>URL Encoder &amp; Decoder</h4>
+            <span>Escape &amp; decode query strings and URIs</span>
+          </div>
+        </a>
+
+        <a href="hash-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fee2e2; color:#dc2626;">🔒</div>
+          <div class="quick-tool-info">
+            <h4>Hash Generator</h4>
+            <span>SHA-256, SHA-512, SHA-1, MD5 generator</span>
+          </div>
+        </a>
+
+        <a href="word-counter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#ecfdf5; color:#059669;">📊</div>
+          <div class="quick-tool-info">
+            <h4>Word &amp; Character Counter</h4>
+            <span>Words, sentences, paragraphs &amp; reading time</span>
+          </div>
+        </a>
+
+        <a href="case-converter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f3e8ff; color:#7e22ce;">Aa</div>
+          <div class="quick-tool-info">
+            <h4>Case Converter</h4>
+            <span>UPPERCASE, lowercase, Title Case, camelCase</span>
+          </div>
+        </a>
+
+        <a href="base64-converter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef2f2; color:#b91c1c;">🔤</div>
+          <div class="quick-tool-info">
+            <h4>Base64 Text Encoder</h4>
+            <span>Encode and decode plain text to Base64</span>
+          </div>
+        </a>
+
+        <a href="html-editor.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#eff6ff; color:#2563eb;">&lt;/&gt;</div>
+          <div class="quick-tool-info">
+            <h4>HTML Live Editor</h4>
+            <span>Write HTML/CSS with instant live browser preview</span>
+          </div>
+        </a>
+
+        <a href="markdown-editor.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdf4; color:#16a34a;">✍️</div>
+          <div class="quick-tool-info">
+            <h4>Markdown Editor</h4>
+            <span>Real-time GitHub-flavored markdown editor</span>
+          </div>
+        </a>
+
+        <a href="css-formatter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0e7ff; color:#4338ca;">🎨</div>
+          <div class="quick-tool-info">
+            <h4>CSS Beautifier</h4>
+            <span>Format, indent, beautify &amp; minify CSS</span>
+          </div>
+        </a>
+
+        <a href="lorem-ipsum-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fffbeb; color:#b45309;">📄</div>
+          <div class="quick-tool-info">
+            <h4>Lorem Ipsum Generator</h4>
+            <span>Dummy placeholder text paragraphs &amp; words</span>
+          </div>
+        </a>
+
+        <a href="stopwatch.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef3c7; color:#d97706;">⏱️</div>
+          <div class="quick-tool-info">
+            <h4>Stopwatch &amp; Timer</h4>
+            <span>Millisecond lap stopwatch &amp; countdown alarm</span>
+          </div>
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="qr-code-generator.html">Custom QR Designer</a>
+          <a href="notepad.html">Online Notepad</a>
+          <a href="csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="image-compressor.html">Image Compressor</a>
+          <a href="regex-tester.html">Regex Live Tester</a>
+          <a href="diff-checker.html">Text Diff Checker</a>
+          <a href="./">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

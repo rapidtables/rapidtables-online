@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Stopwatch &amp; Countdown Timer - RapidTables.online</title>
+  <meta name="description" content="Free online stopwatch and countdown timer with milliseconds and lap times. Accurate, lightweight, and easy to use on mobile and desktop.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .timer-display-box {
+      text-align: center;
+      padding: 30px 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .timer-digits {
+      font-size: 54px;
+      font-weight: 800;
+      font-family: monospace;
+      color: var(--text-main);
+      letter-spacing: 2px;
+    }
+    @media (max-width: 600px) {
+      .timer-digits {
+        font-size: 38px;
+      }
+    }
+    .lap-table-wrapper {
+      max-height: 240px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Stopwatch &amp; Timer</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Stopwatch &amp; Countdown Timer</h1>
+        <p class="subtitle">Accurate browser-based stopwatch with lap split times and configurable countdown timer.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+          <button class="btn btn-primary btn-sm" id="tab_sw_btn" onclick="switchMode('stopwatch')">Stopwatch</button>
+          <button class="btn btn-secondary btn-sm" id="tab_cd_btn" onclick="switchMode('countdown')">Countdown Timer</button>
+        </div>
+
+        <!-- Mode 1: Stopwatch -->
+        <div id="stopwatch_section">
+          <div class="timer-display-box">
+            <div id="sw_display" class="timer-digits">00:00:00.00</div>
+          </div>
+
+          <div class="btn-row" style="justify-content: center;">
+            <button class="btn btn-primary" id="sw_start_btn" onclick="toggleStopwatch()">▶ Start</button>
+            <button class="btn btn-secondary" id="sw_lap_btn" onclick="recordLap()" disabled>🚩 Lap</button>
+            <button class="btn btn-secondary" onclick="resetStopwatch()">🔄 Reset</button>
+          </div>
+
+          <div class="lap-table-wrapper" id="lap_container" style="display: none;">
+            <table class="data-table">
+              <thead>
+                <tr><th>Lap #</th><th>Split Time</th><th>Total Elapsed</th></tr>
+              </thead>
+              <tbody id="lap_tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mode 2: Countdown Timer -->
+        <div id="countdown_section" style="display: none;">
+          <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-bottom: 16px;">
+            <div style="text-align: center;">
+              <label style="font-size: 11px;">Hours</label>
+              <input type="number" id="cd_h" class="input-control" value="0" min="0" max="99" style="width: 70px; text-align: center;">
+            </div>
+            <span>:</span>
+            <div style="text-align: center;">
+              <label style="font-size: 11px;">Minutes</label>
+              <input type="number" id="cd_m" class="input-control" value="5" min="0" max="59" style="width: 70px; text-align: center;">
+            </div>
+            <span>:</span>
+            <div style="text-align: center;">
+              <label style="font-size: 11px;">Seconds</label>
+              <input type="number" id="cd_s" class="input-control" value="0" min="0" max="59" style="width: 70px; text-align: center;">
+            </div>
+          </div>
+
+          <div class="timer-display-box">
+            <div id="cd_display" class="timer-digits">00:05:00</div>
+          </div>
+
+          <div class="btn-row" style="justify-content: center;">
+            <button class="btn btn-primary" id="cd_start_btn" onclick="toggleCountdown()">▶ Start Timer</button>
+            <button class="btn btn-secondary" onclick="resetCountdown()">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Features &amp; Keyboard Shortcuts</h2>
+        <ul>
+          <li><strong>Spacebar:</strong> Start or Pause current timer / stopwatch.</li>
+          <li><strong>L Key:</strong> Record lap time in stopwatch mode.</li>
+          <li><strong>R Key:</strong> Reset timer or stopwatch.</li>
+          <li><strong>High-precision:</strong> Uses <code>performance.now()</code> to avoid background browser tab throttling.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Time Utilities</div>
+        <ul class="sidebar-list">
+          <li><a href="../calc/time/age-calculator.html">Age Calculator</a></li>
+          <li><a href="../calc/time/date-calculator.html">Date Calculator</a></li>
+          <li><a href="../convert/time-converter.html">Time Unit Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // Mode Switch
+    let currentMode = 'stopwatch';
+    function switchMode(m) {
+      currentMode = m;
+      document.getElementById('stopwatch_section').style.display = m === 'stopwatch' ? 'block' : 'none';
+      document.getElementById('countdown_section').style.display = m === 'countdown' ? 'block' : 'none';
+      document.getElementById('tab_sw_btn').className = m === 'stopwatch' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+      document.getElementById('tab_cd_btn').className = m === 'countdown' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+    }
+
+    // Stopwatch Logic
+    let swRunning = false;
+    let swStartTime = 0;
+    let swElapsedTime = 0;
+    let swInterval = null;
+    let lapCount = 0;
+    let lastLapTime = 0;
+
+    function formatTime(ms) {
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      const cs = Math.floor((ms % 1000) / 10);
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${cs.toString().padStart(2, '0')}`;
+    }
+
+    function toggleStopwatch() {
+      const btn = document.getElementById('sw_start_btn');
+      const lapBtn = document.getElementById('sw_lap_btn');
+      if (!swRunning) {
+        swStartTime = performance.now() - swElapsedTime;
+        swInterval = setInterval(() => {
+          swElapsedTime = performance.now() - swStartTime;
+          document.getElementById('sw_display').textContent = formatTime(swElapsedTime);
+        }, 10);
+        swRunning = true;
+        btn.textContent = "⏸ Pause";
+        lapBtn.disabled = false;
+      } else {
+        clearInterval(swInterval);
+        swRunning = false;
+        btn.textContent = "▶ Resume";
+      }
+    }
+
+    function recordLap() {
+      if (!swRunning) return;
+      lapCount++;
+      const currentLapTime = swElapsedTime - lastLapTime;
+      lastLapTime = swElapsedTime;
+
+      document.getElementById('lap_container').style.display = 'block';
+      const row = `<tr><td>${lapCount}</td><td>${formatTime(currentLapTime)}</td><td>${formatTime(swElapsedTime)}</td></tr>`;
+      document.getElementById('lap_tbody').insertAdjacentHTML('afterbegin', row);
+    }
+
+    function resetStopwatch() {
+      clearInterval(swInterval);
+      swRunning = false;
+      swElapsedTime = 0;
+      lapCount = 0;
+      lastLapTime = 0;
+      document.getElementById('sw_display').textContent = "00:00:00.00";
+      document.getElementById('sw_start_btn').textContent = "▶ Start";
+      document.getElementById('sw_lap_btn').disabled = true;
+      document.getElementById('lap_tbody').innerHTML = "";
+      document.getElementById('lap_container').style.display = 'none';
+    }
+
+    // Countdown Logic
+    let cdRunning = false;
+    let cdRemainingMs = 300000;
+    let cdInterval = null;
+
+    function formatCountdown(ms) {
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function toggleCountdown() {
+      const btn = document.getElementById('cd_start_btn');
+      if (!cdRunning) {
+        if (cdRemainingMs <= 0 || !cdInterval) {
+          const h = parseInt(document.getElementById('cd_h').value, 10) || 0;
+          const m = parseInt(document.getElementById('cd_m').value, 10) || 0;
+          const s = parseInt(document.getElementById('cd_s').value, 10) || 0;
+          cdRemainingMs = (h * 3600 + m * 60 + s) * 1000;
+        }
+
+        if (cdRemainingMs <= 0) return;
+
+        let end = performance.now() + cdRemainingMs;
+        cdInterval = setInterval(() => {
+          cdRemainingMs = Math.max(0, end - performance.now());
+          document.getElementById('cd_display').textContent = formatCountdown(cdRemainingMs);
+          if (cdRemainingMs <= 0) {
+            clearInterval(cdInterval);
+            cdRunning = false;
+            btn.textContent = "▶ Start Timer";
+            alert("⏰ Timer has finished!");
+          }
+        }, 100);
+        cdRunning = true;
+        btn.textContent = "⏸ Pause";
+      } else {
+        clearInterval(cdInterval);
+        cdRunning = false;
+        btn.textContent = "▶ Resume";
+      }
+    }
+
+    function resetCountdown() {
+      clearInterval(cdInterval);
+      cdRunning = false;
+      const h = parseInt(document.getElementById('cd_h').value, 10) || 0;
+      const m = parseInt(document.getElementById('cd_m').value, 10) || 0;
+      const s = parseInt(document.getElementById('cd_s').value, 10) || 0;
+      cdRemainingMs = (h * 3600 + m * 60 + s) * 1000;
+      document.getElementById('cd_display').textContent = formatCountdown(cdRemainingMs);
+      document.getElementById('cd_start_btn').textContent = "▶ Start Timer";
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        currentMode === 'stopwatch' ? toggleStopwatch() : toggleCountdown();
+      } else if (e.key.toLowerCase() === 'l' && currentMode === 'stopwatch') {
+        recordLap();
+      } else if (e.key.toLowerCase() === 'r') {
+        currentMode === 'stopwatch' ? resetStopwatch() : resetCountdown();
+      }
+    });
+  </script>
+</body>
+</html>

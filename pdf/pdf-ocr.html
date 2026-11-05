@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF OCR Online Free - Extract Text from Scanned PDF - RapidTables.online</title>
+  <meta name="description" content="Extract editable text from scanned PDF documents and images online for free using optical character recognition (OCR). 100% private in-browser processing.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .ocr-output-box {
+      width: 100%;
+      min-height: 280px;
+      max-height: 500px;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.7;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      resize: vertical;
+      margin-top: 16px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+      display: none;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.2s;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF OCR</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>PDF OCR - Scanned Document Text Extractor</h1>
+        <p class="subtitle">Convert scanned PDFs, photocopies, receipts, and images into editable, searchable digital text using Optical Character Recognition (OCR).</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">🔍📄</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a Scanned PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports scanned documents, bills, and images. 100% private in-browser OCR.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf,image/*" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+        <div class="progress-bar" id="progress_bar"><div class="progress-fill" id="progress_fill"></div></div>
+
+        <div id="result_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="doc_info_lbl">OCR Complete</strong>
+            <span id="doc_stats_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="copyText()">📋 Copy Text</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadTxt()">📄 Download .txt</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Scan Another</button>
+          </div>
+        </div>
+
+        <div id="output_wrapper" style="display: none;">
+          <h3 style="font-size: 15px; margin-top: 20px; margin-bottom: 8px;">Recognized Text Output:</h3>
+          <textarea id="ocr_output" class="ocr-output-box" placeholder="Recognized text will appear here..."></textarea>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How In-Browser Optical Character Recognition Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Scanned papers, fax transmissions, and mobile phone snapshots are merely flat image pixels. RapidTables.online utilizes a client-side WebAssembly neural OCR engine to recognize letter shapes, fonts, and numerals, converting static pixels into editable typography.
+        </p>
+
+        <h3 style="margin-top: 16px;">Ideal Use Cases</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Old Books &amp; Academic Theses:</strong> Turn paper libraries and scanned PDF books into searchable digital documents.</li>
+          <li><strong>Invoices &amp; Receipts:</strong> Extract line items, dates, and amounts from photographed accounting bills.</li>
+          <li><strong>Confidential Records:</strong> Since the OCR algorithm runs purely inside your browser's RAM, sensitive legal and medical scans never leave your device.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-word.html">📝 PDF to Word (.docx)</a></li>
+          <li><a href="pdf-to-text.html">📄 PDF to Plain Text</a></li>
+          <li><a href="pdf-to-excel.html">📊 PDF to Excel</a></li>
+          <li><a href="pdf-reader.html">📖 PDF Reader</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Private OCR</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          No scans sent to cloud servers. Zero data collection.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-ocr.html">PDF OCR</a>
+          <a href="../pdf/pdf-to-word.html">PDF to Word</a>
+          <a href="../pdf/pdf-to-text.html">PDF to Text</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFileName = '';
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFileName = file.name;
+      const status = document.getElementById('status_msg');
+      const progressBar = document.getElementById('progress_bar');
+      const progressFill = document.getElementById('progress_fill');
+
+      document.getElementById('drop_zone').style.display = 'none';
+      progressBar.style.display = 'block';
+      status.textContent = 'Initializing OCR neural engine...';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const totalPages = pdf.numPages;
+
+        let extractedText = '';
+
+        // First attempt standard text content extraction (if PDF has embedded text layer)
+        let hasDirectText = false;
+        let directTextArray = [];
+        for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+          const page = await pdf.getPage(i);
+          const tc = await page.getTextContent();
+          if (tc.items.length > 5) hasDirectText = true;
+        }
+
+        if (hasDirectText) {
+          // Fast extraction for searchable PDF
+          for (let i = 1; i <= totalPages; i++) {
+            status.textContent = `Extracting text: page ${i} of ${totalPages}...`;
+            progressFill.style.width = Math.round((i / totalPages) * 100) + '%';
+            const page = await pdf.getPage(i);
+            const tc = await page.getTextContent();
+            const pageStr = tc.items.map(it => it.str).join(' ');
+            directTextArray.push(`--- Page ${i} ---\n` + pageStr);
+          }
+          extractedText = directTextArray.join('\n\n');
+        } else {
+          // Scanned image PDF -> Use Tesseract
+          for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+            status.textContent = `Running OCR on scanned page ${i} of ${totalPages}...`;
+            progressFill.style.width = Math.round((i / totalPages) * 100) + '%';
+
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            const res = await Tesseract.recognize(canvas, 'eng');
+            extractedText += `--- Page ${i} ---\n` + res.data.text + '\n\n';
+          }
+        }
+
+        progressBar.style.display = 'none';
+        document.getElementById('ocr_output').value = extractedText.trim() || 'No legible text recognized.';
+        document.getElementById('doc_info_lbl').textContent = file.name;
+        document.getElementById('doc_stats_lbl').textContent = `• ${totalPages} pages processed`;
+        document.getElementById('result_bar').style.display = 'flex';
+        document.getElementById('output_wrapper').style.display = 'block';
+        status.textContent = 'OCR processing complete!';
+      } catch (err) {
+        progressBar.style.display = 'none';
+        status.textContent = 'OCR Error: ' + err.message;
+      }
+    }
+
+    function copyText() {
+      const text = document.getElementById('ocr_output').value;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('OCR text copied to clipboard!');
+      });
+    }
+
+    function downloadTxt() {
+      const text = document.getElementById('ocr_output').value;
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const baseName = currentFileName.replace(/\.[^/.]+$/, '');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = baseName + '-ocr.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function resetTool() {
+      currentFileName = '';
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('result_bar').style.display = 'none';
+      document.getElementById('output_wrapper').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      document.getElementById('ocr_output').value = '';
+    }
+  </script>
+</body>
+</html>

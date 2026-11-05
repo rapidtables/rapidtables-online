@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ohm's Law Calculator (V, I, R, P) - RapidTables.online</title>
+  <meta name="description" content="Free online Ohm's Law calculator. Calculate voltage (V), current (I), resistance (R), and power (P) given any two values with formulas and step-by-step math.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#electric-calculators">Electrical</a>
+    <span class="sep">&gt;</span>
+    <span>Ohm's Law Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Ohm's Law Calculator</h1>
+        <p class="subtitle">Enter any two values (Voltage, Current, Resistance, or Power) to calculate the remaining two values.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="ohm_v">Voltage (V) in Volts</label>
+            <input type="number" id="ohm_v" class="input-control" placeholder="e.g. 12" value="12" step="any">
+          </div>
+          <div class="form-group">
+            <label for="ohm_i">Current (I) in Amperes</label>
+            <input type="number" id="ohm_i" class="input-control" placeholder="e.g. 2" value="2" step="any">
+          </div>
+          <div class="form-group">
+            <label for="ohm_r">Resistance (R) in Ohms (Ω)</label>
+            <input type="number" id="ohm_r" class="input-control" placeholder="e.g. 6" step="any">
+          </div>
+          <div class="form-group">
+            <label for="ohm_p">Power (P) in Watts (W)</label>
+            <input type="number" id="ohm_p" class="input-control" placeholder="e.g. 24" step="any">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="calcOhms()">Calculate</button>
+          <button class="btn btn-secondary" onclick="resetOhms()">Reset</button>
+        </div>
+
+        <div id="res_ohms" class="result-card hidden">
+          <h3>Calculated Results</h3>
+          <div class="result-value" id="ohm_res_main">P = 24 Watts</div>
+          <div class="result-details" id="ohm_res_grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 14px;"></div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Ohm's Law Formulas</h2>
+        <p>Ohm's law defines the relationship between Voltage (V), Current (I), and Resistance (R):</p>
+        <div class="formula-box">
+          V = I × R<br>
+          I = V / R<br>
+          R = V / I<br>
+          P = V × I = I² × R = V² / R
+        </div>
+
+        <h3>Units Summary</h3>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Quantity</th><th>Symbol</th><th>SI Unit</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Voltage</td><td>V</td><td>Volt (V)</td></tr>
+              <tr><td>Current</td><td>I</td><td>Ampere (A)</td></tr>
+              <tr><td>Resistance</td><td>R</td><td>Ohm (Ω)</td></tr>
+              <tr><td>Power</td><td>P</td><td>Watt (W)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Electrical Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="resistor-color-code.html">Resistor Color Code</a></li>
+          <li><a href="energy-cost-calculator.html">Electricity Cost Calc</a></li>
+          <li><a href="voltage-divider.html">Voltage Divider Calc</a></li>
+          <li><a href="../../convert/energy-converter.html">Energy Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function calcOhms() {
+      let v = parseFloat(document.getElementById('ohm_v').value);
+      let i = parseFloat(document.getElementById('ohm_i').value);
+      let r = parseFloat(document.getElementById('ohm_r').value);
+      let p = parseFloat(document.getElementById('ohm_p').value);
+
+      let count = (!isNaN(v)?1:0) + (!isNaN(i)?1:0) + (!isNaN(r)?1:0) + (!isNaN(p)?1:0);
+      if (count < 2) {
+        alert("Please enter at least two values.");
+        return;
+      }
+
+      if (!isNaN(v) && !isNaN(i)) {
+        r = v / i;
+        p = v * i;
+      } else if (!isNaN(v) && !isNaN(r)) {
+        i = v / r;
+        p = (v * v) / r;
+      } else if (!isNaN(v) && !isNaN(p)) {
+        i = p / v;
+        r = (v * v) / p;
+      } else if (!isNaN(i) && !isNaN(r)) {
+        v = i * r;
+        p = i * i * r;
+      } else if (!isNaN(i) && !isNaN(p)) {
+        v = p / i;
+        r = p / (i * i);
+      } else if (!isNaN(r) && !isNaN(p)) {
+        v = Math.sqrt(p * r);
+        i = Math.sqrt(p / r);
+      }
+
+      document.getElementById('ohm_v').value = Number(v.toFixed(4));
+      document.getElementById('ohm_i').value = Number(i.toFixed(4));
+      document.getElementById('ohm_r').value = Number(r.toFixed(4));
+      document.getElementById('ohm_p').value = Number(p.toFixed(4));
+
+      document.getElementById('ohm_res_main').textContent = `Power: ${Number(p.toFixed(4))} Watts`;
+      document.getElementById('ohm_res_grid').innerHTML = `
+        <div><strong>Voltage (V):</strong> ${Number(v.toFixed(4))} V</div>
+        <div><strong>Current (I):</strong> ${Number(i.toFixed(4))} A</div>
+        <div><strong>Resistance (R):</strong> ${Number(r.toFixed(4))} Ω</div>
+        <div><strong>Power (P):</strong> ${Number(p.toFixed(4))} W</div>
+      `;
+      document.getElementById('res_ohms').classList.remove('hidden');
+    }
+
+    function resetOhms() {
+      document.getElementById('ohm_v').value = '12';
+      document.getElementById('ohm_i').value = '2';
+      document.getElementById('ohm_r').value = '';
+      document.getElementById('ohm_p').value = '';
+      calcOhms();
+    }
+
+    calcOhms();
+  </script>
+</body>
+</html>

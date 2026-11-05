@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resistor Color Code Calculator (4 &amp; 5 Band) - RapidTables.online</title>
+  <meta name="description" content="Free online resistor color code calculator for 4-band and 5-band resistors. Calculate resistance value, multiplier, and tolerance with visual color preview.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .resistor-graphic {
+      max-width: 360px;
+      height: 70px;
+      margin: 16px auto;
+      background: #e0d0b0;
+      border-radius: 20px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.1);
+      border: 2px solid #c2b290;
+    }
+    .resistor-graphic::before, .resistor-graphic::after {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 6px;
+      background: #94a3b8;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .resistor-graphic::before { left: -40px; }
+    .resistor-graphic::after { right: -40px; }
+    .res-band {
+      width: 14px;
+      height: 100%;
+      transition: background-color 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#electric-calculators">Electrical</a>
+    <span class="sep">&gt;</span>
+    <span>Resistor Color Code</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Resistor Color Code Calculator</h1>
+        <p class="subtitle">Calculate resistance value and tolerance for 4-band and 5-band axial through-hole resistors.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="margin-bottom: 14px;">
+          <label style="font-weight: 600; margin-right: 14px;">Bands:</label>
+          <label><input type="radio" name="r_bands" value="4" checked onchange="setBands(4)"> 4 Bands</label>
+          &nbsp;&nbsp;
+          <label><input type="radio" name="r_bands" value="5" onchange="setBands(5)"> 5 Bands</label>
+        </div>
+
+        <!-- Graphic -->
+        <div style="padding: 10px 40px;">
+          <div class="resistor-graphic">
+            <div id="b_disp_1" class="res-band" style="background:#8B4513;"></div>
+            <div id="b_disp_2" class="res-band" style="background:#000000;"></div>
+            <div id="b_disp_3" class="res-band" style="background:#FF0000;"></div>
+            <div id="b_disp_4" class="res-band" style="background:#D4AF37;"></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px;">
+          <div class="form-group">
+            <label>1st Band</label>
+            <select id="sel_b1" class="select-control" onchange="calcResistor()"></select>
+          </div>
+          <div class="form-group">
+            <label>2nd Band</label>
+            <select id="sel_b2" class="select-control" onchange="calcResistor()"></select>
+          </div>
+          <div class="form-group" id="group_b3" style="display:none;">
+            <label>3rd Band</label>
+            <select id="sel_b3" class="select-control" onchange="calcResistor()"></select>
+          </div>
+          <div class="form-group">
+            <label id="lbl_mult">Multiplier</label>
+            <select id="sel_mult" class="select-control" onchange="calcResistor()"></select>
+          </div>
+          <div class="form-group">
+            <label>Tolerance</label>
+            <select id="sel_tol" class="select-control" onchange="calcResistor()"></select>
+          </div>
+        </div>
+
+        <div id="res_resistor" class="result-card">
+          <h3>Calculated Resistance</h3>
+          <div class="result-value" id="resistor_val">1 kΩ ±5%</div>
+          <div class="result-details" id="resistor_range">Range: 950 Ω – 1050 Ω</div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Resistor Color Chart</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Color</th><th>Digit</th><th>Multiplier</th><th>Tolerance</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Black</td><td>0</td><td>10⁰ (1 Ω)</td><td>-</td></tr>
+              <tr><td>Brown</td><td>1</td><td>10¹ (10 Ω)</td><td>±1%</td></tr>
+              <tr><td>Red</td><td>2</td><td>10² (100 Ω)</td><td>±2%</td></tr>
+              <tr><td>Orange</td><td>3</td><td>10³ (1 kΩ)</td><td>-</td></tr>
+              <tr><td>Yellow</td><td>4</td><td>10⁴ (10 kΩ)</td><td>-</td></tr>
+              <tr><td>Green</td><td>5</td><td>10⁵ (100 kΩ)</td><td>±0.5%</td></tr>
+              <tr><td>Blue</td><td>6</td><td>10⁶ (1 MΩ)</td><td>±0.25%</td></tr>
+              <tr><td>Violet</td><td>7</td><td>10⁷ (10 MΩ)</td><td>±0.1%</td></tr>
+              <tr><td>Gray</td><td>8</td><td>10⁸</td><td>±0.05%</td></tr>
+              <tr><td>White</td><td>9</td><td>10⁹</td><td>-</td></tr>
+              <tr><td>Gold</td><td>-</td><td>0.1</td><td>±5%</td></tr>
+              <tr><td>Silver</td><td>-</td><td>0.01</td><td>±10%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Electrical Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="ohms-law-calculator.html">Ohm's Law Calculator</a></li>
+          <li><a href="energy-cost-calculator.html">Electricity Cost Calc</a></li>
+          <li><a href="voltage-divider.html">Voltage Divider Calc</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    const colorValues = [
+      { name: "Black", code: "#000000", digit: 0, mult: 1, tol: null },
+      { name: "Brown", code: "#8B4513", digit: 1, mult: 10, tol: 1 },
+      { name: "Red", code: "#FF0000", digit: 2, mult: 100, tol: 2 },
+      { name: "Orange", code: "#FFA500", digit: 3, mult: 1000, tol: null },
+      { name: "Yellow", code: "#FFFF00", digit: 4, mult: 10000, tol: null },
+      { name: "Green", code: "#008000", digit: 5, mult: 100000, tol: 0.5 },
+      { name: "Blue", code: "#0000FF", digit: 6, mult: 1000000, tol: 0.25 },
+      { name: "Violet", code: "#EE82EE", digit: 7, mult: 10000000, tol: 0.1 },
+      { name: "Gray", code: "#808080", digit: 8, mult: 100000000, tol: 0.05 },
+      { name: "White", code: "#FFFFFF", digit: 9, mult: 1000000000, tol: null },
+      { name: "Gold", code: "#D4AF37", digit: null, mult: 0.1, tol: 5 },
+      { name: "Silver", code: "#C0C0C0", digit: null, mult: 0.01, tol: 10 }
+    ];
+
+    let bandCount = 4;
+
+    function populateSelects() {
+      const b1 = document.getElementById('sel_b1');
+      const b2 = document.getElementById('sel_b2');
+      const b3 = document.getElementById('sel_b3');
+      const mult = document.getElementById('sel_mult');
+      const tol = document.getElementById('sel_tol');
+
+      colorValues.forEach(c => {
+        if (c.digit !== null) {
+          b1.innerHTML += `<option value="${c.digit}" data-code="${c.code}" ${c.digit===1?'selected':''}>${c.name} (${c.digit})</option>`;
+          b2.innerHTML += `<option value="${c.digit}" data-code="${c.code}" ${c.digit===0?'selected':''}>${c.name} (${c.digit})</option>`;
+          b3.innerHTML += `<option value="${c.digit}" data-code="${c.code}" ${c.digit===0?'selected':''}>${c.name} (${c.digit})</option>`;
+        }
+        mult.innerHTML += `<option value="${c.mult}" data-code="${c.code}" ${c.mult===100?'selected':''}>${c.name} (×${c.mult})</option>`;
+        if (c.tol !== null) {
+          tol.innerHTML += `<option value="${c.tol}" data-code="${c.code}" ${c.tol===5?'selected':''}>${c.name} (±${c.tol}%)</option>`;
+        }
+      });
+    }
+
+    function setBands(count) {
+      bandCount = count;
+      document.getElementById('group_b3').style.display = count === 5 ? 'block' : 'none';
+      calcResistor();
+    }
+
+    function formatOhms(r) {
+      if (r >= 1e6) return (r / 1e6).toFixed(2).replace(/\.?0+$/, '') + ' MΩ';
+      if (r >= 1e3) return (r / 1e3).toFixed(2).replace(/\.?0+$/, '') + ' kΩ';
+      return r.toFixed(2).replace(/\.?0+$/, '') + ' Ω';
+    }
+
+    function calcResistor() {
+      const b1 = parseInt(document.getElementById('sel_b1').value, 10);
+      const b2 = parseInt(document.getElementById('sel_b2').value, 10);
+      const mult = parseFloat(document.getElementById('sel_mult').value);
+      const tol = parseFloat(document.getElementById('sel_tol').value);
+
+      let val = 0;
+      if (bandCount === 4) {
+        val = (b1 * 10 + b2) * mult;
+      } else {
+        const b3 = parseInt(document.getElementById('sel_b3').value, 10);
+        val = (b1 * 100 + b2 * 10 + b3) * mult;
+      }
+
+      const minVal = val * (1 - tol / 100);
+      const maxVal = val * (1 + tol / 100);
+
+      document.getElementById('resistor_val').textContent = `${formatOhms(val)} ±${tol}%`;
+      document.getElementById('resistor_range').textContent = `Range: ${formatOhms(minVal)} – ${formatOhms(maxVal)}`;
+
+      // Update graphic band colors
+      document.getElementById('b_disp_1').style.background = document.getElementById('sel_b1').selectedOptions[0].getAttribute('data-code');
+      document.getElementById('b_disp_2').style.background = document.getElementById('sel_b2').selectedOptions[0].getAttribute('data-code');
+      document.getElementById('b_disp_3').style.background = document.getElementById('sel_mult').selectedOptions[0].getAttribute('data-code');
+      document.getElementById('b_disp_4').style.background = document.getElementById('sel_tol').selectedOptions[0].getAttribute('data-code');
+    }
+
+    populateSelects();
+    calcResistor();
+  </script>
+</body>
+</html>

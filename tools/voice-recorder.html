@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Voice &amp; Audio Recorder - RapidTables.online</title>
+  <meta name="description" content="Free online microphone voice recorder. Record audio notes, speeches, and interviews with live waveform visualizer. Save and download MP3/WebM audio privately.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .recorder-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+    .timer-display {
+      font-size: 52px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .waveform-canvas {
+      width: 100%;
+      max-width: 540px;
+      height: 90px;
+      background: var(--bg-alt);
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+      border: 1px solid var(--border-color);
+    }
+    .record-btn-main {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 4px solid #fca5a5;
+      color: #fff;
+      font-size: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+    }
+    .record-btn-main:hover {
+      transform: scale(1.06);
+    }
+    .record-btn-main.recording {
+      animation: pulseRecord 1.5s infinite;
+      background: #dc2626;
+      border-radius: 16px;
+    }
+    @keyframes pulseRecord {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .audio-player-wrapper {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .audio-player-wrapper audio {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Voice &amp; Audio Recorder</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Voice &amp; Audio Recorder</h1>
+        <p class="subtitle">Record high-quality audio notes, podcasts, voice memos, and meetings directly from your microphone with zero uploads.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="recorder-card">
+          <div class="timer-display" id="timer_lbl">00:00:00</div>
+
+          <!-- Real-Time Waveform -->
+          <canvas id="waveform_canvas" class="waveform-canvas" width="540" height="90"></canvas>
+
+          <!-- Record Trigger Button -->
+          <button type="button" class="record-btn-main" id="record_btn" onclick="toggleRecord()" title="Start Recording">
+            🎙️
+          </button>
+
+          <div id="record_status_txt" style="margin-top: 14px; font-size: 14px; font-weight: 600; color: var(--text-muted);">
+            Click the microphone to start recording
+          </div>
+
+          <div id="active_controls" style="display: none; gap: 12px; margin-top: 20px;">
+            <button class="btn btn-secondary btn-sm" id="pause_btn" onclick="togglePause()">⏸️ Pause</button>
+            <button class="btn btn-primary btn-sm" onclick="stopRecording()">⏹️ Finish &amp; Save</button>
+          </div>
+
+          <!-- Playback & Download Container -->
+          <div id="playback_container" class="audio-player-wrapper" style="display: none;">
+            <audio id="audio_preview" controls></audio>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button class="btn btn-primary" onclick="downloadRecordedAudio()">💾 Download Audio (.webm)</button>
+              <button class="btn btn-secondary" onclick="resetRecorder()">🔄 Record Again</button>
+            </div>
+            <span id="recording_details_lbl" style="font-size: 13px; color: var(--text-muted); margin-top: 4px;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Record Voice and Sound Online</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Click Microphone:</strong> Press the red microphone button to begin. Your browser will ask for microphone permission.</li>
+          <li><strong>Speak Clearly:</strong> Watch the real-time visual waveform respond to your voice volume and frequency.</li>
+          <li><strong>Pause or Finish:</strong> Pause if you need a break, or click "Finish &amp; Save" when done.</li>
+          <li><strong>Listen &amp; Download:</strong> Preview your recording with the built-in media player and download the audio file directly to your device.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">100% Private &amp; Secure</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Unlike cloud voice recorders that transmit your private conversations to remote third-party databases, our tool records entirely inside your browser memory using HTML5 MediaRecorder. Your audio never touches any external server.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Everyday Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="text-to-speech.html">🔊 Text to Speech Reader</a></li>
+          <li><a href="stopwatch.html">⏱️ Stopwatch &amp; Timer</a></li>
+          <li><a href="notepad.html">📝 Online Notepad</a></li>
+          <li><a href="word-counter.html">📊 Word Counter</a></li>
+          <li><a href="../pdf/pdf-to-text.html">📄 PDF to Text</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>No Time Limits</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Record short voice notes or hours of lectures for free with zero watermarks or subscription requirements.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioBlob = null;
+    let audioUrl = null;
+    let recordStartTime = 0;
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+    let isPaused = false;
+
+    // Web Audio visualizer variables
+    let audioCtx = null;
+    let analyser = null;
+    let visualizerSource = null;
+    let animationFrameId = null;
+
+    const canvas = document.getElementById('waveform_canvas');
+    const canvasCtx = canvas.getContext('2d');
+
+    function drawEmptyWaveform() {
+      canvasCtx.fillStyle = '#1e293b';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(0, canvas.height / 2);
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.strokeStyle = '#475569';
+      canvasCtx.lineWidth = 2;
+      canvasCtx.stroke();
+    }
+    drawEmptyWaveform();
+
+    function formatTime(totalSeconds) {
+      const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+      const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+      const s = (totalSeconds % 60).toString().padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    async function toggleRecord() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        stopRecording();
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        startAudioStream(stream);
+      } catch (err) {
+        alert("Microphone Access Error: " + err.message + "\nPlease allow microphone permissions in your browser.");
+      }
+    }
+
+    function startAudioStream(stream) {
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+
+      // Web Audio setup for live visual waveform
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      visualizerSource = audioCtx.createMediaStreamSource(stream);
+      visualizerSource.connect(analyser);
+
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        // Stop audio tracks
+        stream.getTracks().forEach(track => track.stop());
+        cancelAnimationFrame(animationFrameId);
+
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        audioUrl = URL.createObjectURL(audioBlob);
+
+        const player = document.getElementById('audio_preview');
+        player.src = audioUrl;
+
+        const sizeKb = (audioBlob.size / 1024).toFixed(1);
+        document.getElementById('recording_details_lbl').textContent = `Duration: ${formatTime(elapsedSeconds)} | File size: ${sizeKb} KB`;
+
+        document.getElementById('playback_container').style.display = 'flex';
+        document.getElementById('active_controls').style.display = 'none';
+        document.getElementById('record_btn').style.display = 'none';
+        document.getElementById('record_status_txt').textContent = 'Recording finished!';
+        drawEmptyWaveform();
+      };
+
+      mediaRecorder.start(200); // 200ms slice
+      recordStartTime = Date.now();
+      elapsedSeconds = 0;
+      isPaused = false;
+
+      document.getElementById('record_btn').classList.add('recording');
+      document.getElementById('record_btn').innerHTML = '⏹️';
+      document.getElementById('active_controls').style.display = 'flex';
+      document.getElementById('record_status_txt').textContent = '🔴 Recording live audio...';
+      document.getElementById('playback_container').style.display = 'none';
+
+      timerInterval = setInterval(() => {
+        if (!isPaused) {
+          elapsedSeconds++;
+          document.getElementById('timer_lbl').textContent = formatTime(elapsedSeconds);
+        }
+      }, 1000);
+
+      visualizeAudio();
+    }
+
+    function visualizeAudio() {
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function render() {
+        animationFrameId = requestAnimationFrame(render);
+        analyser.getByteFrequencyData(dataArray);
+
+        canvasCtx.fillStyle = '#0f172a';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+
+          // Gradient color from cyan to blue
+          canvasCtx.fillStyle = `rgb(59, 130, 246)`;
+          canvasCtx.fillRect(x, (canvas.height - barHeight) / 2, barWidth - 1, Math.max(3, barHeight));
+
+          x += barWidth + 1;
+        }
+      }
+      render();
+    }
+
+    function togglePause() {
+      if (!mediaRecorder) return;
+      const pauseBtn = document.getElementById('pause_btn');
+      if (isPaused) {
+        mediaRecorder.resume();
+        isPaused = false;
+        pauseBtn.innerHTML = '⏸️ Pause';
+        document.getElementById('record_status_txt').textContent = '🔴 Recording live audio...';
+      } else {
+        mediaRecorder.pause();
+        isPaused = true;
+        pauseBtn.innerHTML = '▶️ Resume';
+        document.getElementById('record_status_txt').textContent = '⏸️ Recording paused';
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        clearInterval(timerInterval);
+        document.getElementById('record_btn').classList.remove('recording');
+        document.getElementById('record_btn').innerHTML = '🎙️';
+      }
+    }
+
+    function downloadRecordedAudio() {
+      if (!audioUrl) return;
+      const a = document.createElement('a');
+      a.href = audioUrl;
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+      a.download = `voice_recording_${timestamp}.webm`;
+      a.click();
+      showToast('Audio file downloaded');
+    }
+
+    function resetRecorder() {
+      audioBlob = null;
+      audioUrl = null;
+      audioChunks = [];
+      clearInterval(timerInterval);
+      elapsedSeconds = 0;
+      document.getElementById('timer_lbl').textContent = '00:00:00';
+      document.getElementById('record_btn').style.display = 'flex';
+      document.getElementById('record_btn').innerHTML = '🎙️';
+      document.getElementById('record_btn').classList.remove('recording');
+      document.getElementById('playback_container').style.display = 'none';
+      document.getElementById('active_controls').style.display = 'none';
+      document.getElementById('record_status_txt').textContent = 'Click the microphone to start recording';
+      drawEmptyWaveform();
+    }
+  </script>
+</body>
+</html>

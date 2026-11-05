@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exponent Calculator (xʸ) - RapidTables.online</title>
+  <meta name="description" content="Free online exponent calculator. Calculate powers, negative exponents, fractional powers, scientific notation, and roots with rules and steps.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Exponent Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Exponent Calculator</h1>
+        <p class="subtitle">Compute positive, negative, and fractional powers for any base number: <strong>bʸ</strong>.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap;">
+          <div>
+            <label style="font-size: 13px; font-weight: 600;">Base (b)</label>
+            <input type="number" id="exp_base" class="input-control" style="width: 130px;" value="2" step="any">
+          </div>
+          <div style="margin-bottom: 12px; font-size: 22px; font-weight: bold;">^</div>
+          <div>
+            <label style="font-size: 13px; font-weight: 600;">Exponent (y)</label>
+            <input type="number" id="exp_power" class="input-control" style="width: 110px;" value="8" step="any">
+          </div>
+          <button class="btn btn-primary" onclick="calcExp()" style="margin-bottom: 2px;">Calculate</button>
+        </div>
+
+        <div id="res_exp" class="result-card hidden">
+          <h3>Result</h3>
+          <div class="result-value" id="exp_res">256</div>
+          <div class="result-details" id="exp_details">2^8 = 256</div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Exponent Rules &amp; Properties</h2>
+        <ul>
+          <li><strong>Zero Exponent:</strong> <code>b⁰ = 1</code> (for any b ≠ 0)</li>
+          <li><strong>Negative Exponent:</strong> <code>b⁻ⁿ = 1 / bⁿ</code></li>
+          <li><strong>Product Rule:</strong> <code>bⁿ · bᵐ = bⁿ⁺ᵐ</code></li>
+          <li><strong>Quotient Rule:</strong> <code>bⁿ / bᵐ = bⁿ⁻ᵐ</code></li>
+          <li><strong>Power of a Power:</strong> <code>(bⁿ)ᵐ = bⁿᵐ</code></li>
+          <li><strong>Fractional Exponent:</strong> <code>b^(1/n) = ⁿ√b</code></li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Math Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="logarithm-calculator.html">Logarithm Calculator</a></li>
+          <li><a href="scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="random-number-generator.html">Random Number Gen</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function calcExp() {
+      const b = parseFloat(document.getElementById('exp_base').value);
+      const y = parseFloat(document.getElementById('exp_power').value);
+
+      if (isNaN(b) || isNaN(y)) return;
+
+      const res = Math.pow(b, y);
+      document.getElementById('exp_res').textContent = Number.isFinite(res) ? Number(res.toPrecision(10)).toString() : res.toString();
+      document.getElementById('exp_details').textContent = `${b}^${y} = ${res}`;
+      document.getElementById('res_exp').classList.remove('hidden');
+    }
+
+    calcExp();
+  </script>
+</body>
+</html>

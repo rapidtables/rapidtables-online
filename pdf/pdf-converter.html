@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online PDF Converter Free - Convert To &amp; From PDF - RapidTables.online</title>
+  <meta name="description" content="All-in-one online PDF converter. Convert PDF to Word, Excel, PPT, JPG, PNG and convert Word, Excel, Images, and HTML to PDF. 100% private in-browser tool.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .converter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .conv-tab-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .conv-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .format-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .format-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all var(--transition);
+    }
+    .format-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .format-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>All-in-One PDF Converter Studio</h1>
+        <p class="subtitle">Convert documents, images, spreadsheets, and presentations to and from PDF format with zero file size limits and 100% client-side privacy.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="converter-tabs">
+          <button class="conv-tab-btn active" onclick="switchTab('from_pdf', this)">Convert From PDF</button>
+          <button class="conv-tab-btn" onclick="switchTab('to_pdf', this)">Convert To PDF</button>
+        </div>
+
+        <div id="tab_from_pdf">
+          <div class="format-cards-grid">
+            <a href="pdf-to-word.html" class="format-card">
+              <div class="format-icon" style="background: #e0f2fe; color: #0284c7;">📝</div>
+              <div>
+                <strong>PDF to Word</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Convert to editable .docx</div>
+              </div>
+            </a>
+
+            <a href="pdf-to-excel.html" class="format-card">
+              <div class="format-icon" style="background: #ecfdf5; color: #059669;">📊</div>
+              <div>
+                <strong>PDF to Excel</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Extract tables to .xlsx &amp; .csv</div>
+              </div>
+            </a>
+
+            <a href="pdf-to-ppt.html" class="format-card">
+              <div class="format-icon" style="background: #fff7ed; color: #ea580c;">📽️</div>
+              <div>
+                <strong>PDF to PowerPoint</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Turn pages into .pptx slides</div>
+              </div>
+            </a>
+
+            <a href="pdf-to-jpg.html" class="format-card">
+              <div class="format-icon" style="background: #fef3c7; color: #d97706;">🖼️</div>
+              <div>
+                <strong>PDF to JPG</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Crisp JPEG image extraction</div>
+              </div>
+            </a>
+
+            <a href="pdf-to-png.html" class="format-card">
+              <div class="format-icon" style="background: #f3e8ff; color: #7e22ce;">📸</div>
+              <div>
+                <strong>PDF to PNG</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Lossless graphic exports</div>
+              </div>
+            </a>
+
+            <a href="pdf-to-text.html" class="format-card">
+              <div class="format-icon" style="background: #f1f5f9; color: #475569;">📄</div>
+              <div>
+                <strong>PDF to Text</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Raw text &amp; word counter</div>
+              </div>
+            </a>
+
+            <a href="pdf-ocr.html" class="format-card">
+              <div class="format-icon" style="background: #fee2e2; color: #dc2626;">🔍</div>
+              <div>
+                <strong>PDF OCR</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Optical character recognition</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div id="tab_to_pdf" style="display: none;">
+          <div class="format-cards-grid">
+            <a href="word-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #e0f2fe; color: #0284c7;">📝</div>
+              <div>
+                <strong>Word to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Convert .docx documents to PDF</div>
+              </div>
+            </a>
+
+            <a href="excel-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #ecfdf5; color: #059669;">📈</div>
+              <div>
+                <strong>Excel to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Convert .xlsx workbooks to PDF</div>
+              </div>
+            </a>
+
+            <a href="ppt-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #fff7ed; color: #ea580c;">📽️</div>
+              <div>
+                <strong>PowerPoint to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Convert .pptx slides to PDF</div>
+              </div>
+            </a>
+
+            <a href="jpg-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #fef3c7; color: #d97706;">🌄</div>
+              <div>
+                <strong>JPG to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Package photos into a clean PDF</div>
+              </div>
+            </a>
+
+            <a href="image-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #fdf2f8; color: #db2777;">📷</div>
+              <div>
+                <strong>Image to PDF (All)</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">JPG, PNG, WebP to PDF</div>
+              </div>
+            </a>
+
+            <a href="text-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #f0fdf4; color: #16a34a;">📄</div>
+              <div>
+                <strong>Text to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Create formatted A4 PDFs from TXT</div>
+              </div>
+            </a>
+
+            <a href="html-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #f0f9ff; color: #0284c7;">🌐</div>
+              <div>
+                <strong>HTML to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Convert webpages &amp; HTML code</div>
+              </div>
+            </a>
+
+            <a href="csv-to-pdf.html" class="format-card">
+              <div class="format-icon" style="background: #fef2f2; color: #ef4444;">📊</div>
+              <div>
+                <strong>CSV to PDF</strong>
+                <div style="font-size: 12px; color: var(--text-muted);">Format raw CSV data to PDF table</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>Universal Document Conversion Engine</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online provides a full suite of document conversion tools designed to operate entirely in your web browser. From Microsoft Office formats (Word, Excel, PowerPoint) to images (JPG, PNG) and raw code (HTML, CSV, TXT), documents convert seamlessly with preserved typography and layouts.
+        </p>
+
+        <h3 style="margin-top: 16px;">Enterprise Privacy Guarantee</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your confidential papers, accounting records, and sensitive contracts are processed directly in local browser memory. Zero files are uploaded to our servers, eliminating data exposure risks.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Popular PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF</a></li>
+          <li><a href="edit-pdf.html">✏️ Edit PDF</a></li>
+          <li><a href="sign-pdf.html">✍️ Sign PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Free &amp; Uncapped</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Process unlimited files without subscriptions or credit cards.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-converter.html">PDF Converter</a>
+          <a href="../pdf/pdf-to-word.html">PDF to Word</a>
+          <a href="../pdf/pdf-to-excel.html">PDF to Excel</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function switchTab(tab, el) {
+      document.querySelectorAll('.conv-tab-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+
+      document.getElementById('tab_from_pdf').style.display = (tab === 'from_pdf') ? 'block' : 'none';
+      document.getElementById('tab_to_pdf').style.display = (tab === 'to_pdf') ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

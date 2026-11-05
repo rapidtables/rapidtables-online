@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature Converter (°C, °F, K) - RapidTables.online</title>
+  <meta name="description" content="Free online temperature converter. Convert between Celsius, Fahrenheit, and Kelvin with instant live updates and conversion formulas.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Temperature Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Temperature Converter</h1>
+        <p class="subtitle">Convert between Celsius (°C), Fahrenheit (°F), and Kelvin (K) in real time.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="temp_c">Celsius (°C)</label>
+            <input type="number" id="temp_c" class="input-control" value="25" step="any" oninput="fromC(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="temp_f">Fahrenheit (°F)</label>
+            <input type="number" id="temp_f" class="input-control" step="any" oninput="fromF(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="temp_k">Kelvin (K)</label>
+            <input type="number" id="temp_k" class="input-control" step="any" oninput="fromK(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Temperature Conversion Formulas</h2>
+        <ul>
+          <li><strong>Celsius to Fahrenheit:</strong> <code>°F = (°C × 9/5) + 32</code></li>
+          <li><strong>Fahrenheit to Celsius:</strong> <code>°C = (°F - 32) × 5/9</code></li>
+          <li><strong>Celsius to Kelvin:</strong> <code>K = °C + 273.15</code></li>
+          <li><strong>Fahrenheit to Kelvin:</strong> <code>K = (°F - 32) × 5/9 + 273.15</code></li>
+        </ul>
+
+        <h3>Key Temperature Reference Points</h3>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>State / Event</th><th>°C</th><th>°F</th><th>K</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Absolute Zero</td><td>-273.15 °C</td><td>-459.67 °F</td><td>0 K</td></tr>
+              <tr><td>Freezing Point of Water</td><td>0 °C</td><td>32 °F</td><td>273.15 K</td></tr>
+              <tr><td>Average Human Body Temp</td><td>37 °C</td><td>98.6 °F</td><td>310.15 K</td></tr>
+              <tr><td>Boiling Point of Water</td><td>100 °C</td><td>212 °F</td><td>373.15 K</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Unit Converters</div>
+        <ul class="sidebar-list">
+          <li><a href="length-converter.html">Length Converter</a></li>
+          <li><a href="weight-converter.html">Weight Converter</a></li>
+          <li><a href="number-base-converter.html">Number Base Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function fromC(val) {
+      if (val === '' || isNaN(val)) return;
+      const c = parseFloat(val);
+      document.getElementById('temp_f').value = Number(((c * 9/5) + 32).toFixed(4));
+      document.getElementById('temp_k').value = Number((c + 273.15).toFixed(4));
+    }
+    function fromF(val) {
+      if (val === '' || isNaN(val)) return;
+      const f = parseFloat(val);
+      const c = (f - 32) * 5/9;
+      document.getElementById('temp_c').value = Number(c.toFixed(4));
+      document.getElementById('temp_k').value = Number((c + 273.15).toFixed(4));
+    }
+    function fromK(val) {
+      if (val === '' || isNaN(val)) return;
+      const k = parseFloat(val);
+      const c = k - 273.15;
+      document.getElementById('temp_c').value = Number(c.toFixed(4));
+      document.getElementById('temp_f').value = Number(((c * 9/5) + 32).toFixed(4));
+    }
+
+    fromC(25);
+  </script>
+</body>
+</html>

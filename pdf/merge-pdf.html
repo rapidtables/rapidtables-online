@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge PDF Files Online - RapidTables.online</title>
+  <meta name="description" content="Free online tool to merge multiple PDF files into a single document. Fast, secure, client-side merging with zero server uploads.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .upload-box:hover, .upload-box.dragover {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Merge PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Merge PDF Files</h1>
+        <p class="subtitle">Combine two or more PDF documents into one single PDF directly in your browser. 100% private and secure.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_files').click()">
+          <div style="font-size: 38px; margin-bottom: 8px;">📑</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to select PDF files or drag &amp; drop here</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports multiple .pdf files</div>
+          <input type="file" id="pdf_files" multiple accept="application/pdf" style="display: none;" onchange="handleFileSelect(this.files)">
+        </div>
+
+        <div id="file_list" style="margin-top: 16px;"></div>
+
+        <div class="btn-row" id="action_row" style="display: none;">
+          <button class="btn btn-primary" id="merge_btn" onclick="mergePdfs()">📑 Merge PDFs Now</button>
+          <button class="btn btn-secondary" onclick="clearFiles()">Clear All</button>
+        </div>
+
+        <div id="res_merge" class="result-card hidden">
+          <h3>Success!</h3>
+          <div class="result-details" id="merge_status" style="margin-bottom: 12px; font-size: 15px;">PDFs merged successfully!</div>
+          <button class="btn btn-primary" id="download_btn">⬇️ Download Merged PDF</button>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>How to Merge PDF Files Online</h2>
+        <ol>
+          <li>Click the upload area or drag and drop multiple PDF files.</li>
+          <li>Review the list of uploaded PDF files.</li>
+          <li>Click <strong>Merge PDFs Now</strong> to combine them using high-speed client-side processing.</li>
+          <li>Click <strong>Download Merged PDF</strong> to save the combined file to your computer.</li>
+        </ol>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">PDF Utilities</div>
+        <ul class="sidebar-list">
+          <li><a href="split-pdf.html">Split PDF</a></li>
+          <li><a href="image-to-pdf.html">Image to PDF</a></li>
+          <li><a href="rotate-pdf.html">Rotate PDF</a></li>
+          <li><a href="pdf-to-text.html">PDF to Text</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let selectedFiles = [];
+
+    function handleFileSelect(files) {
+      for (const file of files) {
+        if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+          selectedFiles.push(file);
+        }
+      }
+      renderFileList();
+    }
+
+    function renderFileList() {
+      const container = document.getElementById('file_list');
+      container.innerHTML = "";
+      if (selectedFiles.length === 0) {
+        document.getElementById('action_row').style.display = 'none';
+        return;
+      }
+      document.getElementById('action_row').style.display = 'flex';
+
+      selectedFiles.forEach((f, idx) => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML = `
+          <div>
+            <strong>${idx + 1}. ${f.name}</strong>
+            <span style="font-size:12px; color:var(--text-muted); margin-left:8px;">(${(f.size / 1024).toFixed(1)} KB)</span>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="removeFile(${idx})">✕</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function removeFile(idx) {
+      selectedFiles.splice(idx, 1);
+      renderFileList();
+    }
+
+    function clearFiles() {
+      selectedFiles = [];
+      renderFileList();
+      document.getElementById('res_merge').classList.add('hidden');
+    }
+
+    // Drag & drop
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFileSelect(e.dataTransfer.files);
+    });
+
+    async function mergePdfs() {
+      if (selectedFiles.length < 2) {
+        alert("Please select at least 2 PDF files to merge.");
+        return;
+      }
+
+      const mergeBtn = document.getElementById('merge_btn');
+      mergeBtn.disabled = true;
+      mergeBtn.textContent = "Merging...";
+
+      try {
+        const { PDFDocument } = PDFLib;
+        const mergedPdf = await PDFDocument.create();
+
+        for (const file of selectedFiles) {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await PDFDocument.load(arrayBuffer);
+          const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+          copiedPages.forEach((page) => mergedPdf.addPage(page));
+        }
+
+        const mergedPdfBytes = await mergedPdf.save();
+        const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+
+        const dlBtn = document.getElementById('download_btn');
+        dlBtn.onclick = () => {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `merged_${new Date().toISOString().slice(0, 10)}.pdf`;
+          a.click();
+        };
+
+        document.getElementById('merge_status').textContent = `Merged ${selectedFiles.length} files successfully (${mergedPdf.getPageCount()} total pages)!`;
+        document.getElementById('res_merge').classList.remove('hidden');
+        showToast("PDFs merged successfully!");
+      } catch (err) {
+        alert("Error merging PDFs: " + err.message);
+      } finally {
+        mergeBtn.disabled = false;
+        mergeBtn.textContent = "📑 Merge PDFs Now";
+      }
+    }
+  </script>
+</body>
+</html>

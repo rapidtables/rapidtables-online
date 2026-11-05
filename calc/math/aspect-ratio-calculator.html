@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aspect Ratio Calculator - RapidTables.online</title>
+  <meta name="description" content="Free online aspect ratio calculator. Calculate missing dimensions (width/height), find simplified aspect ratios (16:9, 4:3, 1:1), and view standard video resolutions.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .ratio-preset-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .ratio-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .ratio-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .ratio-visualizer-box {
+      background: #0f172a;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+    .ratio-box {
+      background: #3b82f6;
+      border: 2px solid #60a5fa;
+      border-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      transition: width 0.2s ease, height 0.2s ease;
+      max-width: 100%;
+      max-height: 200px;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Aspect Ratio Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Aspect Ratio Calculator</h1>
+        <p class="subtitle">Calculate dimensions, resize images and video, find simplified ratios, and compare standard display resolutions.</p>
+      </div>
+
+      <div class="tool-box">
+        <h2 style="font-size: 16px; margin-bottom: 8px;">1. Original Ratio &amp; Dimensions</h2>
+        <div class="calc-grid-2">
+          <div class="calc-input-group">
+            <label for="orig_w">Original Width (W₁)</label>
+            <input type="number" id="orig_w" value="1920" min="1" step="1" oninput="onOriginalChange()">
+          </div>
+          <div class="calc-input-group">
+            <label for="orig_h">Original Height (H₁)</label>
+            <input type="number" id="orig_h" value="1080" min="1" step="1" oninput="onOriginalChange()">
+          </div>
+        </div>
+
+        <div style="margin-top: 10px;">
+          <label style="font-size: 13px; font-weight: 600;">Popular Aspect Ratio Presets:</label>
+          <div class="ratio-preset-grid">
+            <button type="button" class="ratio-btn active" onclick="applyPreset(16, 9)">16:9 (Widescreen HD)</button>
+            <button type="button" class="ratio-btn" onclick="applyPreset(4, 3)">4:3 (Standard TV / iPad)</button>
+            <button type="button" class="ratio-btn" onclick="applyPreset(1, 1)">1:1 (Square / Instagram)</button>
+            <button type="button" class="ratio-btn" onclick="applyPreset(9, 16)">9:16 (TikTok / Reels / Shorts)</button>
+            <button type="button" class="ratio-btn" onclick="applyPreset(21, 9)">21:9 (Ultrawide Cinema)</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; padding: 12px; background: var(--bg-alt); border-radius: var(--radius-sm); font-size: 14px;">
+          Simplified Aspect Ratio: <strong id="simplified_ratio_lbl" style="color: var(--primary); font-size: 16px;">16 : 9</strong>
+          <span id="decimal_ratio_lbl" style="color: var(--text-muted); margin-left: 10px;">(1.78 : 1)</span>
+        </div>
+
+        <h2 style="font-size: 16px; margin-top: 24px; margin-bottom: 8px;">2. Calculate Scaled Dimensions</h2>
+        <div class="calc-grid-2">
+          <div class="calc-input-group">
+            <label for="new_w">New Width (W₂)</label>
+            <input type="number" id="new_w" value="1280" min="1" step="1" oninput="calculateFromNewWidth()">
+          </div>
+          <div class="calc-input-group">
+            <label for="new_h">New Height (H₂)</label>
+            <input type="number" id="new_h" value="720" min="1" step="1" oninput="calculateFromNewHeight()">
+          </div>
+        </div>
+
+        <!-- Live Visualizer -->
+        <div class="ratio-visualizer-box">
+          <div id="visual_box" class="ratio-box" style="width: 256px; height: 144px;">
+            <span id="visual_box_label">1280 × 720</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>Common Video and Screen Resolutions</h2>
+        <table class="data-table" style="margin-top: 12px;">
+          <thead>
+            <tr>
+              <th>Standard Name</th>
+              <th>Dimensions (W × H)</th>
+              <th>Aspect Ratio</th>
+              <th>Common Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>8K UHD</strong></td>
+              <td>7680 × 4320</td>
+              <td>16:9</td>
+              <td>High-End Cinema &amp; Next-Gen Displays</td>
+            </tr>
+            <tr>
+              <td><strong>4K UHD</strong></td>
+              <td>3840 × 2160</td>
+              <td>16:9</td>
+              <td>4K Streaming, YouTube &amp; TV</td>
+            </tr>
+            <tr>
+              <td><strong>1440p (QHD / 2K)</strong></td>
+              <td>2560 × 1440</td>
+              <td>16:9</td>
+              <td>PC Gaming Monitors &amp; Flagship Phones</td>
+            </tr>
+            <tr>
+              <td><strong>1080p (FHD)</strong></td>
+              <td>1920 × 1080</td>
+              <td>16:9</td>
+              <td>Standard High Definition Video</td>
+            </tr>
+            <tr>
+              <td><strong>720p (HD)</strong></td>
+              <td>1280 × 720</td>
+              <td>16:9</td>
+              <td>Standard Web Streaming &amp; Video Calls</td>
+            </tr>
+            <tr>
+              <td><strong>Mobile Reels / TikTok</strong></td>
+              <td>1080 × 1920</td>
+              <td>9:16</td>
+              <td>Vertical Social Media Videos</td>
+            </tr>
+            <tr>
+              <td><strong>Instagram Post</strong></td>
+              <td>1080 × 1080</td>
+              <td>1:1</td>
+              <td>Square Social Media Photography</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Math &amp; Media Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="../../tools/image-compressor.html">🗜️ Image Compressor</a></li>
+          <li><a href="fraction-calculator.html">➗ Fraction Calculator</a></li>
+          <li><a href="percentage-calculator.html">% Percentage Calculator</a></li>
+          <li><a href="../../tools/color-picker.html">🎨 Color Picker</a></li>
+          <li><a href="scientific-calculator.html">🧮 Scientific Calculator</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Design Friendly</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Keep images, videos, and UI wireframes proportional without distorted stretching.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        const t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    function onOriginalChange() {
+      const w1 = parseFloat(document.getElementById('orig_w').value) || 16;
+      const h1 = parseFloat(document.getElementById('orig_h').value) || 9;
+
+      const divisor = gcd(w1, h1);
+      const simpleW = w1 / divisor;
+      const simpleH = h1 / divisor;
+      const decimalRatio = (w1 / h1).toFixed(2);
+
+      document.getElementById('simplified_ratio_lbl').textContent = `${simpleW} : ${simpleH}`;
+      document.getElementById('decimal_ratio_lbl').textContent = `(${decimalRatio} : 1)`;
+
+      calculateFromNewWidth();
+    }
+
+    function calculateFromNewWidth() {
+      const w1 = parseFloat(document.getElementById('orig_w').value) || 16;
+      const h1 = parseFloat(document.getElementById('orig_h').value) || 9;
+      const w2 = parseFloat(document.getElementById('new_w').value) || 1;
+
+      const h2 = Math.round((w2 * h1) / w1);
+      document.getElementById('new_h').value = h2;
+      updateVisualBox(w2, h2);
+    }
+
+    function calculateFromNewHeight() {
+      const w1 = parseFloat(document.getElementById('orig_w').value) || 16;
+      const h1 = parseFloat(document.getElementById('orig_h').value) || 9;
+      const h2 = parseFloat(document.getElementById('new_h').value) || 1;
+
+      const w2 = Math.round((h2 * w1) / h1);
+      document.getElementById('new_w').value = w2;
+      updateVisualBox(w2, h2);
+    }
+
+    function updateVisualBox(w, h) {
+      const box = document.getElementById('visual_box');
+      const maxW = 280;
+      const maxH = 160;
+
+      const scale = Math.min(maxW / w, maxH / h);
+      const boxW = Math.max(30, Math.round(w * scale));
+      const boxH = Math.max(30, Math.round(h * scale));
+
+      box.style.width = `${boxW}px`;
+      box.style.height = `${boxH}px`;
+      document.getElementById('visual_box_label').textContent = `${w} × ${h}`;
+    }
+
+    function applyPreset(w, h) {
+      document.querySelectorAll('.ratio-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.startsWith(`${w}:${h}`));
+      });
+      document.getElementById('orig_w').value = w;
+      document.getElementById('orig_h').value = h;
+      onOriginalChange();
+      showToast(`Selected ${w}:${h} ratio`);
+    }
+
+    onOriginalChange();
+  </script>
+</body>
+</html>

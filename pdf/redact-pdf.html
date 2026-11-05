@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redact PDF Online Free - Blackout Sensitive Text - RapidTables.online</title>
+  <meta name="description" content="Redact and blackout sensitive text, numbers, and graphics from PDF documents online for free. Permanent sanitization with 100% browser-based privacy.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .redact-workspace {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .redact-canvas-area {
+      flex: 1;
+      min-width: 300px;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .canvas-stack {
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      cursor: crosshair;
+    }
+    .canvas-stack canvas {
+      display: block;
+    }
+    #draw_canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .redact-sidebar {
+      width: 280px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Redact PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Redact &amp; Blackout PDF Content</h1>
+        <p class="subtitle">Permanently sanitize sensitive information from legal contracts, bank records, and IDs. Draw blackout boxes directly on pages.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">⬛</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all PDF files. 100% processed securely in your browser.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handlePdf(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="redact_workspace" class="redact-workspace" style="display: none;">
+          <div class="redact-canvas-area">
+            <div class="canvas-stack" id="canvas_stack">
+              <canvas id="base_canvas"></canvas>
+              <canvas id="draw_canvas"></canvas>
+            </div>
+            <div style="margin-top: 12px; color: #94a3b8; font-size: 13px;">
+              💡 <em>Click and drag over sensitive text or images to draw a permanent blackout box.</em>
+            </div>
+          </div>
+
+          <div class="redact-sidebar">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="font-size: 16px; margin: 0;">Redaction Controls</h3>
+              <div style="font-size: 12px; color: var(--text-muted);">
+                Page: <span id="cur_page_lbl">1</span> / <span id="total_pages_lbl">1</span>
+              </div>
+            </div>
+
+            <!-- Page Nav -->
+            <div style="display: flex; gap: 8px; justify-content: space-between;">
+              <button class="btn btn-secondary btn-sm" onclick="prevPage()">◀ Prev</button>
+              <button class="btn btn-secondary btn-sm" onclick="nextPage()">Next ▶</button>
+            </div>
+
+            <div>
+              <label for="redact_color" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Redaction Style:</label>
+              <select id="redact_color" style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-alt); color: var(--text-main);">
+                <option value="#000000" selected>Blackout (Standard)</option>
+                <option value="#ffffff">Whiteout (Invisible)</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm" onclick="undoLastBox()" style="flex: 1;">↩ Undo Box</button>
+              <button class="btn btn-secondary btn-sm" onclick="clearCurrentPageBoxes()" style="flex: 1;">Clear Page</button>
+            </div>
+
+            <button class="btn btn-primary" id="save_btn" onclick="burnRedactionsAndDownload()" style="width: 100%; padding: 12px; font-size: 15px;">
+              💾 Sanitize &amp; Download PDF
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()" style="width: 100%;">
+              🔄 Choose Another File
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>Permanent vs. Cosmetic Redaction</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Many standard software programs merely draw a black rectangle on top of PDF text, leaving the underlying sensitive letters selectable and extractable by copying or inspecting. RapidTables.online burns your redaction boxes directly into the page raster stream, destroying the original text layer permanently so it can never be recovered.
+        </p>
+
+        <h3 style="margin-top: 16px;">What to Redact Before Sharing</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Personal Identifiers:</strong> Social security numbers, tax IDs, passport numbers, home addresses, phone numbers.</li>
+          <li><strong>Financial Details:</strong> Bank account numbers, routing codes, credit card digits, transaction balances.</li>
+          <li><strong>Legal &amp; Business Data:</strong> Client identities, proprietary formulas, confidential settlements, signature stamps.</li>
+          <li><strong>100% In-Browser Privacy:</strong> Your sensitive files are processed in local browser RAM with zero server-side transmission.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="crop-pdf.html">📐 Crop PDF Margins</a></li>
+          <li><a href="sign-pdf.html">✍️ Sign PDF Document</a></li>
+          <li><a href="watermark-pdf.html">🏷️ Add Watermark</a></li>
+          <li><a href="delete-pdf-pages.html">🗑️ Delete PDF Pages</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Permanent Security</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Redacted information is destroyed client-side. Zero recovery risk.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/redact-pdf.html">Redact PDF</a>
+          <a href="../pdf/crop-pdf.html">Crop PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let currentArrayBuffer = null;
+    let pdfDoc = null;
+    let totalPages = 0;
+    let currentPageNum = 1;
+    let pageBoxes = {}; // { pageNum: [ {x, y, w, h, color} ] }
+    let isDrawing = false;
+    let startX = 0, startY = 0;
+    let currentScale = 1.0;
+
+    async function handlePdf(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      currentArrayBuffer = await file.arrayBuffer();
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Loading ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        pdfDoc = await pdfjsLib.getDocument({ data: currentArrayBuffer.slice(0) }).promise;
+        totalPages = pdfDoc.numPages;
+        currentPageNum = 1;
+        pageBoxes = {};
+
+        document.getElementById('total_pages_lbl').textContent = totalPages;
+        document.getElementById('redact_workspace').style.display = 'flex';
+        status.textContent = '';
+
+        initDrawingListeners();
+        renderPage(currentPageNum);
+      } catch (err) {
+        status.textContent = 'Error opening PDF: ' + err.message;
+      }
+    }
+
+    async function renderPage(num) {
+      if (!pdfDoc) return;
+      document.getElementById('cur_page_lbl').textContent = num;
+      const page = await pdfDoc.getPage(num);
+
+      const unscaledViewport = page.getViewport({ scale: 1.0 });
+      const maxWidth = 560;
+      currentScale = Math.min(1.2, maxWidth / unscaledViewport.width);
+      const viewport = page.getViewport({ scale: currentScale });
+
+      const baseCanvas = document.getElementById('base_canvas');
+      const drawCanvas = document.getElementById('draw_canvas');
+
+      baseCanvas.width = viewport.width;
+      baseCanvas.height = viewport.height;
+      drawCanvas.width = viewport.width;
+      drawCanvas.height = viewport.height;
+
+      const ctx = baseCanvas.getContext('2d');
+      await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+      redrawBoxes();
+    }
+
+    function initDrawingListeners() {
+      const drawCanvas = document.getElementById('draw_canvas');
+      
+      drawCanvas.onmousedown = (e) => {
+        isDrawing = true;
+        const rect = drawCanvas.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+      };
+
+      drawCanvas.onmousemove = (e) => {
+        if (!isDrawing) return;
+        const rect = drawCanvas.getBoundingClientRect();
+        const curX = e.clientX - rect.left;
+        const curY = e.clientY - rect.top;
+
+        redrawBoxes();
+
+        // Draw active drag box
+        const ctx = drawCanvas.getContext('2d');
+        const color = document.getElementById('redact_color').value;
+        ctx.fillStyle = color;
+        ctx.fillRect(
+          Math.min(startX, curX),
+          Math.min(startY, curY),
+          Math.abs(curX - startX),
+          Math.abs(curY - startY)
+        );
+      };
+
+      const finishBox = (e) => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        const rect = drawCanvas.getBoundingClientRect();
+        const curX = e.clientX - rect.left;
+        const curY = e.clientY - rect.top;
+
+        const w = Math.abs(curX - startX);
+        const h = Math.abs(curY - startY);
+
+        if (w > 4 && h > 4) {
+          if (!pageBoxes[currentPageNum]) {
+            pageBoxes[currentPageNum] = [];
+          }
+          const color = document.getElementById('redact_color').value;
+          pageBoxes[currentPageNum].push({
+            x: Math.min(startX, curX),
+            y: Math.min(startY, curY),
+            w: w,
+            h: h,
+            color: color
+          });
+        }
+        redrawBoxes();
+      };
+
+      drawCanvas.onmouseup = finishBox;
+      drawCanvas.onmouseleave = finishBox;
+    }
+
+    function redrawBoxes() {
+      const drawCanvas = document.getElementById('draw_canvas');
+      const ctx = drawCanvas.getContext('2d');
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+
+      const boxes = pageBoxes[currentPageNum] || [];
+      boxes.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+      });
+    }
+
+    function undoLastBox() {
+      if (pageBoxes[currentPageNum] && pageBoxes[currentPageNum].length > 0) {
+        pageBoxes[currentPageNum].pop();
+        redrawBoxes();
+      }
+    }
+
+    function clearCurrentPageBoxes() {
+      pageBoxes[currentPageNum] = [];
+      redrawBoxes();
+    }
+
+    function prevPage() {
+      if (currentPageNum > 1) {
+        currentPageNum--;
+        renderPage(currentPageNum);
+      }
+    }
+
+    function nextPage() {
+      if (currentPageNum < totalPages) {
+        currentPageNum++;
+        renderPage(currentPageNum);
+      }
+    }
+
+    async function burnRedactionsAndDownload() {
+      const btn = document.getElementById('save_btn');
+      btn.disabled = true;
+      btn.textContent = 'Sanitizing PDF...';
+
+      try {
+        const doc = await PDFLib.PDFDocument.create();
+
+        for (let i = 1; i <= totalPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 1.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          // Burn boxes into canvas permanently
+          const boxes = pageBoxes[i] || [];
+          const scaleFactor = viewport.width / document.getElementById('draw_canvas').width;
+
+          boxes.forEach(b => {
+            ctx.fillStyle = b.color;
+            ctx.fillRect(
+              b.x * scaleFactor,
+              b.y * scaleFactor,
+              b.w * scaleFactor,
+              b.h * scaleFactor
+            );
+          });
+
+          // Convert to image and place on new PDF page
+          const pngDataUrl = canvas.toDataURL('image/png');
+          const pngBytes = await fetch(pngDataUrl).then(r => r.arrayBuffer());
+          const embeddedImage = await doc.embedPng(pngBytes);
+
+          const origViewport = page.getViewport({ scale: 1.0 });
+          const newPage = doc.addPage([origViewport.width, origViewport.height]);
+          newPage.drawImage(embeddedImage, {
+            x: 0,
+            y: 0,
+            width: origViewport.width,
+            height: origViewport.height
+          });
+        }
+
+        const sanitizedBytes = await doc.save();
+        const blob = new Blob([sanitizedBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+        a.href = url;
+        a.download = baseName + '-redacted.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Sanitize & Download PDF';
+      } catch (err) {
+        alert('Redaction failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Sanitize & Download PDF';
+      }
+    }
+
+    function resetTool() {
+      currentFile = null;
+      currentArrayBuffer = null;
+      pdfDoc = null;
+      pageBoxes = {};
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('redact_workspace').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

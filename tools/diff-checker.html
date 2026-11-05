@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diff Checker (Compare Text Online) - RapidTables.online</title>
+  <meta name="description" content="Free online diff checker. Compare two text files or snippets side-by-side and find differences, additions, and deletions with instant highlighting.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .diff-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .diff-inputs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .diff-output-box {
+      font-family: monospace;
+      font-size: 13.5px;
+      line-height: 1.5;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin-top: 14px;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .diff-add {
+      background-color: #dcfce7;
+      color: #15803d;
+      display: block;
+      padding: 1px 4px;
+    }
+    .diff-del {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      display: block;
+      padding: 1px 4px;
+      text-decoration: line-through;
+    }
+    .diff-same {
+      color: var(--text-muted);
+      display: block;
+      padding: 1px 4px;
+    }
+    [data-theme="dark"] .diff-add {
+      background-color: #064e3b;
+      color: #6ee7b7;
+    }
+    [data-theme="dark"] .diff-del {
+      background-color: #7f1d1d;
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Diff Checker</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Text Difference Checker</h1>
+        <p class="subtitle">Compare two text files or code snippets and visually highlight differences line-by-line.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="diff-inputs-grid">
+          <div class="form-group">
+            <label for="diff_t1" style="font-weight: 600;">Original Text:</label>
+            <textarea id="diff_t1" class="input-control" rows="8" placeholder="Paste original text here...">The quick brown fox jumps over the lazy dog.
+RapidTables provides calculators and tools.
+Fast and easy to use.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="diff_t2" style="font-weight: 600;">Modified Text:</label>
+            <textarea id="diff_t2" class="input-control" rows="8" placeholder="Paste modified text here...">The quick brown fox jumps over the sleeping dog.
+RapidTables.online provides free online calculators and tools.
+Fast, private, and easy to use.</textarea>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="compareTexts()">🔍 Find Differences</button>
+          <button class="btn btn-secondary" onclick="clearDiff()">Clear All</button>
+        </div>
+
+        <div id="diff_result_wrapper" style="display: none; margin-top: 20px;">
+          <div id="diff_summary" style="font-weight: 600; font-size: 14px; margin-bottom: 8px;"></div>
+          <div id="diff_output" class="diff-output-box"></div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>How Diff Checker Works</h2>
+        <p>A diff tool calculates the difference between two files using the Longest Common Subsequence (LCS) algorithm:</p>
+        <ul>
+          <li><span style="color:#15803d; font-weight:bold;">Green Lines:</span> Content added to the new modified version.</li>
+          <li><span style="color:#b91c1c; font-weight:bold;">Red Lines:</span> Content removed or replaced from the original version.</li>
+          <li><span>Gray Lines:</span> Identical unchanged lines.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Text &amp; Code Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="word-counter.html">Word Counter</a></li>
+          <li><a href="case-converter.html">Case Converter</a></li>
+          <li><a href="json-formatter.html">JSON Formatter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function compareTexts() {
+      const t1 = document.getElementById('diff_t1').value;
+      const t2 = document.getElementById('diff_t2').value;
+
+      const lines1 = t1.split('\n');
+      const lines2 = t2.split('\n');
+
+      let html = '';
+      let added = 0;
+      let removed = 0;
+
+      // Simple line diff
+      const maxLen = Math.max(lines1.length, lines2.length);
+      for (let i = 0; i < maxLen; i++) {
+        const l1 = lines1[i];
+        const l2 = lines2[i];
+
+        if (l1 === l2) {
+          html += `<span class="diff-same">  ${escapeHtml(l1 || '')}</span>`;
+        } else {
+          if (l1 !== undefined) {
+            html += `<span class="diff-del">- ${escapeHtml(l1)}</span>`;
+            removed++;
+          }
+          if (l2 !== undefined) {
+            html += `<span class="diff-add">+ ${escapeHtml(l2)}</span>`;
+            added++;
+          }
+        }
+      }
+
+      document.getElementById('diff_summary').innerHTML = `
+        <span style="color:#15803d;">+ ${added} line(s) added</span> &nbsp;|&nbsp; 
+        <span style="color:#b91c1c;">- ${removed} line(s) removed</span>
+      `;
+      document.getElementById('diff_output').innerHTML = html;
+      document.getElementById('diff_result_wrapper').style.display = 'block';
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function clearDiff() {
+      document.getElementById('diff_t1').value = '';
+      document.getElementById('diff_t2').value = '';
+      document.getElementById('diff_result_wrapper').style.display = 'none';
+    }
+
+    compareTexts();
+  </script>
+</body>
+</html>

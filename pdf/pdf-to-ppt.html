@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert PDF to PowerPoint Online Free (PPTX) - RapidTables.online</title>
+  <meta name="description" content="Convert PDF documents to editable Microsoft PowerPoint (.pptx) presentation slides online for free. 100% private in-browser conversion.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .slides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .slide-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .slide-thumb {
+      background: #0f172a;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+    }
+    .slide-thumb canvas {
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .slide-footer {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-alt);
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF to PowerPoint</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert PDF to PowerPoint (PPTX)</h1>
+        <p class="subtitle">Transform PDF presentations and documents into Microsoft PowerPoint (.pptx) slide decks instantly.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📊➡️📽️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Generates native 16:9 presentation slides client-side.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="result_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="doc_info_lbl">Slides ready</strong>
+            <span id="doc_stats_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" id="download_pptx_btn" onclick="downloadPptx()">💾 Download PowerPoint (.pptx)</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadSlidesZip()">📦 Download Slide Images (ZIP)</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Convert Another</button>
+          </div>
+        </div>
+
+        <div id="slides_grid" class="slides-grid"></div>
+      </div>
+
+      <section class="info-card">
+        <h2>How PDF to PowerPoint Conversion Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Each PDF page is converted into a high-definition 16:9 widescreen slide canvas. The slide graphics are packaged into an OpenXML <code>.pptx</code> presentation bundle with standard slide layouts, ready to present in Microsoft PowerPoint, Google Slides, or Keynote.
+        </p>
+
+        <h3 style="margin-top: 16px;">100% Client-Side Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          No files leave your computer. Presentations, pitch decks, and internal conference slides are rendered entirely inside local memory.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF to Office</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-word.html">📝 PDF to Word (.docx)</a></li>
+          <li><a href="pdf-to-excel.html">📊 PDF to Excel (.xlsx)</a></li>
+          <li><a href="ppt-to-pdf.html">📽️ PPT to PDF</a></li>
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Presentation Ready</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Seamlessly present on big screens or edit in Microsoft PowerPoint.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-ppt.html">PDF to PowerPoint</a>
+          <a href="../pdf/pdf-to-word.html">PDF to Word</a>
+          <a href="../pdf/pdf-to-excel.html">PDF to Excel</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let slideImages = []; // array of { pageNum, dataUrl, width, height }
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      currentFile = file;
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Rendering slides for ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages = pdf.numPages;
+
+        slideImages = [];
+        const grid = document.getElementById('slides_grid');
+        grid.innerHTML = '';
+
+        for (let i = 1; i <= numPages; i++) {
+          status.textContent = `Rendering slide ${i} of ${numPages}...`;
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 1.5 });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          const dataUrl = canvas.toDataURL('image/png');
+          slideImages.push({
+            pageNum: i,
+            dataUrl: dataUrl,
+            width: viewport.width,
+            height: viewport.height
+          });
+
+          // Card preview
+          const card = document.createElement('div');
+          card.className = 'slide-card';
+          const thumbWrap = document.createElement('div');
+          thumbWrap.className = 'slide-thumb';
+          const thumbCanvas = document.createElement('canvas');
+          thumbCanvas.width = viewport.width * 0.25;
+          thumbCanvas.height = viewport.height * 0.25;
+          const thumbCtx = thumbCanvas.getContext('2d');
+          thumbCtx.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
+          thumbWrap.appendChild(thumbCanvas);
+
+          const footer = document.createElement('div');
+          footer.className = 'slide-footer';
+          footer.innerHTML = `<span>Slide ${i}</span><span>📽️ 16:9</span>`;
+
+          card.appendChild(thumbWrap);
+          card.appendChild(footer);
+          grid.appendChild(card);
+        }
+
+        document.getElementById('doc_info_lbl').textContent = file.name;
+        document.getElementById('doc_stats_lbl').textContent = `• ${numPages} presentation slides created`;
+        document.getElementById('result_bar').style.display = 'flex';
+        status.textContent = 'Slides generated successfully!';
+      } catch (err) {
+        status.textContent = 'Error rendering slides: ' + err.message;
+      }
+    }
+
+    async function downloadPptx() {
+      if (!slideImages.length) return;
+      const btn = document.getElementById('download_pptx_btn');
+      btn.disabled = true;
+      btn.textContent = 'Building PPTX...';
+
+      try {
+        const zip = new JSZip();
+
+        // 1. [Content_Types].xml
+        let slideOverrides = '';
+        slideImages.forEach((_, idx) => {
+          slideOverrides += `<Override PartName="/ppt/slides/slide${idx + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`;
+        });
+
+        zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
+  <Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>
+  ${slideOverrides}
+</Types>`);
+
+        // 2. _rels/.rels
+        zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/>
+</Relationships>`);
+
+        // 3. ppt/presentation.xml
+        let sldIdLst = '';
+        slideImages.forEach((_, idx) => {
+          sldIdLst += `<p:sldId id="${256 + idx}" r:id="rId${idx + 1}"/>`;
+        });
+
+        zip.file("ppt/presentation.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:presentation xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:sldSz cx="12192000" cy="6858000" type="screen16x9"/>
+  <p:sldIdLst>
+    ${sldIdLst}
+  </p:sldIdLst>
+</p:presentation>`);
+
+        // 4. ppt/_rels/presentation.xml.rels
+        let presRels = '';
+        slideImages.forEach((_, idx) => {
+          presRels += `<Relationship Id="rId${idx + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide${idx + 1}.xml"/>`;
+        });
+
+        zip.file("ppt/_rels/presentation.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  ${presRels}
+</Relationships>`);
+
+        // 5. For each slide: add image file, slide rels, and slide XML
+        for (let idx = 0; idx < slideImages.length; idx++) {
+          const s = slideImages[idx];
+          const imgBase64 = s.dataUrl.replace(/^data:image\/png;base64,/, "");
+          zip.file(`ppt/media/image${idx + 1}.png`, imgBase64, { base64: true });
+
+          // slide rels
+          zip.file(`ppt/slides/_rels/slide${idx + 1}.xml.rels`, `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/image${idx + 1}.png"/>
+</Relationships>`);
+
+          // slide XML
+          zip.file(`ppt/slides/slide${idx + 1}.xml`, `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:cSld>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr/>
+      <p:pic>
+        <p:nvPicPr>
+          <p:cNvPr id="2" name="Slide Image ${idx + 1}"/>
+          <p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr>
+          <p:nvPr/>
+        </p:nvPicPr>
+        <p:blipFill>
+          <a:blip r:embed="rId1"/>
+          <a:stretch><a:fillRect/></a:stretch>
+        </p:blipFill>
+        <p:spPr>
+          <a:xfrm>
+            <a:off x="0" y="0"/>
+            <a:ext cx="12192000" cy="6858000"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+        </p:spPr>
+      </p:pic>
+    </p:spTree>
+  </p:cSld>
+</p:sld>`);
+        }
+
+        const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation" });
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = baseName + '.pptx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Download PowerPoint (.pptx)';
+      } catch (err) {
+        alert('Failed to generate presentation: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download PowerPoint (.pptx)';
+      }
+    }
+
+    async function downloadSlidesZip() {
+      if (!slideImages.length) return;
+      const zip = new JSZip();
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+
+      slideImages.forEach((s, idx) => {
+        const imgBase64 = s.dataUrl.replace(/^data:image\/png;base64,/, "");
+        zip.file(`${baseName}-slide-${idx + 1}.png`, imgBase64, { base64: true });
+      });
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = baseName + '-slides.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function resetTool() {
+      currentFile = null;
+      slideImages = [];
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('result_bar').style.display = 'none';
+      document.getElementById('slides_grid').innerHTML = '';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

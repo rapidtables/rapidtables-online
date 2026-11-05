@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Online Barcode Generator - RapidTables.online</title>
+  <meta name="description" content="Generate custom barcodes online for free. Supports Code 128, EAN-13, UPC, Code 39, ITF-14, and Pharmacode with instant vector SVG and high-res PNG download.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .barcode-workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .barcode-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+    .preview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+      position: sticky;
+      top: 90px;
+    }
+    .barcode-stage {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: var(--radius-sm);
+      border: 1px dashed #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      overflow-x: auto;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .barcode-stage svg {
+      max-width: 100%;
+      height: auto;
+    }
+    .color-swatch-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      align-items: center;
+    }
+    .color-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .color-btn:hover {
+      transform: scale(1.15);
+    }
+    .btn-action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .btn-action-group .btn {
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+    }
+    .error-banner {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-bottom: 14px;
+      width: 100%;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print_area, #print_area * {
+        visibility: visible;
+      }
+      #print_area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding-top: 50px;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Web Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Barcode Generator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Barcode Generator</h1>
+        <p class="subtitle">Generate standard 1D linear barcodes (Code 128, EAN-13, UPC, Code 39) with custom dimensions, fonts, and print-ready vector SVG or PNG downloads.</p>
+      </div>
+
+      <div class="barcode-workspace">
+        <!-- Configuration Controls -->
+        <div class="tool-box">
+          <h3 style="margin-top:0; margin-bottom:16px;">1. Barcode Configuration</h3>
+
+          <div class="form-group">
+            <label for="barcode_type">Barcode Symbology / Format</label>
+            <select id="barcode_type" class="input-control" onchange="updateFormatHint(); generateBarcode();">
+              <option value="CODE128" selected>Code 128 (Universal, Alphanumeric - Recommended)</option>
+              <option value="EAN13">EAN-13 (International Retail Products - 12 or 13 digits)</option>
+              <option value="UPC">UPC-A (North American Retail - 11 or 12 digits)</option>
+              <option value="EAN8">EAN-8 (Small Package Retail - 7 or 8 digits)</option>
+              <option value="CODE39">Code 39 (Industrial &amp; Logistics, A-Z 0-9 - . $ / + %)</option>
+              <option value="ITF14">ITF-14 / Interleaved 2 of 5 (Shipping cartons - 14 digits)</option>
+              <option value="pharmacode">Pharmacode (Pharmaceutical packaging - digits 3 to 131070)</option>
+              <option value="MSI">MSI / Plessey (Inventory &amp; Warehousing - digits only)</option>
+            </select>
+            <small id="format_hint" style="color:var(--text-muted); font-size:12px; display:block; margin-top:4px;">
+              Supports letters, numbers, and symbols. Perfect for inventory, shipping, and custom IDs.
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label for="barcode_data">Barcode Value / Data Content</label>
+            <input type="text" id="barcode_data" class="input-control" value="RAPIDTABLES-2026" oninput="generateBarcode()">
+          </div>
+
+          <h3 style="margin-top:24px; margin-bottom:16px;">2. Dimensions &amp; Typography</h3>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label for="bar_width">Bar Width (<span id="val_bar_width">2</span>px)</label>
+              <input type="range" id="bar_width" min="1" max="4" step="0.5" value="2" oninput="document.getElementById('val_bar_width').textContent=this.value; generateBarcode();">
+            </div>
+            <div class="form-group">
+              <label for="bar_height">Bar Height (<span id="val_bar_height">80</span>px)</label>
+              <input type="range" id="bar_height" min="30" max="180" step="5" value="80" oninput="document.getElementById('val_bar_height').textContent=this.value; generateBarcode();">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label for="quiet_margin">Quiet Zone / Margin (<span id="val_quiet_margin">10</span>px)</label>
+              <input type="range" id="quiet_margin" min="0" max="40" step="2" value="10" oninput="document.getElementById('val_quiet_margin').textContent=this.value; generateBarcode();">
+            </div>
+            <div class="form-group">
+              <label for="font_size">Text Font Size (<span id="val_font_size">16</span>px)</label>
+              <input type="range" id="font_size" min="10" max="28" step="1" value="16" oninput="document.getElementById('val_font_size').textContent=this.value; generateBarcode();">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="display_value" checked onchange="generateBarcode()"> Show Text Value
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="text_position">Text Position</label>
+              <select id="text_position" class="input-control" onchange="generateBarcode()">
+                <option value="bottom" selected>Bottom</option>
+                <option value="top">Top</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="margin-top:20px; margin-bottom:16px;">3. Color Customization</h3>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="form-group">
+              <label for="bar_color">Bar Color</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="color" id="bar_color" value="#000000" onchange="generateBarcode()" style="height:38px; width:50px; padding:2px; cursor:pointer;">
+                <input type="text" id="bar_color_hex" class="input-control" value="#000000" style="width:100px;" oninput="document.getElementById('bar_color').value=this.value; generateBarcode();">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="bg_color">Background Color</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="color" id="bg_color" value="#ffffff" onchange="generateBarcode()" style="height:38px; width:50px; padding:2px; cursor:pointer;">
+                <label style="font-size:12px; display:flex; align-items:center; gap:4px; margin:0; cursor:pointer;">
+                  <input type="checkbox" id="bg_transparent" onchange="generateBarcode()"> Transparent
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Preview & Export Column -->
+        <div>
+          <div class="preview-card">
+            <h4 style="margin:0 0 16px 0; color:var(--text-main); align-self:flex-start;">Live Barcode Preview</h4>
+            
+            <div id="error_banner" class="error-banner"></div>
+
+            <div id="print_area" class="barcode-stage">
+              <svg id="barcode_svg"></svg>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="btn-action-group">
+              <button class="btn btn-primary" onclick="downloadBarcode('png')">
+                📥 Download PNG
+              </button>
+              <button class="btn btn-secondary" onclick="downloadBarcode('svg')">
+                🎨 Download SVG (Vector)
+              </button>
+              <button class="btn btn-secondary" onclick="copyBarcodeImage()">
+                📋 Copy Image
+              </button>
+              <button class="btn btn-secondary" onclick="window.print()">
+                🖨️ Print Barcode
+              </button>
+            </div>
+
+            <div style="margin-top:14px; font-size:12px; color:var(--text-muted); text-align:center;">
+              High-resolution vector barcode suitable for thermal label printers, offset printing, and packaging.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informational Section -->
+      <section style="margin-top: 40px;" class="tool-box">
+        <h2>Supported Barcode Standards &amp; Formats</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div style="background:var(--bg-alt); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+            <h4 style="margin-top:0; color:var(--primary);">Code 128</h4>
+            <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0;">
+              High-density alphanumeric barcode. Supports all 128 ASCII characters. Widely used for logistics, shipping containers, and asset tracking.
+            </p>
+          </div>
+          <div style="background:var(--bg-alt); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+            <h4 style="margin-top:0; color:var(--primary);">EAN-13 &amp; UPC-A</h4>
+            <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0;">
+              Standard retail product barcodes scanned at supermarket point-of-sale checkouts worldwide (EAN in Europe/Asia/Latin America, UPC in USA/Canada).
+            </p>
+          </div>
+          <div style="background:var(--bg-alt); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-color);">
+            <h4 style="margin-top:0; color:var(--primary);">Code 39 &amp; ITF-14</h4>
+            <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin:0;">
+              Standard in industrial, automotive, aerospace, and defense applications. ITF-14 is standard for corrugated master shipping cartons.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Web Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="qr-code-generator.html">📱 Custom QR Designer</a></li>
+          <li><a href="color-picker.html">🎨 Color Picker</a></li>
+          <li><a href="image-compressor.html">🗜️ Image Compressor</a></li>
+          <li><a href="notepad.html">📝 Online Notepad</a></li>
+          <li><a href="diff-checker.html">🔍 Text Diff Checker</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Print &amp; Scanner Tips</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted); margin:0;">
+          Maintain a clean white Quiet Zone (margin) of at least 10px on both sides so standard laser and camera barcode readers can detect the start and stop characters accurately.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/barcode-generator.html">Barcode Generator</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const hints = {
+      "CODE128": "Supports all 128 ASCII characters (letters, digits, symbols). Great for any custom ID.",
+      "EAN13": "Requires 12 or 13 digits. If 12 digits entered, check digit is auto-calculated.",
+      "UPC": "Requires 11 or 12 digits (UPC-A). Standard in North America.",
+      "EAN8": "Requires 7 or 8 digits. Used for small commercial packages.",
+      "CODE39": "Supports uppercase letters (A-Z), numbers (0-9) and symbols (- . $ / + % space).",
+      "ITF14": "Requires 14 numeric digits. Standard for outer shipping cartons.",
+      "pharmacode": "Requires numeric integer value between 3 and 131070.",
+      "MSI": "Requires numeric digits only (0-9). Used in warehouse inventory."
+    };
+
+    function updateFormatHint() {
+      const type = document.getElementById('barcode_type').value;
+      document.getElementById('format_hint').textContent = hints[type] || "";
+      const valInput = document.getElementById('barcode_data');
+      if (type === 'EAN13' && !/^\d{12,13}$/.test(valInput.value)) {
+        valInput.value = "590123412345";
+      } else if (type === 'UPC' && !/^\d{11,12}$/.test(valInput.value)) {
+        valInput.value = "01234567890";
+      } else if (type === 'EAN8' && !/^\d{7,8}$/.test(valInput.value)) {
+        valInput.value = "1234567";
+      } else if (type === 'ITF14' && !/^\d{14}$/.test(valInput.value)) {
+        valInput.value = "10012345678902";
+      } else if (type === 'pharmacode' && !/^\d+$/.test(valInput.value)) {
+        valInput.value = "1234";
+      } else if (type === 'MSI' && !/^\d+$/.test(valInput.value)) {
+        valInput.value = "12345678";
+      }
+    }
+
+    function generateBarcode() {
+      const errorBanner = document.getElementById('error_banner');
+      errorBanner.style.display = 'none';
+
+      const format = document.getElementById('barcode_type').value;
+      const text = document.getElementById('barcode_data').value.trim();
+      const width = parseFloat(document.getElementById('bar_width').value) || 2;
+      const height = parseInt(document.getElementById('bar_height').value, 10) || 80;
+      const margin = parseInt(document.getElementById('quiet_margin').value, 10) || 10;
+      const fontSize = parseInt(document.getElementById('font_size').value, 10) || 16;
+      const displayValue = document.getElementById('display_value').checked;
+      const textPosition = document.getElementById('text_position').value;
+      const lineColor = document.getElementById('bar_color').value;
+      const isTransparent = document.getElementById('bg_transparent').checked;
+      const background = isTransparent ? "transparent" : document.getElementById('bg_color').value;
+
+      document.getElementById('bar_color_hex').value = lineColor;
+
+      if (!text) {
+        errorBanner.textContent = "Please enter barcode content.";
+        errorBanner.style.display = 'block';
+        return;
+      }
+
+      try {
+        JsBarcode("#barcode_svg", text, {
+          format: format,
+          width: width,
+          height: height,
+          displayValue: displayValue,
+          textPosition: textPosition,
+          fontSize: fontSize,
+          margin: margin,
+          lineColor: lineColor,
+          background: background,
+          font: "monospace",
+          valid: function(valid) {
+            if (!valid) {
+              errorBanner.textContent = `Invalid data for ${format}. Please check character and length requirements.`;
+              errorBanner.style.display = 'block';
+            }
+          }
+        });
+      } catch (err) {
+        errorBanner.textContent = err.message || "Failed to generate barcode.";
+        errorBanner.style.display = 'block';
+      }
+    }
+
+    function downloadBarcode(type) {
+      const svg = document.getElementById('barcode_svg');
+      if (!svg || !svg.innerHTML) {
+        showToast("Generate a barcode first!");
+        return;
+      }
+
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const filename = `barcode_${document.getElementById('barcode_data').value.trim().replace(/[^a-zA-Z0-9_-]/g, '_') || 'code'}`;
+
+      if (type === 'svg') {
+        const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Vector SVG downloaded!");
+      } else {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = function() {
+          const scale = 2; // high-res
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          ctx.scale(scale, scale);
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+
+          canvas.toBlob(function(blob) {
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = `${filename}.png`;
+            a.click();
+            URL.revokeObjectURL(pngUrl);
+            showToast("High-res PNG downloaded!");
+          });
+        };
+        img.src = url;
+      }
+    }
+
+    async function copyBarcodeImage() {
+      const svg = document.getElementById('barcode_svg');
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = async function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob(async function(blob) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            showToast("Barcode copied to clipboard!");
+          } catch (err) {
+            showToast("Could not copy directly. Please download PNG instead.");
+          }
+        });
+      };
+      img.src = url;
+    }
+
+    // Initial render on load
+    window.addEventListener('DOMContentLoaded', () => {
+      generateBarcode();
+    });
+  </script>
+</body>
+</html>

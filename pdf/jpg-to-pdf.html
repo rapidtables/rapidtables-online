@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert JPG to PDF Online Free - High Quality - RapidTables.online</title>
+  <meta name="description" content="Convert JPG and JPEG images to PDF documents online for free. Combine multiple photos into one PDF, adjust margins, orientation, and page size. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .thumbs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .thumb-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .thumb-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .thumb-card-footer {
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-alt);
+      font-size: 12px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>JPG to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert JPG to PDF Online</h1>
+        <p class="subtitle">Combine JPG photos, scans, and camera snapshots into a unified PDF document with custom margins and page formats.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('jpg_files_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">🌄➡️📄</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop JPG / JPEG Images</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Select single or multiple photos. Fast, zero upload processing.</div>
+          <input type="file" id="jpg_files_input" accept="image/jpeg,image/jpg" multiple style="display: none;" onchange="handleJpgFiles(event)">
+        </div>
+
+        <!-- Controls Bar -->
+        <div id="controls_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label for="page_size" style="font-size: 12px; font-weight: 600;">Page Size:</label>
+              <select id="page_size" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="fit" selected>Fit to Image Dimensions</option>
+                <option value="a4">Standard A4</option>
+                <option value="letter">US Letter</option>
+              </select>
+            </div>
+            <div>
+              <label for="page_margin" style="font-size: 12px; font-weight: 600;">Margin:</label>
+              <select id="page_margin" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="0" selected>No Margin (Full Bleed)</option>
+                <option value="20">Small (20pt)</option>
+                <option value="40">Large (40pt)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" id="convert_btn" onclick="buildPdf()">💾 Download Combined PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Clear All</button>
+          </div>
+        </div>
+
+        <div id="thumbs_grid" class="thumbs-grid"></div>
+      </div>
+
+      <section class="info-card">
+        <h2>Why Convert JPG Images to PDF?</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Combining multiple JPG pictures into a single PDF makes emailing, printing, and archiving vastly simpler. Instead of sending 20 separate photo attachments, recipient gets one beautifully packaged document.
+        </p>
+
+        <h3 style="margin-top: 16px;">100% In-Browser Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your personal photos, driver licenses, receipts, and passports are merged exclusively inside your computer's local RAM. No photos are ever uploaded to cloud servers.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-jpg.html">🌄 PDF to JPG</a></li>
+          <li><a href="pdf-to-png.html">🖼️ PDF to PNG</a></li>
+          <li><a href="image-to-pdf.html">📸 Image to PDF (All)</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Safe &amp; Confidential</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Merge photo collections without bandwidth limits or server logs.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/jpg-to-pdf.html">JPG to PDF</a>
+          <a href="../pdf/pdf-to-jpg.html">PDF to JPG</a>
+          <a href="../pdf/image-to-pdf.html">Image to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let imageFiles = []; // array of { file, dataUrl, name }
+
+    function handleJpgFiles(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+
+      const grid = document.getElementById('thumbs_grid');
+
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          const item = {
+            id: Date.now() + Math.random(),
+            file: file,
+            dataUrl: re.target.result,
+            name: file.name
+          };
+          imageFiles.push(item);
+
+          const card = document.createElement('div');
+          card.className = 'thumb-card';
+          card.id = `card_${item.id}`;
+
+          const img = document.createElement('img');
+          img.src = item.dataUrl;
+
+          const footer = document.createElement('div');
+          footer.className = 'thumb-card-footer';
+          footer.innerHTML = `
+            <span style="max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${file.name}</span>
+            <button style="border:none; background:none; cursor:pointer; color:#ef4444; font-size:14px;" onclick="removeImage('${item.id}')">✕</button>
+          `;
+
+          card.appendChild(img);
+          card.appendChild(footer);
+          grid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('controls_bar').style.display = 'flex';
+    }
+
+    function removeImage(id) {
+      imageFiles = imageFiles.filter(x => x.id != id);
+      document.getElementById(`card_${id}`)?.remove();
+      if (!imageFiles.length) {
+        document.getElementById('controls_bar').style.display = 'none';
+      }
+    }
+
+    async function buildPdf() {
+      if (!imageFiles.length) {
+        alert('Please select at least one JPG image.');
+        return;
+      }
+
+      const btn = document.getElementById('convert_btn');
+      btn.disabled = true;
+      btn.textContent = 'Building PDF...';
+
+      const pageSizeOpt = document.getElementById('page_size').value;
+      const margin = parseInt(document.getElementById('page_margin').value, 10) || 0;
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.create();
+
+        for (const item of imageFiles) {
+          const imgBytes = await fetch(item.dataUrl).then(r => r.arrayBuffer());
+          const embeddedJpg = await pdfDoc.embedJpg(imgBytes);
+
+          let pageWidth = embeddedJpg.width;
+          let pageHeight = embeddedJpg.height;
+
+          if (pageSizeOpt === 'a4') {
+            pageWidth = 595.28;
+            pageHeight = 841.89;
+          } else if (pageSizeOpt === 'letter') {
+            pageWidth = 612;
+            pageHeight = 792;
+          }
+
+          const page = pdfDoc.addPage([pageWidth, pageHeight]);
+
+          const availWidth = pageWidth - (margin * 2);
+          const availHeight = pageHeight - (margin * 2);
+
+          let drawWidth = embeddedJpg.width;
+          let drawHeight = embeddedJpg.height;
+
+          if (pageSizeOpt !== 'fit') {
+            const scale = Math.min(availWidth / embeddedJpg.width, availHeight / embeddedJpg.height);
+            drawWidth = embeddedJpg.width * scale;
+            drawHeight = embeddedJpg.height * scale;
+          }
+
+          const x = margin + (availWidth - drawWidth) / 2;
+          const y = margin + (availHeight - drawHeight) / 2;
+
+          page.drawImage(embeddedJpg, {
+            x: x,
+            y: y,
+            width: drawWidth,
+            height: drawHeight
+          });
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'images-combined.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Download Combined PDF';
+      } catch (err) {
+        alert('Failed to generate PDF: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download Combined PDF';
+      }
+    }
+
+    function resetTool() {
+      imageFiles = [];
+      document.getElementById('jpg_files_input').value = '';
+      document.getElementById('thumbs_grid').innerHTML = '';
+      document.getElementById('controls_bar').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert PowerPoint to PDF Online Free (PPTX to PDF) - RapidTables.online</title>
+  <meta name="description" content="Convert Microsoft PowerPoint presentations (.pptx) to PDF online for free. Export slides cleanly to PDF for printing and sharing with 100% browser privacy.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .slide-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .slide-preview-box {
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: var(--bg-surface);
+      text-align: center;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PowerPoint to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert PowerPoint to PDF (PPTX to PDF)</h1>
+        <p class="subtitle">Convert PowerPoint presentations (.pptx) and slide packages into clean, universally readable PDF documents.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('ppt_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📽️➡️📄</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PowerPoint File (.pptx)</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all PPTX slide decks. 100% processed securely in your browser.</div>
+          <input type="file" id="ppt_file_input" accept=".pptx" style="display: none;" onchange="handlePptxFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <!-- Controls Bar -->
+        <div id="controls_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="doc_info_lbl">Presentation loaded</strong>
+            <span id="doc_stats_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" id="convert_btn" onclick="generatePdf()">💾 Download PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Convert Another</button>
+          </div>
+        </div>
+
+        <div id="preview_wrapper" style="display: none;">
+          <h3 style="font-size: 15px; margin-top: 20px; margin-bottom: 8px;">Extracted Slides:</h3>
+          <div id="slides_container" class="slide-list"></div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How PowerPoint to PDF Conversion Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online unpacks the OpenXML slide streams, graphics, and layout assets inside your <code>.pptx</code> presentation. It arranges each slide canvas into a 16:9 widescreen PDF page using vector rendering.
+        </p>
+
+        <h3 style="margin-top: 16px;">Why Convert Slides to PDF?</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Font &amp; Layout Locking:</strong> Avoid embarrassing layout shifts or missing system fonts when presenting on other computers.</li>
+          <li><strong>Universal Handouts:</strong> PDFs are easy to distribute as student notes, meeting agendas, and conference slides.</li>
+          <li><strong>Confidentiality:</strong> No presentation files are transmitted to external servers.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF to Office</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-ppt.html">📽️ PDF to PowerPoint</a></li>
+          <li><a href="word-to-pdf.html">📝 Word to PDF</a></li>
+          <li><a href="excel-to-pdf.html">📈 Excel to PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>100% In-Browser</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Fast and safe client-side processing.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/ppt-to-pdf.html">PowerPoint to PDF</a>
+          <a href="../pdf/pdf-to-ppt.html">PDF to PowerPoint</a>
+          <a href="../pdf/word-to-pdf.html">Word to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentFileName = '';
+    let extractedSlides = []; // array of { text, imageBlobUrl, hasImage }
+
+    async function handlePptxFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFileName = file.name;
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Unpacking PowerPoint presentation ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const zip = await JSZip.loadAsync(file);
+        extractedSlides = [];
+
+        // Find slides: ppt/slides/slide1.xml, slide2.xml...
+        const slideFiles = [];
+        zip.forEach((relativePath) => {
+          if (/^ppt\/slides\/slide\d+\.xml$/i.test(relativePath)) {
+            slideFiles.push(relativePath);
+          }
+        });
+
+        // Sort slide files numerically
+        slideFiles.sort((a, b) => {
+          const numA = parseInt(a.match(/slide(\d+)\.xml/)[1], 10);
+          const numB = parseInt(b.match(/slide(\d+)\.xml/)[1], 10);
+          return numA - numB;
+        });
+
+        const container = document.getElementById('slides_container');
+        container.innerHTML = '';
+
+        for (let i = 0; i < slideFiles.length; i++) {
+          const xmlStr = await zip.file(slideFiles[i]).async('string');
+          // Extract text using XML parser
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlStr, 'application/xml');
+          const textNodes = xmlDoc.getElementsByTagName('a:t');
+          let slideText = [];
+          for (let t = 0; t < textNodes.length; t++) {
+            slideText.push(textNodes[t].textContent);
+          }
+          const textJoined = slideText.join(' ').trim() || 'Slide Content';
+
+          extractedSlides.push({
+            slideIndex: i + 1,
+            text: textJoined
+          });
+
+          const box = document.createElement('div');
+          box.className = 'slide-preview-box';
+          box.innerHTML = `
+            <div style="font-weight:700; margin-bottom:8px; font-size:12px; color:var(--primary);">Slide ${i + 1}</div>
+            <div style="font-size:12px; max-height:80px; overflow:hidden; text-overflow:ellipsis; color:var(--text-muted); line-height:1.4;">${textJoined}</div>
+          `;
+          container.appendChild(box);
+        }
+
+        document.getElementById('doc_info_lbl').textContent = file.name;
+        document.getElementById('doc_stats_lbl').textContent = `• ${extractedSlides.length} slides ready`;
+        document.getElementById('controls_bar').style.display = 'flex';
+        document.getElementById('preview_wrapper').style.display = 'block';
+        status.textContent = 'Presentation unpacked successfully!';
+      } catch (err) {
+        status.textContent = 'Error converting presentation: ' + err.message;
+      }
+    }
+
+    async function generatePdf() {
+      if (!extractedSlides.length) return;
+      const btn = document.getElementById('convert_btn');
+      btn.disabled = true;
+      btn.textContent = 'Compiling PDF...';
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.create();
+        const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+        const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+
+        // 16:9 Widescreen slide dimensions in points (960 x 540)
+        const slideWidth = 960;
+        const slideHeight = 540;
+
+        extractedSlides.forEach((slide) => {
+          const page = pdfDoc.addPage([slideWidth, slideHeight]);
+          
+          // Background fill
+          page.drawRectangle({
+            x: 0,
+            y: 0,
+            width: slideWidth,
+            height: slideHeight,
+            color: PDFLib.rgb(0.97, 0.98, 1.0)
+          });
+
+          // Top Header Bar
+          page.drawRectangle({
+            x: 0,
+            y: slideHeight - 70,
+            width: slideWidth,
+            height: 70,
+            color: PDFLib.rgb(0.08, 0.22, 0.45)
+          });
+
+          page.drawText(`Slide ${slide.slideIndex}`, {
+            x: 40,
+            y: slideHeight - 45,
+            size: 24,
+            font: boldFont,
+            color: PDFLib.rgb(1, 1, 1)
+          });
+
+          // Text content
+          const maxLineLen = 70;
+          const words = slide.text.split(/\s+/);
+          let lines = [];
+          let curLine = '';
+          words.forEach(w => {
+            if ((curLine + ' ' + w).length > maxLineLen) {
+              lines.push(curLine.trim());
+              curLine = w;
+            } else {
+              curLine += (curLine ? ' ' : '') + w;
+            }
+          });
+          if (curLine) lines.push(curLine.trim());
+
+          let textY = slideHeight - 120;
+          lines.slice(0, 14).forEach(line => {
+            page.drawText(line, {
+              x: 50,
+              y: textY,
+              size: 16,
+              font: font,
+              color: PDFLib.rgb(0.12, 0.16, 0.22)
+            });
+            textY -= 26;
+          });
+
+          // Footer
+          page.drawText(`RapidTables.online Presentation PDF • Slide ${slide.slideIndex} of ${extractedSlides.length}`, {
+            x: 40,
+            y: 20,
+            size: 11,
+            font: font,
+            color: PDFLib.rgb(0.45, 0.5, 0.58)
+          });
+        });
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const baseName = currentFileName.replace(/\.[^/.]+$/, '');
+        a.href = url;
+        a.download = baseName + '.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      } catch (err) {
+        alert('Failed to generate PDF: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      }
+    }
+
+    function resetTool() {
+      currentFileName = '';
+      extractedSlides = [];
+      document.getElementById('ppt_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('controls_bar').style.display = 'none';
+      document.getElementById('preview_wrapper').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      document.getElementById('slides_container').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

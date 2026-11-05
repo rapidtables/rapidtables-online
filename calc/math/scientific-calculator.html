@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scientific Calculator Online - RapidTables.online</title>
+  <meta name="description" content="Free online scientific calculator with advanced math functions: trigonometry (sin, cos, tan), logarithms, powers, roots, radians/degrees, and history.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .calc-container {
+      max-width: 440px;
+      margin: 0 auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-md);
+    }
+    .calc-screen {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 14px;
+      text-align: right;
+    }
+    .calc-history {
+      font-size: 13px;
+      color: var(--text-muted);
+      min-height: 18px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .calc-display {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .calc-btn {
+      padding: 12px 6px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .calc-btn:hover {
+      background: var(--bg-alt);
+    }
+    .calc-btn.btn-op {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .calc-btn.btn-eq {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      grid-column: span 2;
+    }
+    .calc-btn.btn-eq:hover {
+      background: var(--primary-hover);
+    }
+    .calc-mode {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Scientific Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      
+      <div class="page-title-section">
+        <h1>Scientific Calculator</h1>
+        <p class="subtitle">Fast online scientific calculator supporting trigonometry, logarithms, exponential powers, roots, and angle units.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="calc-container">
+          <div class="calc-mode">
+            <div>
+              <label><input type="radio" name="angle_mode" value="deg" checked onchange="setAngleMode('deg')"> DEG</label>
+              &nbsp;
+              <label><input type="radio" name="angle_mode" value="rad" onchange="setAngleMode('rad')"> RAD</label>
+            </div>
+            <span id="calc-status" style="color:var(--text-muted); font-size:12px;">Ready</span>
+          </div>
+
+          <div class="calc-screen">
+            <div id="calc-history" class="calc-history"></div>
+            <div id="calc-display" class="calc-display">0</div>
+          </div>
+
+          <div class="calc-grid">
+            <!-- Row 1 -->
+            <button class="calc-btn btn-op" onclick="fnTrig('sin')">sin</button>
+            <button class="calc-btn btn-op" onclick="fnTrig('cos')">cos</button>
+            <button class="calc-btn btn-op" onclick="fnTrig('tan')">tan</button>
+            <button class="calc-btn btn-op" onclick="insertVal('(')">(</button>
+            <button class="calc-btn btn-op" onclick="insertVal(')')">)</button>
+
+            <!-- Row 2 -->
+            <button class="calc-btn btn-op" onclick="fnLog()">log</button>
+            <button class="calc-btn btn-op" onclick="fnLn()">ln</button>
+            <button class="calc-btn btn-op" onclick="fnSqrt()">√</button>
+            <button class="calc-btn btn-op" onclick="insertVal('^')">xʸ</button>
+            <button class="calc-btn" style="color:red;" onclick="calcClear()">C</button>
+
+            <!-- Row 3 -->
+            <button class="calc-btn btn-op" onclick="insertVal('π')">π</button>
+            <button class="calc-btn" onclick="insertVal('7')">7</button>
+            <button class="calc-btn" onclick="insertVal('8')">8</button>
+            <button class="calc-btn" onclick="insertVal('9')">9</button>
+            <button class="calc-btn btn-op" onclick="insertVal('/')">÷</button>
+
+            <!-- Row 4 -->
+            <button class="calc-btn btn-op" onclick="insertVal('e')">e</button>
+            <button class="calc-btn" onclick="insertVal('4')">4</button>
+            <button class="calc-btn" onclick="insertVal('5')">5</button>
+            <button class="calc-btn" onclick="insertVal('6')">6</button>
+            <button class="calc-btn btn-op" onclick="insertVal('*')">×</button>
+
+            <!-- Row 5 -->
+            <button class="calc-btn btn-op" onclick="fnFactorial()">n!</button>
+            <button class="calc-btn" onclick="insertVal('1')">1</button>
+            <button class="calc-btn" onclick="insertVal('2')">2</button>
+            <button class="calc-btn" onclick="insertVal('3')">3</button>
+            <button class="calc-btn btn-op" onclick="insertVal('-')">-</button>
+
+            <!-- Row 6 -->
+            <button class="calc-btn" onclick="calcBackspace()">⌫</button>
+            <button class="calc-btn" onclick="insertVal('0')">0</button>
+            <button class="calc-btn" onclick="insertVal('.')">.</button>
+            <button class="calc-btn btn-op" onclick="insertVal('+')">+</button>
+            <button class="calc-btn btn-eq" style="grid-column: span 1;" onclick="calcEquals()">=</button>
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>About the Scientific Calculator</h2>
+        <p>This online scientific calculator performs both basic arithmetic (+, -, ×, ÷) and advanced scientific mathematics directly in your web browser:</p>
+        <ul>
+          <li><strong>Trigonometry</strong>: Sine (sin), Cosine (cos), Tangent (tan) with configurable Degree (DEG) or Radian (RAD) mode.</li>
+          <li><strong>Logarithmic Functions</strong>: Base-10 logarithm (<code>log</code>) and natural logarithm (<code>ln</code>).</li>
+          <li><strong>Powers and Roots</strong>: Square root (<code>√</code>) and custom exponents (<code>x^y</code>).</li>
+          <li><strong>Constants &amp; Factorials</strong>: Mathematical constants Pi (<code>π ≈ 3.14159</code>), Euler's number (<code>e ≈ 2.71828</code>), and factorial (<code>n!</code>).</li>
+        </ul>
+      </article>
+
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Math Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="percentage-calculator.html">Percentage Calculator</a></li>
+          <li><a href="fraction-calculator.html">Fraction Calculator</a></li>
+          <li><a href="average-calculator.html">Average Calculator</a></li>
+          <li><a href="../../convert/number-base-converter.html">Number Base Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    let expr = "";
+    let angleMode = "deg";
+    const display = document.getElementById("calc-display");
+    const history = document.getElementById("calc-history");
+
+    function setAngleMode(mode) {
+      angleMode = mode;
+    }
+
+    function insertVal(v) {
+      if (expr === "0" && !isNaN(v)) expr = "";
+      expr += v;
+      display.textContent = expr;
+    }
+
+    function calcClear() {
+      expr = "";
+      display.textContent = "0";
+      history.textContent = "";
+    }
+
+    function calcBackspace() {
+      expr = expr.slice(0, -1);
+      display.textContent = expr || "0";
+    }
+
+    function fnTrig(name) {
+      try {
+        let cur = parseCurrent();
+        let rad = angleMode === "deg" ? (cur * Math.PI) / 180 : cur;
+        let res = 0;
+        if (name === "sin") res = Math.sin(rad);
+        if (name === "cos") res = Math.cos(rad);
+        if (name === "tan") res = Math.tan(rad);
+        setResult(res, `${name}(${cur})`);
+      } catch (e) {
+        display.textContent = "Error";
+      }
+    }
+
+    function fnLog() {
+      let cur = parseCurrent();
+      if (cur <= 0) return display.textContent = "Error";
+      setResult(Math.log10(cur), `log(${cur})`);
+    }
+
+    function fnLn() {
+      let cur = parseCurrent();
+      if (cur <= 0) return display.textContent = "Error";
+      setResult(Math.log(cur), `ln(${cur})`);
+    }
+
+    function fnSqrt() {
+      let cur = parseCurrent();
+      if (cur < 0) return display.textContent = "Error";
+      setResult(Math.sqrt(cur), `√(${cur})`);
+    }
+
+    function fnFactorial() {
+      let n = Math.round(parseCurrent());
+      if (n < 0 || n > 170) return display.textContent = "Error";
+      let f = 1;
+      for (let i = 2; i <= n; i++) f *= i;
+      setResult(f, `${n}!`);
+    }
+
+    function parseCurrent() {
+      calcEquals(false);
+      return parseFloat(display.textContent) || 0;
+    }
+
+    function setResult(val, histText) {
+      val = Number(val.toFixed(8));
+      history.textContent = histText;
+      display.textContent = val.toString();
+      expr = val.toString();
+    }
+
+    function calcEquals(updateHistory = true) {
+      if (!expr) return;
+      try {
+        let sanitized = expr
+          .replace(/×/g, "*")
+          .replace(/÷/g, "/")
+          .replace(/π/g, "Math.PI")
+          .replace(/e/g, "Math.E")
+          .replace(/\^/g, "**");
+        
+        // Safe evaluation
+        let result = Function('"use strict";return (' + sanitized + ')')();
+        if (typeof result === "number" && !isNaN(result) && isFinite(result)) {
+          result = Number(result.toFixed(8));
+          if (updateHistory) history.textContent = expr + " =";
+          display.textContent = result.toString();
+          expr = result.toString();
+        } else {
+          display.textContent = "Error";
+        }
+      } catch (err) {
+        display.textContent = "Error";
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", (e) => {
+      if (document.activeElement.tagName === "INPUT") return;
+      if (!isNaN(e.key) || "+-*/().".includes(e.key)) {
+        insertVal(e.key);
+      } else if (e.key === "Enter") {
+        calcEquals();
+      } else if (e.key === "Backspace") {
+        calcBackspace();
+      } else if (e.key === "Escape") {
+        calcClear();
+      }
+    });
+  </script>
+</body>
+</html>

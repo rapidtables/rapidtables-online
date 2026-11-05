@@ -1,0 +1,82 @@
+# ==============================================================================
+# Nginx Configuration for RapidTables.online (Oracle Cloud VPS)
+# Enforces HTTPS & Canonical WWW (https://www.rapidtables.online)
+# ==============================================================================
+
+# 1. Redirect all HTTP (Port 80) to HTTPS WWW
+server {
+    listen 80;
+    listen [::]:80;
+    server_name rapidtables.online www.rapidtables.online;
+
+    return 301 https://www.rapidtables.online$request_uri;
+}
+
+# 2. Redirect HTTPS non-www (https://rapidtables.online) to HTTPS WWW
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name rapidtables.online;
+
+    # SSL Certificates (managed by Certbot / Let's Encrypt)
+    ssl_certificate /etc/letsencrypt/live/rapidtables.online/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/rapidtables.online/privkey.pem;
+
+    return 301 https://www.rapidtables.online$request_uri;
+}
+
+# 3. Main Canonical Server Block (https://www.rapidtables.online)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.rapidtables.online;
+
+    root /var/www/rapidtables.online;
+    index index.html;
+
+    # SSL Certificates
+    ssl_certificate /etc/letsencrypt/live/rapidtables.online/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/rapidtables.online/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Security Headers
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+    # Canonical 301: /index.html -> /
+    if ($request_uri ~ ^/index\.html$) {
+        return 301 /;
+    }
+
+    # Canonical 301: /dir/index.html -> /dir/
+    if ($request_uri ~ ^/(.*)/index\.html$) {
+        return 301 /$1/;
+    }
+
+    # 301 Redirect old /about/ URLs to clean root pages
+    location = /about { return 301 /about.html; }
+    location = /about/ { return 301 /about.html; }
+    location = /about/about.html { return 301 /about.html; }
+    location ~ ^/about/privacy(\.html)?$ { return 301 /privacy.html; }
+    location ~ ^/about/terms(\.html)?$ { return 301 /terms.html; }
+    location ~ ^/about/contact(\.html)?$ { return 301 /contact.html; }
+
+    # Gzip Compression
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 256;
+
+    # Browser Caching
+    location ~* \.(css|js|png|jpg|jpeg|gif|svg|webp|ico|woff2?)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # Clean directory & extensionless routing
+    location / {
+        try_files $uri $uri/ $uri.html =404;
+    }
+}

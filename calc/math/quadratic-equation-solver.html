@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quadratic Equation Solver - RapidTables.online</title>
+  <meta name="description" content="Free online quadratic equation solver. Solve ax² + bx + c = 0 with step-by-step formula, discriminant, real &amp; complex roots, and vertex coordinates.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Quadratic Equation Solver</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Quadratic Equation Solver</h1>
+        <p class="subtitle">Solve second-order polynomial equations in the standard form: <strong>ax² + bx + c = 0</strong>.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 18px; font-weight: bold; margin-bottom: 16px;">
+          <input type="number" id="q_a" class="input-control" style="width: 80px; text-align: center;" value="1" step="any">
+          <span>x² +</span>
+          <input type="number" id="q_b" class="input-control" style="width: 80px; text-align: center;" value="-5" step="any">
+          <span>x +</span>
+          <input type="number" id="q_c" class="input-control" style="width: 80px; text-align: center;" value="6" step="any">
+          <span>= 0</span>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="solveQuadratic()">Solve Equation</button>
+          <button class="btn btn-secondary" onclick="resetQuad()">Reset</button>
+        </div>
+
+        <div id="res_quad" class="result-card hidden">
+          <h3>Calculated Roots</h3>
+          <div class="result-value" id="quad_roots">x₁ = 3, x₂ = 2</div>
+          <div class="result-details" id="quad_details" style="margin-top: 10px;"></div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Quadratic Formula</h2>
+        <p>Roots of the quadratic equation <code>ax² + bx + c = 0</code> are given by:</p>
+        <div class="formula-box">x = [ -b ± √(b² - 4ac) ] / (2a)</div>
+        <p>The term <code>Δ = b² - 4ac</code> is the <strong>discriminant</strong>:</p>
+        <ul>
+          <li><strong>Δ &gt; 0:</strong> Two distinct real roots.</li>
+          <li><strong>Δ = 0:</strong> Exactly one real root (double root).</li>
+          <li><strong>Δ &lt; 0:</strong> Two conjugate complex roots.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Math Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="percentage-calculator.html">Percentage Calculator</a></li>
+          <li><a href="logarithm-calculator.html">Logarithm Calculator</a></li>
+          <li><a href="exponent-calculator.html">Exponent Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function solveQuadratic() {
+      const a = parseFloat(document.getElementById('q_a').value);
+      const b = parseFloat(document.getElementById('q_b').value);
+      const c = parseFloat(document.getElementById('q_c').value);
+
+      if (isNaN(a) || isNaN(b) || isNaN(c)) return;
+      if (a === 0) {
+        alert("Coefficient 'a' cannot be 0 in a quadratic equation (that would be a linear equation).");
+        return;
+      }
+
+      const d = (b * b) - (4 * a * c);
+      let rText = "";
+      let detail = `Discriminant (Δ = b² - 4ac): ${d.toFixed(4)}`;
+
+      // Parabola vertex: h = -b/(2a), k = c - b²/(4a)
+      const h = -b / (2 * a);
+      const k = c - (b * b) / (4 * a);
+
+      if (d > 0) {
+        const x1 = (-b + Math.sqrt(d)) / (2 * a);
+        const x2 = (-b - Math.sqrt(d)) / (2 * a);
+        rText = `x₁ = ${Number(x1.toFixed(5))}, x₂ = ${Number(x2.toFixed(5))}`;
+        detail += ` | Real distinct roots. Vertex at (${h.toFixed(3)}, ${k.toFixed(3)})`;
+      } else if (d === 0) {
+        const x = -b / (2 * a);
+        rText = `x = ${Number(x.toFixed(5))} (Double Root)`;
+        detail += ` | Exactly one real solution. Vertex at (${h.toFixed(3)}, ${k.toFixed(3)})`;
+      } else {
+        const real = -b / (2 * a);
+        const imag = Math.sqrt(-d) / (2 * a);
+        rText = `x₁ = ${real.toFixed(4)} + ${Math.abs(imag).toFixed(4)}i, x₂ = ${real.toFixed(4)} - ${Math.abs(imag).toFixed(4)}i`;
+        detail += ` | Complex conjugate roots. Vertex at (${h.toFixed(3)}, ${k.toFixed(3)})`;
+      }
+
+      document.getElementById('quad_roots').textContent = rText;
+      document.getElementById('quad_details').textContent = detail;
+      document.getElementById('res_quad').classList.remove('hidden');
+    }
+
+    function resetQuad() {
+      document.getElementById('q_a').value = '1';
+      document.getElementById('q_b').value = '-5';
+      document.getElementById('q_c').value = '6';
+      solveQuadratic();
+    }
+
+    solveQuadratic();
+  </script>
+</body>
+</html>

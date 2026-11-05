@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Formatter &amp; Minifier - RapidTables.online</title>
+  <meta name="description" content="Free online CSS beautifier, formatter, and minifier. Clean up messy stylesheets, indent CSS rules, or compress CSS to save bandwidth.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>CSS Formatter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>CSS Formatter &amp; Minifier</h1>
+        <p class="subtitle">Beautify unformatted CSS stylesheets or compress them into minified production code.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="form-group">
+          <label for="css_code">CSS Source Code:</label>
+          <textarea id="css_code" class="input-control" rows="12" style="font-family: monospace; font-size: 13.5px;" placeholder="Paste CSS here...">body{margin:0;padding:0;font-family:sans-serif;}h1{color:#1976d2;font-size:24px;}.btn{background:#1976d2;color:#fff;border-radius:4px;padding:8px 16px;}</textarea>
+        </div>
+
+        <div id="css_stats" style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px;"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="formatCss()">✨ Beautify / Format</button>
+          <button class="btn btn-primary" onclick="minifyCss()">📦 Minify / Compress</button>
+          <button class="btn btn-secondary" onclick="copyText('css_code')">📋 Copy</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('css_code').value=''; document.getElementById('css_stats').textContent='';">Clear</button>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Why Minify CSS?</h2>
+        <p>Minifying CSS removes unnecessary spaces, line breaks, indentation, and comments from stylesheets. This reduces file size, decreases bandwidth usage, and speeds up web page load times.</p>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Developer Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="html-editor.html">HTML Editor</a></li>
+          <li><a href="json-formatter.html">JSON Formatter</a></li>
+          <li><a href="color-picker.html">Color Picker</a></li>
+          <li><a href="diff-checker.html">Diff Checker</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function formatCss() {
+      let css = document.getElementById('css_code').value;
+      if (!css) return;
+
+      // Clean extra spaces
+      css = css.replace(/\s*\{\s*/g, " {\n  ");
+      css = css.replace(/;\s*/g, ";\n  ");
+      css = css.replace(/,\s*/g, ", ");
+      css = css.replace(/\s*\}\s*/g, "\n}\n\n");
+      css = css.replace(/\n\s*\n\s*\}/g, "\n}");
+      css = css.replace(/  \}/g, "}");
+      css = css.trim();
+
+      document.getElementById('css_code').value = css;
+      document.getElementById('css_stats').textContent = `Formatted: ${css.length} characters`;
+      showToast('CSS formatted!');
+    }
+
+    function minifyCss() {
+      let css = document.getElementById('css_code').value;
+      if (!css) return;
+
+      const origLen = css.length;
+      css = css.replace(/\/\*[\s\S]*?\*\//g, ""); // strip comments
+      css = css.replace(/\s+/g, " ");
+      css = css.replace(/\s*([\{\}:;,])\s*/g, "$1");
+      css = css.replace(/;\}/g, "}");
+      css = css.trim();
+
+      const newLen = css.length;
+      const saved = Math.round((1 - (newLen / origLen)) * 100);
+
+      document.getElementById('css_code').value = css;
+      document.getElementById('css_stats').textContent = `Minified: ${newLen} chars (${Math.max(0, saved)}% reduction)`;
+      showToast('CSS minified!');
+    }
+
+    formatCss();
+  </script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WCAG Color Contrast Checker - RapidTables.online</title>
+  <meta name="description" content="Free online WCAG 2.1 color contrast checker. Test contrast ratios for AA and AAA accessibility compliance with live preview of headings, text, and buttons.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .contrast-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pass {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .badge-fail {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .compliance-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .preview-canvas-box {
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 30px;
+      margin-top: 24px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .color-input-combo {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .color-input-combo input[type="color"] {
+      width: 48px;
+      height: 40px;
+      padding: 2px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      background: var(--bg-surface);
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Color Contrast Checker</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>WCAG Color Contrast Checker</h1>
+        <p class="subtitle">Check contrast ratios between foreground text and background colors according to WCAG 2.1 Level AA &amp; AAA accessibility standards.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="calc-grid-2">
+          <!-- Text Color -->
+          <div class="calc-input-group">
+            <label for="text_color_hex">Text / Foreground Color</label>
+            <div class="color-input-combo">
+              <input type="color" id="text_color_picker" value="#0f172a" oninput="onPickerChange('text')">
+              <input type="text" id="text_color_hex" value="#0F172A" oninput="onHexChange('text')">
+            </div>
+          </div>
+
+          <!-- Background Color -->
+          <div class="calc-input-group">
+            <label for="bg_color_hex">Background Color</label>
+            <div class="color-input-combo">
+              <input type="color" id="bg_color_picker" value="#ffffff" oninput="onPickerChange('bg')">
+              <input type="text" id="bg_color_hex" value="#FFFFFF" oninput="onHexChange('bg')">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="swapColors()">🔄 Swap Colors</button>
+          <button class="btn btn-secondary btn-sm" onclick="setPresetColors('#1e293b', '#f8fafc')">Slate on White</button>
+          <button class="btn btn-secondary btn-sm" onclick="setPresetColors('#ffffff', '#2563eb')">White on Blue</button>
+          <button class="btn btn-secondary btn-sm" onclick="setPresetColors('#f8fafc', '#0f172a')">Light on Dark</button>
+          <button class="btn btn-secondary btn-sm" onclick="setPresetColors('#eab308', '#ffffff')">Low Contrast (Warning)</button>
+        </div>
+
+        <!-- Big Contrast Ratio Stat -->
+        <div style="margin-top: 24px; text-align: center; padding: 20px; background: var(--bg-alt); border-radius: var(--radius-md);">
+          <div style="font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Contrast Ratio</div>
+          <div id="ratio_stat_number" style="font-size: 48px; font-weight: 800; color: var(--primary); margin: 6px 0;">19.55 : 1</div>
+          <div id="overall_verdict_badge" class="contrast-badge badge-pass">Superb Contrast</div>
+        </div>
+
+        <!-- Compliance Cards Grid -->
+        <div class="compliance-grid">
+          <div class="compliance-card">
+            <div>
+              <strong>WCAG Level AA</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Normal Text (&gt; 4.5:1)</div>
+            </div>
+            <span id="badge_aa_normal" class="contrast-badge badge-pass">PASS</span>
+          </div>
+
+          <div class="compliance-card">
+            <div>
+              <strong>WCAG Level AA</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Large Text / 18pt+ (&gt; 3.0:1)</div>
+            </div>
+            <span id="badge_aa_large" class="contrast-badge badge-pass">PASS</span>
+          </div>
+
+          <div class="compliance-card">
+            <div>
+              <strong>WCAG Level AAA</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Normal Text (&gt; 7.0:1)</div>
+            </div>
+            <span id="badge_aaa_normal" class="contrast-badge badge-pass">PASS</span>
+          </div>
+
+          <div class="compliance-card">
+            <div>
+              <strong>WCAG Level AAA</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Large Text / 18pt+ (&gt; 4.5:1)</div>
+            </div>
+            <span id="badge_aaa_large" class="contrast-badge badge-pass">PASS</span>
+          </div>
+
+          <div class="compliance-card">
+            <div>
+              <strong>UI Components</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Icons &amp; Inputs (&gt; 3.0:1)</div>
+            </div>
+            <span id="badge_ui" class="contrast-badge badge-pass">PASS</span>
+          </div>
+        </div>
+
+        <!-- Live Visual Preview Box -->
+        <div id="preview_canvas" class="preview-canvas-box" style="background: #ffffff; color: #0f172a;">
+          <h2 style="margin-top: 0; font-size: 24px; color: inherit;">Sample Heading (18pt Bold)</h2>
+          <p style="font-size: 14px; line-height: 1.6; color: inherit;">
+            This is an interactive preview showing how body paragraphs, readable font sizes, and user interface elements look using your selected colors.
+          </p>
+          <button type="button" style="padding: 10px 18px; font-weight: 700; border-radius: 6px; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; margin-top: 10px;">
+            Sample Action Button
+          </button>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>Understanding Web Content Accessibility Guidelines (WCAG)</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          To ensure that websites and software applications are accessible to users with low vision, color blindness, or age-related visual impairments, the World Wide Web Consortium (W3C) established the WCAG 2.1 standard:
+        </p>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted); margin-top: 10px;">
+          <li><strong>Level AA (Minimum Legal Standard):</strong> Requires a contrast ratio of at least <strong>4.5:1</strong> for normal text and <strong>3:1</strong> for large text (18pt or 14pt bold). Most international laws (ADA, Section 508, European EN 301 549) require Level AA compliance.</li>
+          <li><strong>Level AAA (Enhanced Standard):</strong> Requires a contrast ratio of at least <strong>7:1</strong> for normal body text and <strong>4.5:1</strong> for large text.</li>
+          <li><strong>UI Components:</strong> Interactive form inputs, borders, and functional icons must achieve at least <strong>3:1</strong> contrast against their adjacent background.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Design Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="color-picker.html">🎨 Color Picker &amp; HEX/RGB</a></li>
+          <li><a href="../calc/math/aspect-ratio-calculator.html">📐 Aspect Ratio Calculator</a></li>
+          <li><a href="image-compressor.html">🗜️ Image Compressor</a></li>
+          <li><a href="css-formatter.html">🎨 CSS Formatter</a></li>
+          <li><a href="html-editor.html">&lt;/&gt; HTML Live Editor</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Accessibility First</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Testing contrast early prevents costly redesigns and ensures all visitors can read your content comfortably.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function hexToRgb(hex) {
+      hex = hex.replace(/^#/, '');
+      if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+      }
+      const num = parseInt(hex, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    // Relative luminance calculation according to WCAG 2.1
+    function getLuminance(r, g, b) {
+      const a = [r, g, b].map(v => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    }
+
+    function calculateContrast() {
+      const textHex = document.getElementById('text_color_hex').value.trim();
+      const bgHex = document.getElementById('bg_color_hex').value.trim();
+
+      const rgb1 = hexToRgb(textHex);
+      const rgb2 = hexToRgb(bgHex);
+
+      const l1 = getLuminance(rgb1.r, rgb1.g, rgb1.b);
+      const l2 = getLuminance(rgb2.r, rgb2.g, rgb2.b);
+
+      const lighter = Math.max(l1, l2);
+      const darker = Math.min(l1, l2);
+      const ratio = (lighter + 0.05) / (darker + 0.05);
+
+      document.getElementById('ratio_stat_number').textContent = `${ratio.toFixed(2)} : 1`;
+
+      // Update Preview Canvas
+      const canvas = document.getElementById('preview_canvas');
+      canvas.style.backgroundColor = bgHex;
+      canvas.style.color = textHex;
+
+      // Update Badges
+      updateBadge('badge_aa_normal', ratio >= 4.5);
+      updateBadge('badge_aa_large', ratio >= 3.0);
+      updateBadge('badge_aaa_normal', ratio >= 7.0);
+      updateBadge('badge_aaa_large', ratio >= 4.5);
+      updateBadge('badge_ui', ratio >= 3.0);
+
+      // Overall Verdict
+      const verdict = document.getElementById('overall_verdict_badge');
+      if (ratio >= 7.0) {
+        verdict.textContent = 'Excellent (AAA Compliant)';
+        verdict.className = 'contrast-badge badge-pass';
+      } else if (ratio >= 4.5) {
+        verdict.textContent = 'Good (AA Compliant)';
+        verdict.className = 'contrast-badge badge-pass';
+      } else if (ratio >= 3.0) {
+        verdict.textContent = 'Fair (Large Text Only)';
+        verdict.className = 'contrast-badge badge-pass';
+      } else {
+        verdict.textContent = 'Poor Contrast (Fails WCAG)';
+        verdict.className = 'contrast-badge badge-fail';
+      }
+    }
+
+    function updateBadge(id, isPass) {
+      const el = document.getElementById(id);
+      el.textContent = isPass ? 'PASS' : 'FAIL';
+      el.className = `contrast-badge ${isPass ? 'badge-pass' : 'badge-fail'}`;
+    }
+
+    function onPickerChange(type) {
+      if (type === 'text') {
+        const val = document.getElementById('text_color_picker').value;
+        document.getElementById('text_color_hex').value = val.toUpperCase();
+      } else {
+        const val = document.getElementById('bg_color_picker').value;
+        document.getElementById('bg_color_hex').value = val.toUpperCase();
+      }
+      calculateContrast();
+    }
+
+    function onHexChange(type) {
+      if (type === 'text') {
+        let val = document.getElementById('text_color_hex').value.trim();
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          document.getElementById('text_color_picker').value = val;
+        }
+      } else {
+        let val = document.getElementById('bg_color_hex').value.trim();
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          document.getElementById('bg_color_picker').value = val;
+        }
+      }
+      calculateContrast();
+    }
+
+    function swapColors() {
+      const tHex = document.getElementById('text_color_hex').value;
+      const bHex = document.getElementById('bg_color_hex').value;
+
+      document.getElementById('text_color_hex').value = bHex;
+      document.getElementById('bg_color_hex').value = tHex;
+      document.getElementById('text_color_picker').value = bHex;
+      document.getElementById('bg_color_picker').value = tHex;
+
+      calculateContrast();
+      showToast('Colors swapped');
+    }
+
+    function setPresetColors(text, bg) {
+      document.getElementById('text_color_hex').value = text;
+      document.getElementById('bg_color_hex').value = bg;
+      document.getElementById('text_color_picker').value = text;
+      document.getElementById('bg_color_picker').value = bg;
+      calculateContrast();
+    }
+
+    calculateContrast();
+  </script>
+</body>
+</html>

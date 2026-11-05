@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organize &amp; Delete PDF Pages Online - RapidTables.online</title>
+  <meta name="description" content="Organize, reorder, sort, and delete pages from PDF documents visually online for free. Drag or move pages with live thumbnail previews. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .organize-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .page-item-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform var(--transition), border-color var(--transition), opacity var(--transition);
+    }
+    .page-item-card.deleted {
+      opacity: 0.35;
+      border-style: dashed;
+      border-color: #ef4444;
+      filter: grayscale(1);
+    }
+    .page-thumb-container {
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      min-height: 200px;
+    }
+    .page-thumb-container canvas {
+      max-width: 100%;
+      max-height: 220px;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border-radius: 2px;
+    }
+    .page-actions-bar {
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border-color);
+      gap: 6px;
+    }
+    .page-actions-bar button {
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .page-actions-bar button:hover {
+      background: var(--border-color);
+    }
+    .btn-delete-page {
+      color: #ef4444 !important;
+      border-color: #fca5a5 !important;
+    }
+    .page-order-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+    .deleted-overlay-badge {
+      display: none;
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ef4444;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .page-item-card.deleted .deleted-overlay-badge {
+      display: block;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Organize &amp; Delete Pages</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Organize &amp; Delete PDF Pages</h1>
+        <p class="subtitle">Sort, reorder, delete unwanted pages, and re-arrange your PDF documents visually with instant thumbnail previews.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 40px; margin-bottom: 8px;">📂</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Load your document to view and organize pages visually.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+
+        <!-- Controls Toolbar -->
+        <div id="toolbar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong>Document Pages:</strong> <span id="pages_counter_lbl"></span>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="restoreAllPages()">🔄 Restore All Pages</button>
+            <button class="btn btn-primary btn-sm" id="export_btn" onclick="exportOrganizedPdf()">💾 Save &amp; Download PDF</button>
+          </div>
+        </div>
+
+        <!-- Grid Container -->
+        <div id="organize_grid" class="organize-grid"></div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Reorder and Delete PDF Pages</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Select your file. Each page will render into an interactive visual card.</li>
+          <li><strong>Reorder Pages:</strong> Use the left (⬅️) and right (➡️) arrows to move pages to your desired order.</li>
+          <li><strong>Remove Pages:</strong> Click the trash icon (🗑️) to delete any unwanted or blank pages. Click it again anytime to undo.</li>
+          <li><strong>Export:</strong> Click "Save &amp; Download PDF" to assemble your new streamlined PDF instantly.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">100% In-Browser Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Unlike conventional online services that require uploading your private files to remote cloud servers, RapidTables.online organizes your document entirely inside your local browser memory using WebAssembly. Your files never touch external servers or the cloud.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="split-pdf.html">✂️ Split PDF Pages</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+          <li><a href="watermark-pdf.html">🏷️ Add Watermark to PDF</a></li>
+          <li><a href="page-numbers.html">🔢 Add Page Numbers</a></li>
+          <li><a href="rotate-pdf.html">🔄 Rotate PDF Pages</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Fast &amp; Free</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          No sign-ups, no watermarks, and no page limitations. Free for unlimited use.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let selectedFile = null;
+    let rawPdfBytes = null;
+    let loadedPdfDoc = null;
+    let pageItems = []; // Array of { originalIndex: 0, isDeleted: false, canvas: HTMLCanvasElement }
+
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--primary)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'var(--border-color)';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPdfFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(event) {
+      if (event.target.files && event.target.files[0]) {
+        loadPdfFile(event.target.files[0]);
+      }
+    }
+
+    async function loadPdfFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      selectedFile = file;
+      const statusMsg = document.getElementById('status_msg');
+      statusMsg.textContent = `Reading and rendering pages from ${file.name}...`;
+
+      try {
+        rawPdfBytes = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: rawPdfBytes });
+        loadedPdfDoc = await loadingTask.promise;
+        const total = loadedPdfDoc.numPages;
+
+        pageItems = [];
+        for (let i = 1; i <= total; i++) {
+          statusMsg.textContent = `Rendering page thumbnail ${i} of ${total}...`;
+          const page = await loadedPdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 0.45 }); // fast lightweight thumbnail
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          pageItems.push({
+            originalIndex: i - 1, // 0-based for pdf-lib
+            isDeleted: false,
+            canvas: canvas
+          });
+        }
+
+        renderGrid();
+        document.getElementById('toolbar').style.display = 'flex';
+        statusMsg.textContent = `✅ Ready! Reorder pages or click 🗑️ to delete.`;
+        showToast(`Loaded ${total} pages`);
+      } catch (err) {
+        alert("Failed to load PDF: " + err.message);
+        statusMsg.textContent = 'Error parsing PDF document.';
+      }
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('organize_grid');
+      grid.innerHTML = '';
+
+      let activeCount = 0;
+
+      pageItems.forEach((item, index) => {
+        if (!item.isDeleted) activeCount++;
+
+        const card = document.createElement('div');
+        card.className = `page-item-card ${item.isDeleted ? 'deleted' : ''}`;
+
+        const badge = document.createElement('div');
+        badge.className = 'page-order-badge';
+        badge.textContent = `Pos: ${index + 1} (Orig: #${item.originalIndex + 1})`;
+
+        const delOverlay = document.createElement('div');
+        delOverlay.className = 'deleted-overlay-badge';
+        delOverlay.textContent = 'DELETED';
+
+        const thumbContainer = document.createElement('div');
+        thumbContainer.className = 'page-thumb-container';
+        thumbContainer.appendChild(item.canvas.cloneNode(true));
+
+        const actionsBar = document.createElement('div');
+        actionsBar.className = 'page-actions-bar';
+
+        const moveLeftBtn = document.createElement('button');
+        moveLeftBtn.innerHTML = '⬅️';
+        moveLeftBtn.title = 'Move Earlier';
+        moveLeftBtn.disabled = index === 0;
+        moveLeftBtn.onclick = () => movePage(index, -1);
+
+        const toggleDelBtn = document.createElement('button');
+        toggleDelBtn.className = 'btn-delete-page';
+        toggleDelBtn.innerHTML = item.isDeleted ? '↩️ Restore' : '🗑️ Delete';
+        toggleDelBtn.title = item.isDeleted ? 'Restore this page' : 'Exclude this page from export';
+        toggleDelBtn.onclick = () => toggleDelete(index);
+
+        const moveRightBtn = document.createElement('button');
+        moveRightBtn.innerHTML = '➡️';
+        moveRightBtn.title = 'Move Later';
+        moveRightBtn.disabled = index === pageItems.length - 1;
+        moveRightBtn.onclick = () => movePage(index, 1);
+
+        actionsBar.appendChild(moveLeftBtn);
+        actionsBar.appendChild(toggleDelBtn);
+        actionsBar.appendChild(moveRightBtn);
+
+        card.appendChild(badge);
+        card.appendChild(thumbContainer);
+        card.appendChild(delOverlay);
+        card.appendChild(actionsBar);
+
+        grid.appendChild(card);
+      });
+
+      document.getElementById('pages_counter_lbl').textContent = `${activeCount} active page(s) out of ${pageItems.length} total`;
+      document.getElementById('export_btn').disabled = activeCount === 0;
+    }
+
+    function movePage(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= pageItems.length) return;
+
+      const temp = pageItems[index];
+      pageItems[index] = pageItems[targetIndex];
+      pageItems[targetIndex] = temp;
+
+      renderGrid();
+    }
+
+    function toggleDelete(index) {
+      pageItems[index].isDeleted = !pageItems[index].isDeleted;
+      renderGrid();
+    }
+
+    function restoreAllPages() {
+      pageItems.forEach(item => item.isDeleted = false);
+      renderGrid();
+      showToast('All pages restored');
+    }
+
+    async function exportOrganizedPdf() {
+      const activePages = pageItems.filter(item => !item.isDeleted);
+      if (activePages.length === 0) {
+        alert('Please keep at least one page to export.');
+        return;
+      }
+
+      const statusMsg = document.getElementById('status_msg');
+      const exportBtn = document.getElementById('export_btn');
+      statusMsg.textContent = 'Generating organized PDF...';
+      exportBtn.disabled = true;
+
+      try {
+        const srcPdf = await PDFLib.PDFDocument.load(rawPdfBytes);
+        const newPdf = await PDFLib.PDFDocument.create();
+
+        // Copy in the specified order
+        for (const item of activePages) {
+          const [copiedPage] = await newPdf.copyPages(srcPdf, [item.originalIndex]);
+          newPdf.addPage(copiedPage);
+        }
+
+        const newBytes = await newPdf.save();
+        const blob = new Blob([newBytes], { type: 'application/pdf' });
+        const a = document.createElement('a');
+        const originalName = selectedFile ? selectedFile.name.replace(/\.pdf$/i, '') : 'document';
+        a.href = URL.createObjectURL(blob);
+        a.download = `${originalName}_organized.pdf`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        statusMsg.textContent = `✅ Successfully exported PDF with ${activePages.length} pages!`;
+        showToast('Organized PDF downloaded!');
+      } catch (err) {
+        alert("Export error: " + err.message);
+        statusMsg.textContent = 'Error building organized PDF.';
+      } finally {
+        exportBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

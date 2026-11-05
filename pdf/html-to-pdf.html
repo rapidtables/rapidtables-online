@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML to PDF Converter Online Free - RapidTables.online</title>
+  <meta name="description" content="Convert HTML code and webpages into clean, printable PDF documents online for free. Live preview, custom margins, and 100% private in-browser rendering.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 768px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .code-input-area {
+      width: 100%;
+      height: 380px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      resize: vertical;
+    }
+    .preview-box {
+      width: 100%;
+      height: 380px;
+      padding: 16px;
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>HTML to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert HTML to PDF Online</h1>
+        <p class="subtitle">Render HTML code and webpage snippets into clean, high-resolution PDF documents with live preview and custom page settings.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label for="page_size" style="font-size: 12px; font-weight: 600;">Size:</label>
+              <select id="page_size" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="a4" selected>A4</option>
+                <option value="letter">Letter</option>
+                <option value="legal">Legal</option>
+              </select>
+            </div>
+            <div>
+              <label for="page_orient" style="font-size: 12px; font-weight: 600;">Orientation:</label>
+              <select id="page_orient" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="portrait" selected>Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" id="convert_btn" onclick="downloadPdf()">💾 Download PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadSample()">📋 Load Sample</button>
+          </div>
+        </div>
+
+        <div class="editor-grid">
+          <div>
+            <label for="html_input" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">HTML &amp; Inline CSS Code:</label>
+            <textarea id="html_input" class="code-input-area" oninput="updatePreview()" placeholder="Type or paste HTML code here..."></textarea>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 6px;">Live Rendered Preview:</label>
+            <div id="html_preview" class="preview-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>Professional HTML to PDF Rendering</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online parses CSS styles, tables, headings, and web typography, compiling the visual tree directly into an A4 or Letter PDF document without needing browser print dialogs.
+        </p>
+
+        <h3 style="margin-top: 16px;">100% In-Browser Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your HTML source and invoice templates are rendered exclusively inside local browser memory.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="text-to-pdf.html">📄 Text to PDF</a></li>
+          <li><a href="word-to-pdf.html">📝 Word to PDF</a></li>
+          <li><a href="excel-to-pdf.html">📈 Excel to PDF</a></li>
+          <li><a href="csv-to-pdf.html">📊 CSV to PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Fast &amp; Free</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Print and save web templates without limits.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/html-to-pdf.html">HTML to PDF</a>
+          <a href="../pdf/text-to-pdf.html">Text to PDF</a>
+          <a href="../pdf/word-to-pdf.html">Word to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updatePreview() {
+      const code = document.getElementById('html_input').value;
+      document.getElementById('html_preview').innerHTML = code;
+    }
+
+    function loadSample() {
+      const sample = `<div style="font-family: Arial, sans-serif; padding: 20px;">
+  <h1 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">Business Invoice #INV-2026-001</h1>
+  <p><strong>Billed To:</strong> Acme Corporation<br><strong>Date:</strong> November 5, 2026</p>
+  
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+      <tr style="background: #f1f5f9; text-align: left;">
+        <th style="padding: 10px; border: 1px solid #cbd5e1;">Service Description</th>
+        <th style="padding: 10px; border: 1px solid #cbd5e1; width: 80px;">Hours</th>
+        <th style="padding: 10px; border: 1px solid #cbd5e1; width: 100px;">Rate</th>
+        <th style="padding: 10px; border: 1px solid #cbd5e1; width: 120px;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">Enterprise Cloud Architecture</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">40</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">$150.00</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">$6,000.00</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">Security Audit & Penetration Testing</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">20</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">$175.00</td>
+        <td style="padding: 8px; border: 1px solid #cbd5e1;">$3,500.00</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr style="font-weight: bold; background: #e2e8f0;">
+        <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #cbd5e1;">Grand Total:</td>
+        <td style="padding: 10px; border: 1px solid #cbd5e1; color: #16a34a;">$9,500.00</td>
+      </tr>
+    </tfoot>
+  </table>
+  
+  <p style="margin-top: 30px; font-size: 12px; color: #64748b;">Payment due within 30 days. Thank you for your business!</p>
+</div>`;
+      document.getElementById('html_input').value = sample;
+      updatePreview();
+    }
+
+    async function downloadPdf() {
+      const element = document.getElementById('html_preview');
+      const pageSize = document.getElementById('page_size').value;
+      const orientation = document.getElementById('page_orient').value;
+      const btn = document.getElementById('convert_btn');
+
+      btn.disabled = true;
+      btn.textContent = 'Generating PDF...';
+
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: 'rendered-document.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: pageSize, orientation: orientation }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      } catch (err) {
+        alert('PDF Generation failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      }
+    }
+
+    // Initialize sample on load
+    loadSample();
+  </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tip Calculator &amp; Bill Splitter - RapidTables.online</title>
+  <meta name="description" content="Free online tip calculator and bill split tool. Calculate exact tip percentages, total bill, and split amounts per person with instant round up options.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .preset-tip-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    @media (max-width: 600px) {
+      .preset-tip-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .tip-btn {
+      padding: 10px 4px;
+      font-size: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .tip-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .result-highlight-card {
+      background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg-surface) 100%);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 600px) {
+      .result-highlight-card {
+        grid-template-columns: 1fr;
+      }
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#finance-calculators">Finance</a>
+    <span class="sep">&gt;</span>
+    <span>Tip Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Tip Calculator &amp; Bill Splitter</h1>
+        <p class="subtitle">Quickly calculate tip percentages, total dining bills, and easily split charges among multiple people.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="calc-grid-2">
+          <div class="calc-input-group">
+            <label for="currency_symbol">Currency</label>
+            <select id="currency_symbol" onchange="calculateTip()">
+              <option value="$" selected>USD ($)</option>
+              <option value="€">EUR (€)</option>
+              <option value="£">GBP (£)</option>
+              <option value="₹">INR (₹)</option>
+              <option value="Rs">PKR (Rs)</option>
+              <option value="¥">JPY/CNY (¥)</option>
+              <option value="C$">CAD (C$)</option>
+              <option value="A$">AUD (A$)</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="bill_amount">Bill Amount</label>
+            <input type="number" id="bill_amount" value="85.00" min="0" step="0.01" oninput="calculateTip()">
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <label style="font-size: 13px; font-weight: 600;">Select Tip Percentage</label>
+          <div class="preset-tip-grid">
+            <button type="button" class="tip-btn" data-tip="10" onclick="selectPresetTip(10)">10%</button>
+            <button type="button" class="tip-btn active" data-tip="15" onclick="selectPresetTip(15)">15%</button>
+            <button type="button" class="tip-btn" data-tip="18" onclick="selectPresetTip(18)">18%</button>
+            <button type="button" class="tip-btn" data-tip="20" onclick="selectPresetTip(20)">20%</button>
+            <button type="button" class="tip-btn" data-tip="25" onclick="selectPresetTip(25)">25%</button>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 16px;">
+          <div class="calc-input-group">
+            <label for="custom_tip">Custom Tip (%)</label>
+            <input type="number" id="custom_tip" value="15" min="0" max="100" step="0.5" oninput="onCustomTipInput()">
+          </div>
+          <div class="calc-input-group">
+            <label for="num_people">Number of People to Split</label>
+            <input type="number" id="num_people" value="2" min="1" max="100" step="1" oninput="calculateTip()">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="roundTotal('up')">⬆️ Round Up Total</button>
+          <button class="btn btn-secondary btn-sm" onclick="roundTotal('down')">⬇️ Round Down Total</button>
+          <button class="btn btn-secondary btn-sm" onclick="resetCalculator()">Reset Defaults</button>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-highlight-card">
+          <div class="stat-item">
+            <span class="stat-label">Total Tip Amount</span>
+            <span class="stat-val" id="res_total_tip">$12.75</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Bill (With Tip)</span>
+            <span class="stat-val" id="res_total_bill">$97.75</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Tip Per Person</span>
+            <span class="stat-val" style="font-size: 24px; color: var(--text-main);" id="res_tip_per_person">$6.38</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Per Person</span>
+            <span class="stat-val" style="font-size: 24px; color: #16a34a;" id="res_total_per_person">$48.88</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>Standard Tipping Guidelines</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Tipping etiquette varies around the world, especially in North American dining culture:
+        </p>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted); margin-top: 10px;">
+          <li><strong>15%:</strong> Standard baseline for polite, satisfactory table service.</li>
+          <li><strong>18%:</strong> Standard for good restaurant service.</li>
+          <li><strong>20%:</strong> Excellent, attentive service.</li>
+          <li><strong>25%+:</strong> Outstanding hospitality, exceptional dining experiences, or large group tables.</li>
+          <li><strong>Food Delivery &amp; Taxi:</strong> Commonly 10% to 15%, or a minimum of $3 to $5.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Finance Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="discount-calculator.html">🏷️ Discount Calculator</a></li>
+          <li><a href="sales-tax-calculator.html">🧾 Sales Tax Calculator</a></li>
+          <li><a href="salary-calculator.html">💼 Salary &amp; Wage Calculator</a></li>
+          <li><a href="loan-calculator.html">🚗 Loan EMI Calculator</a></li>
+          <li><a href="compound-interest-calculator.html">📈 Compound Interest</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Fast Calculations</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Instantly split dinner checks, bar tabs, and taxi rides with zero math errors.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function selectPresetTip(percentage) {
+      document.querySelectorAll('.tip-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.tip, 10) === percentage);
+      });
+      document.getElementById('custom_tip').value = percentage;
+      calculateTip();
+    }
+
+    function onCustomTipInput() {
+      const customVal = parseFloat(document.getElementById('custom_tip').value);
+      document.querySelectorAll('.tip-btn').forEach(btn => {
+        btn.classList.toggle('active', parseFloat(btn.dataset.tip) === customVal);
+      });
+      calculateTip();
+    }
+
+    function calculateTip() {
+      const sym = document.getElementById('currency_symbol').value;
+      const bill = parseFloat(document.getElementById('bill_amount').value) || 0;
+      const tipPercent = parseFloat(document.getElementById('custom_tip').value) || 0;
+      const people = parseInt(document.getElementById('num_people').value, 10) || 1;
+
+      const tipTotal = bill * (tipPercent / 100);
+      const totalBill = bill + tipTotal;
+      const tipPerPerson = tipTotal / Math.max(1, people);
+      const totalPerPerson = totalBill / Math.max(1, people);
+
+      document.getElementById('res_total_tip').textContent = `${sym}${tipTotal.toFixed(2)}`;
+      document.getElementById('res_total_bill').textContent = `${sym}${totalBill.toFixed(2)}`;
+      document.getElementById('res_tip_per_person').textContent = `${sym}${tipPerPerson.toFixed(2)}`;
+      document.getElementById('res_total_per_person').textContent = `${sym}${totalPerPerson.toFixed(2)}`;
+    }
+
+    function roundTotal(direction) {
+      const bill = parseFloat(document.getElementById('bill_amount').value) || 0;
+      if (bill <= 0) return;
+      const curTipPercent = parseFloat(document.getElementById('custom_tip').value) || 0;
+      const curTotal = bill + (bill * (curTipPercent / 100));
+
+      let targetTotal = direction === 'up' ? Math.ceil(curTotal) : Math.floor(curTotal);
+      if (targetTotal <= bill) targetTotal = Math.ceil(curTotal);
+
+      const newTip = targetTotal - bill;
+      const newTipPercent = (newTip / bill) * 100;
+
+      document.getElementById('custom_tip').value = newTipPercent.toFixed(1);
+      onCustomTipInput();
+      showToast(`Rounded ${direction} to clean bill`);
+    }
+
+    function resetCalculator() {
+      document.getElementById('bill_amount').value = '85.00';
+      document.getElementById('num_people').value = '2';
+      selectPresetTip(15);
+      showToast('Calculator reset');
+    }
+
+    calculateTip();
+  </script>
+</body>
+</html>

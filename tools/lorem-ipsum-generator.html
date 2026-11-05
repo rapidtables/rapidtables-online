@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lorem Ipsum Generator (Dummy Text) - RapidTables.online</title>
+  <meta name="description" content="Free online Lorem Ipsum generator. Generate placeholder dummy text in paragraphs, sentences, or words with instant clipboard copy.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Lorem Ipsum Generator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Lorem Ipsum Generator</h1>
+        <p class="subtitle">Generate standard Latin placeholder filler text for web design, layouts, and mockups.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label for="lorem_qty">Quantity:</label>
+            <input type="number" id="lorem_qty" class="input-control" value="3" min="1" max="100">
+          </div>
+
+          <div class="form-group">
+            <label for="lorem_unit">Generate By:</label>
+            <select id="lorem_unit" class="select-control">
+              <option value="paragraphs" selected>Paragraphs</option>
+              <option value="sentences">Sentences</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: center; margin-top: 18px;">
+            <label><input type="checkbox" id="chk_start" checked> Start with "Lorem ipsum..."</label>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 16px;">
+          <button class="btn btn-primary" onclick="generateLorem()">✨ Generate Text</button>
+          <button class="btn btn-secondary" onclick="copyText('lorem_output')">📋 Copy Text</button>
+        </div>
+
+        <div class="form-group">
+          <textarea id="lorem_output" class="input-control" rows="10" readonly style="line-height: 1.6; font-size: 14px;"></textarea>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>What is Lorem Ipsum?</h2>
+        <p><strong>Lorem Ipsum</strong> is dummy text used in laying out print, graphic, or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's <em>De Finibus Bonorum et Malorum</em> for use in a type specimen book.</p>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Text Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="word-counter.html">Word Counter</a></li>
+          <li><a href="case-converter.html">Case Converter</a></li>
+          <li><a href="diff-checker.html">Diff Checker</a></li>
+          <li><a href="notepad.html">Online Notepad</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const WORDS = [
+      "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+      "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
+      "magna", "aliqua", "enim", "ad", "minim", "veniam", "quis", "nostrud",
+      "exercitation", "ullamco", "laboris", "nisi", "aliquip", "ex", "ea", "commodo",
+      "consequat", "duis", "aute", "irure", "in", "reprehenderit", "voluptate",
+      "velit", "esse", "cillum", "fugiat", "nulla", "pariatur", "excepteur", "sint",
+      "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui", "officia",
+      "deserunt", "mollit", "anim", "id", "est", "laborum"
+    ];
+
+    function getRandomSentence() {
+      const len = Math.floor(Math.random() * 8) + 8;
+      const sWords = [];
+      for (let i = 0; i < len; i++) {
+        sWords.push(WORDS[Math.floor(Math.random() * WORDS.length)]);
+      }
+      sWords[0] = sWords[0].charAt(0).toUpperCase() + sWords[0].slice(1);
+      return sWords.join(' ') + '.';
+    }
+
+    function getRandomParagraph() {
+      const sCount = Math.floor(Math.random() * 4) + 4;
+      const sentences = [];
+      for (let i = 0; i < sCount; i++) {
+        sentences.push(getRandomSentence());
+      }
+      return sentences.join(' ');
+    }
+
+    function generateLorem() {
+      const qty = parseInt(document.getElementById('lorem_qty').value, 10) || 1;
+      const unit = document.getElementById('lorem_unit').value;
+      const startWith = document.getElementById('chk_start').checked;
+
+      let result = [];
+      if (unit === 'words') {
+        const words = [];
+        if (startWith) words.push("Lorem", "ipsum", "dolor", "sit", "amet");
+        while (words.length < qty) {
+          words.push(WORDS[Math.floor(Math.random() * WORDS.length)]);
+        }
+        result = [words.slice(0, qty).join(' ')];
+      } else if (unit === 'sentences') {
+        for (let i = 0; i < qty; i++) {
+          result.push(getRandomSentence());
+        }
+        if (startWith && result.length > 0) {
+          result[0] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " + result[0];
+        }
+      } else {
+        // Paragraphs
+        for (let i = 0; i < qty; i++) {
+          result.push(getRandomParagraph());
+        }
+        if (startWith && result.length > 0) {
+          result[0] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " + result[0];
+        }
+      }
+
+      document.getElementById('lorem_output').value = result.join('\n\n');
+    }
+
+    generateLorem();
+  </script>
+</body>
+</html>

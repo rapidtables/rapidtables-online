@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy &amp; Work Converter (Joules, Calories, kWh, BTU) - RapidTables.online</title>
+  <meta name="description" content="Free online energy and work converter. Convert between Joules, Kilojoules, Calories, Kilocalories, Watt-hours, Kilowatt-hours (kWh), and BTU.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Energy Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Energy &amp; Work Converter</h1>
+        <p class="subtitle">Convert between Joules, Kilojoules, Calories, Kilocalories, Kilowatt-hours (kWh), and British Thermal Units (BTU).</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="e_j">Joules (J)</label>
+            <input type="number" id="e_j" class="input-control" value="1000" step="any" oninput="fromJoules(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="e_kj">Kilojoules (kJ)</label>
+            <input type="number" id="e_kj" class="input-control" step="any" oninput="fromKj(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="e_cal">Calories (cal)</label>
+            <input type="number" id="e_cal" class="input-control" step="any" oninput="fromCal(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="e_kcal">Kilocalories / Food Cal (kcal)</label>
+            <input type="number" id="e_kcal" class="input-control" step="any" oninput="fromKcal(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="e_kwh">Kilowatt-hours (kWh)</label>
+            <input type="number" id="e_kwh" class="input-control" step="any" oninput="fromKwh(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="e_btu">British Thermal Units (BTU)</label>
+            <input type="number" id="e_btu" class="input-control" step="any" oninput="fromBtu(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Energy Conversion Factors</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Unit</th><th>Equivalent in Joules (J)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Kilojoule (kJ)</td><td>1,000 J</td></tr>
+              <tr><td>1 Calorie (cal)</td><td>4.184 J</td></tr>
+              <tr><td>1 Kilocalorie (kcal)</td><td>4,184 J</td></tr>
+              <tr><td>1 Kilowatt-hour (kWh)</td><td>3,600,000 J</td></tr>
+              <tr><td>1 BTU (British Thermal Unit)</td><td>1,055.06 J</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Electrical Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="../calc/electric/energy-cost-calculator.html">Electricity Cost Calc</a></li>
+          <li><a href="../calc/electric/ohms-law-calculator.html">Ohm's Law Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateAllEnergy(joules, source) {
+      if (joules === '' || isNaN(joules)) return;
+      const j = parseFloat(joules);
+      const fmt = (n) => Number(n.toPrecision(7)).toString();
+
+      if (source !== 'j') document.getElementById('e_j').value = fmt(j);
+      if (source !== 'kj') document.getElementById('e_kj').value = fmt(j / 1000);
+      if (source !== 'cal') document.getElementById('e_cal').value = fmt(j / 4.184);
+      if (source !== 'kcal') document.getElementById('e_kcal').value = fmt(j / 4184);
+      if (source !== 'kwh') document.getElementById('e_kwh').value = fmt(j / 3600000);
+      if (source !== 'btu') document.getElementById('e_btu').value = fmt(j / 1055.05585);
+    }
+
+    function fromJoules(v) { updateAllEnergy(v, 'j'); }
+    function fromKj(v) { updateAllEnergy(v * 1000, 'kj'); }
+    function fromCal(v) { updateAllEnergy(v * 4.184, 'cal'); }
+    function fromKcal(v) { updateAllEnergy(v * 4184, 'kcal'); }
+    function fromKwh(v) { updateAllEnergy(v * 3600000, 'kwh'); }
+    function fromBtu(v) { updateAllEnergy(v * 1055.05585, 'btu'); }
+
+    fromJoules(1000);
+  </script>
+</body>
+</html>

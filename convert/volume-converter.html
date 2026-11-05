@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Converter (Liters, Gallons, m³, fl oz) - RapidTables.online</title>
+  <meta name="description" content="Free online volume and liquid capacity converter. Convert between liters, milliliters, US gallons, UK gallons, cubic meters, and fluid ounces in real time.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Volume Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Volume &amp; Capacity Converter</h1>
+        <p class="subtitle">Convert liquid capacity and 3D volume measurements with live synchronization across all units.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="v_liters">Liters (L)</label>
+            <input type="number" id="v_liters" class="input-control" value="1" step="any" oninput="fromLiters(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="v_ml">Milliliters (mL)</label>
+            <input type="number" id="v_ml" class="input-control" step="any" oninput="fromMl(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="v_gal">US Gallons (gal)</label>
+            <input type="number" id="v_gal" class="input-control" step="any" oninput="fromUsGal(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="v_floz">US Fluid Ounces (fl oz)</label>
+            <input type="number" id="v_floz" class="input-control" step="any" oninput="fromFlOz(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="v_m3">Cubic Meters (m³)</label>
+            <input type="number" id="v_m3" class="input-control" step="any" oninput="fromM3(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="v_ft3">Cubic Feet (ft³)</label>
+            <input type="number" id="v_ft3" class="input-control" step="any" oninput="fromFt3(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Volume Conversion Factors</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Unit</th><th>Equivalent in Liters (L)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Milliliter (mL)</td><td>0.001 L</td></tr>
+              <tr><td>1 US Gallon (gal)</td><td>3.78541 L</td></tr>
+              <tr><td>1 US Fluid Ounce (fl oz)</td><td>0.0295735 L</td></tr>
+              <tr><td>1 Cubic Meter (m³)</td><td>1,000 L</td></tr>
+              <tr><td>1 Cubic Foot (ft³)</td><td>28.3168 L</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Unit Converters</div>
+        <ul class="sidebar-list">
+          <li><a href="length-converter.html">Length Converter</a></li>
+          <li><a href="weight-converter.html">Weight Converter</a></li>
+          <li><a href="area-converter.html">Area Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateAllVolume(liters, source) {
+      if (liters === '' || isNaN(liters)) return;
+      const l = parseFloat(liters);
+      const fmt = (n) => Number(n.toPrecision(7)).toString();
+
+      if (source !== 'l') document.getElementById('v_liters').value = fmt(l);
+      if (source !== 'ml') document.getElementById('v_ml').value = fmt(l * 1000);
+      if (source !== 'gal') document.getElementById('v_gal').value = fmt(l / 3.785411784);
+      if (source !== 'floz') document.getElementById('v_floz').value = fmt(l / 0.0295735295625);
+      if (source !== 'm3') document.getElementById('v_m3').value = fmt(l / 1000);
+      if (source !== 'ft3') document.getElementById('v_ft3').value = fmt(l / 28.316846592);
+    }
+
+    function fromLiters(v) { updateAllVolume(v, 'l'); }
+    function fromMl(v) { updateAllVolume(v / 1000, 'ml'); }
+    function fromUsGal(v) { updateAllVolume(v * 3.785411784, 'gal'); }
+    function fromFlOz(v) { updateAllVolume(v * 0.0295735295625, 'floz'); }
+    function fromM3(v) { updateAllVolume(v * 1000, 'm3'); }
+    function fromFt3(v) { updateAllVolume(v * 28.316846592, 'ft3'); }
+
+    fromLiters(1);
+  </script>
+</body>
+</html>

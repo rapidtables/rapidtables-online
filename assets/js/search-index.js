@@ -1,0 +1,128 @@
+const SITE_TOOLS_INDEX = [
+  // High-Demand Popular Tools
+  { title: "QR Code Generator", url: "/tools/qr-code-generator.html", category: "Tools", keywords: "qr code generator create qr code custom wifi url barcode generator" },
+  { title: "Voice & Audio Recorder", url: "/tools/voice-recorder.html", category: "Tools", keywords: "voice recorder audio recorder microphone record voice notes speech mp3 webm sound" },
+  { title: "Text to Speech (TTS) Reader", url: "/tools/text-to-speech.html", category: "Tools", keywords: "text to speech tts speech synthesis read aloud voice audio reader listen" },
+  { title: "Online Stopwatch & Timer", url: "/tools/stopwatch.html", category: "Tools", keywords: "stopwatch countdown timer lap timer clock milliseconds" },
+  { title: "Diff Checker (Compare Text)", url: "/tools/diff-checker.html", category: "Tools", keywords: "diff checker text comparison compare text files difference code diff" },
+  { title: "Image Compressor & Resizer", url: "/tools/image-compressor.html", category: "Tools", keywords: "image compressor compress photo reduce kb resize jpg png webp" },
+  { title: "CSV ⇄ JSON Converter", url: "/tools/csv-json-converter.html", category: "Tools", keywords: "csv to json json to csv converter excel spreadsheet array parse table export" },
+  { title: "Base64 Image Converter & Decoder", url: "/tools/base64-image-converter.html", category: "Tools", keywords: "image to base64 base64 to image decoder data uri embed html img css background" },
+  { title: "Tip Calculator & Bill Splitter", url: "/calc/finance/tip-calculator.html", category: "Finance", keywords: "tip calculator bill split restaurant dining gratuity round up split bill" },
+  { title: "IPv4 Subnet & CIDR Calculator", url: "/tools/subnet-calculator.html", category: "Tools", keywords: "subnet calculator ipv4 cidr prefix network address broadcast mask usable hosts ip range" },
+  { title: "WCAG Color Contrast Checker", url: "/tools/color-contrast-checker.html", category: "Tools", keywords: "color contrast checker wcag aa aaa accessibility contrast ratio text background" },
+  { title: "Regex Tester & Debugger", url: "/tools/regex-tester.html", category: "Tools", keywords: "regex tester regular expression debugger pattern match groups flags javascript regex" },
+  { title: "Aspect Ratio Calculator", url: "/calc/math/aspect-ratio-calculator.html", category: "Math", keywords: "aspect ratio calculator 16:9 4:3 1:1 resize dimensions resolution 4k 1080p scale" },
+  { title: "SEO Meta Tag Generator", url: "/tools/meta-tag-generator.html", category: "Tools", keywords: "seo meta tag generator open graph twitter card social preview google serp snippet" },
+  { title: "Discount Calculator", url: "/calc/finance/discount-calculator.html", category: "Finance", keywords: "discount calculator sale price percent off savings coupon price tag" },
+  { title: "UUID / GUID v4 Generator", url: "/tools/uuid-generator.html", category: "Tools", keywords: "uuid generator guid generator v4 random unique identifier bulk" },
+  { title: "Lorem Ipsum Generator", url: "/tools/lorem-ipsum-generator.html", category: "Tools", keywords: "lorem ipsum dummy text placeholder filler text paragraphs words" },
+  { title: "CSS Formatter & Minifier", url: "/tools/css-formatter.html", category: "Tools", keywords: "css formatter beautify css minify css compress stylesheet" },
+
+  // Hub Directories
+  { title: "PDF Tools Suite Hub", url: "/pdf/", category: "PDF", keywords: "pdf tools suite merge split convert images rotate extract text pdf editor ilovepdf" },
+  { title: "Calculators Directory Hub", url: "/calc/", category: "Calculators", keywords: "calculators directory all calculators math finance electrical gpa time health" },
+  { title: "Unit Converters Directory Hub", url: "/convert/", category: "Converters", keywords: "unit converters directory length weight temperature speed area volume data storage energy" },
+  { title: "Web & Developer Tools Hub", url: "/tools/", category: "Tools", keywords: "web developer tools hub qr code notepad diff regex subnet color picker compressor formatter" },
+  { title: "Barcode Generator (Code 128, EAN, UPC)", url: "/tools/barcode-generator.html", category: "Tools", keywords: "barcode generator code 128 ean 13 upc code 39 itf 14 pharmacode vector svg png print label" },
+  { title: "Merge PDF", url: "/pdf/merge-pdf.html", category: "PDF", keywords: "merge pdf combine pdf join pdf files document binder" },
+  { title: "Split PDF & Extract Pages", url: "/pdf/split-pdf.html", category: "PDF", keywords: "split pdf extract pages cut pdf separate pdf document" },
+  { title: "Compress PDF", url: "/pdf/compress-pdf.html", category: "PDF", keywords: "compress pdf reduce file size shrink pdf optimize pdf small pdf mb to kb" },
+  { title: "PDF to Word (DOCX)", url: "/pdf/pdf-to-word.html", category: "PDF", keywords: "pdf to word convert pdf to docx editable word document office" },
+  { title: "PDF to Excel (XLSX)", url: "/pdf/pdf-to-excel.html", category: "PDF", keywords: "pdf to excel convert pdf to xlsx csv spreadsheet table extractor" },
+  { title: "PDF to PowerPoint (PPTX)", url: "/pdf/pdf-to-ppt.html", category: "PDF", keywords: "pdf to powerpoint pdf to ppt pptx presentation slides convert" },
+  { title: "Word to PDF", url: "/pdf/word-to-pdf.html", category: "PDF", keywords: "word to pdf docx to pdf convert document to pdf office" },
+  { title: "Excel to PDF", url: "/pdf/excel-to-pdf.html", category: "PDF", keywords: "excel to pdf xlsx to pdf csv to pdf convert spreadsheet table" },
+  { title: "PowerPoint to PDF", url: "/pdf/ppt-to-pdf.html", category: "PDF", keywords: "powerpoint to pdf ppt to pdf pptx to pdf presentation slides" },
+  { title: "PDF to JPG", url: "/pdf/pdf-to-jpg.html", category: "PDF", keywords: "pdf to jpg convert pdf pages to jpeg images photo" },
+  { title: "PDF to PNG", url: "/pdf/pdf-to-png.html", category: "PDF", keywords: "pdf to png lossless image high res transparent pictures" },
+  { title: "JPG to PDF", url: "/pdf/jpg-to-pdf.html", category: "PDF", keywords: "jpg to pdf jpeg to pdf convert photos to pdf document" },
+  { title: "PDF Converter Studio", url: "/pdf/pdf-converter.html", category: "PDF", keywords: "pdf converter all in one to and from pdf word excel image" },
+  { title: "PDF OCR (Text Extractor)", url: "/pdf/pdf-ocr.html", category: "PDF", keywords: "pdf ocr optical character recognition scanned pdf extract text image to text" },
+  { title: "PDF to PDF/A", url: "/pdf/pdf-to-pdfa.html", category: "PDF", keywords: "pdf to pdfa archival iso 19005 preservation compliance legal standard" },
+  { title: "Delete PDF Pages", url: "/pdf/delete-pdf-pages.html", category: "PDF", keywords: "delete pdf pages remove pages strip pages thumbnail selector" },
+  { title: "Extract PDF Pages", url: "/pdf/extract-pdf-pages.html", category: "PDF", keywords: "extract pdf pages select pages separate pages to pdf" },
+  { title: "Organize & Delete PDF Pages", url: "/pdf/organize-pdf.html", category: "PDF", keywords: "organize pdf reorder pages delete pdf pages sort rearrange remove page thumbnails" },
+  { title: "Edit PDF Document", url: "/pdf/edit-pdf.html", category: "PDF", keywords: "edit pdf add text to pdf draw on pdf shapes stamp markup" },
+  { title: "PDF Annotator", url: "/pdf/pdf-annotator.html", category: "PDF", keywords: "pdf annotator highlight pdf underline comments review notes markup" },
+  { title: "PDF Reader & Viewer", url: "/pdf/pdf-reader.html", category: "PDF", keywords: "pdf reader online pdf viewer open pdf view document zoom print" },
+  { title: "Crop PDF Margins", url: "/pdf/crop-pdf.html", category: "PDF", keywords: "crop pdf trim margins cut borders resize page dimensions" },
+  { title: "Redact PDF (Blackout)", url: "/pdf/redact-pdf.html", category: "PDF", keywords: "redact pdf blackout text sensitive numbers sanitize confidential hide text" },
+  { title: "HTML to PDF", url: "/pdf/html-to-pdf.html", category: "PDF", keywords: "html to pdf webpage to pdf web code print invoice" },
+  { title: "CSV to PDF", url: "/pdf/csv-to-pdf.html", category: "PDF", keywords: "csv to pdf table to pdf spreadsheet to document" },
+  { title: "PDF Form Filler", url: "/pdf/pdf-form-filler.html", category: "PDF", keywords: "pdf form filler fill out forms acroform interactive text fields" },
+  { title: "Share PDF", url: "/pdf/share-pdf.html", category: "PDF", keywords: "share pdf send file qr code web share whatsapp email mobile transfer" },
+  { title: "PDF to JPG / PNG Images", url: "/pdf/pdf-to-image.html", category: "PDF", keywords: "pdf to jpg pdf to png convert pdf to image save pdf pages picture high resolution" },
+  { title: "Image to PDF Converter", url: "/pdf/image-to-pdf.html", category: "PDF", keywords: "image to pdf jpg to pdf png to pdf convert photos picture document a4" },
+  { title: "Sign PDF Online", url: "/pdf/sign-pdf.html", category: "PDF", keywords: "sign pdf online digital signature draw signature e-sign contract electronic signature" },
+  { title: "Add Watermark to PDF", url: "/pdf/watermark-pdf.html", category: "PDF", keywords: "watermark pdf add watermark stamp confidential draft protect copyright opacity" },
+  { title: "Add Page Numbers to PDF", url: "/pdf/page-numbers.html", category: "PDF", keywords: "add page numbers to pdf number pages page 1 of n header footer paginate" },
+  { title: "Text to PDF Converter", url: "/pdf/text-to-pdf.html", category: "PDF", keywords: "text to pdf convert notes text plain text code to pdf document a4 letter generator" },
+  { title: "Rotate PDF", url: "/pdf/rotate-pdf.html", category: "PDF", keywords: "rotate pdf turn orientation 90 degrees 180 degrees landscape portrait" },
+  { title: "PDF to Text Extractor", url: "/pdf/pdf-to-text.html", category: "PDF", keywords: "pdf to text extract text copy pdf words text converter ocr" },
+
+  // Math Calculators
+  { title: "Scientific Calculator", url: "/calc/math/scientific-calculator.html", category: "Math", keywords: "scientific calc sin cos tan log sqrt exponent powers math" },
+  { title: "Percentage Calculator", url: "/calc/math/percentage-calculator.html", category: "Math", keywords: "percentage percent % increase decrease discount difference" },
+  { title: "Fraction Calculator", url: "/calc/math/fraction-calculator.html", category: "Math", keywords: "fractions simplify add subtract multiply divide fraction" },
+  { title: "Average Calculator", url: "/calc/math/average-calculator.html", category: "Math", keywords: "average mean median mode numbers sum count" },
+  { title: "Quadratic Equation Solver", url: "/calc/math/quadratic-equation-solver.html", category: "Math", keywords: "quadratic equation solver roots discriminant parabola algebra ax2" },
+  { title: "Logarithm Calculator", url: "/calc/math/logarithm-calculator.html", category: "Math", keywords: "logarithm log ln log2 log10 natural log base" },
+  { title: "Exponent Calculator", url: "/calc/math/exponent-calculator.html", category: "Math", keywords: "exponent powers xy base power math calculation" },
+  { title: "Random Number Generator", url: "/calc/math/random-number-generator.html", category: "Math", keywords: "random number generator rng lottery dice randomizer" },
+  
+  // Electrical & Electronics
+  { title: "Ohm's Law Calculator", url: "/calc/electric/ohms-law-calculator.html", category: "Electrical", keywords: "ohms law voltage current resistance power volts amps ohms watts" },
+  { title: "Resistor Color Code", url: "/calc/electric/resistor-color-code.html", category: "Electrical", keywords: "resistor color code 4 band 5 band resistance tolerance bands" },
+  { title: "Electricity Cost Calculator", url: "/calc/electric/energy-cost-calculator.html", category: "Electrical", keywords: "electricity cost power energy bill kwh appliance consumption" },
+  { title: "Voltage Divider Calculator", url: "/calc/electric/voltage-divider.html", category: "Electrical", keywords: "voltage divider vout vin resistors circuit electronics" },
+
+  // Finance Calculators
+  { title: "Mortgage Calculator", url: "/calc/finance/mortgage-calculator.html", category: "Finance", keywords: "mortgage home loan monthly payment interest amortization property" },
+  { title: "Compound Interest Calculator", url: "/calc/finance/compound-interest-calculator.html", category: "Finance", keywords: "compound interest investment return savings principal apr apy" },
+  { title: "Loan Payment Calculator", url: "/calc/finance/loan-calculator.html", category: "Finance", keywords: "loan car auto personal payment monthly interest rate emi" },
+  { title: "Salary & Wage Calculator", url: "/calc/finance/salary-calculator.html", category: "Finance", keywords: "salary hourly wage paycheck weekly annual income earnings" },
+  { title: "Sales Tax Calculator", url: "/calc/finance/sales-tax-calculator.html", category: "Finance", keywords: "sales tax discount price after tax vat total" },
+
+  // Health Calculators
+  { title: "BMI Calculator", url: "/calc/health/bmi-calculator.html", category: "Health", keywords: "bmi body mass index weight height metric imperial overweight underweight" },
+  { title: "Calorie Calculator", url: "/calc/health/calorie-calculator.html", category: "Health", keywords: "calories bmr daily maintenance deficit surplus weight loss tdee" },
+
+  // Time & Date Calculators
+  { title: "Age Calculator", url: "/calc/time/age-calculator.html", category: "Time", keywords: "age birthday birth date how old years months days hours" },
+  { title: "Date Calculator", url: "/calc/time/date-calculator.html", category: "Time", keywords: "date days between dates add days duration calendar" },
+
+  // Grade Calculators
+  { title: "GPA Calculator", url: "/calc/grade/gpa-calculator.html", category: "Grade", keywords: "gpa college high school grade point average credits semester" },
+  { title: "Grade Calculator", url: "/calc/grade/grade-calculator.html", category: "Grade", keywords: "grade test exam score weighted points percentage letter grade" },
+
+  // Converters
+  { title: "Length Converter", url: "/convert/length-converter.html", category: "Conversion", keywords: "length distance meters feet inches cm mm kilometers miles yards" },
+  { title: "Weight Converter", url: "/convert/weight-converter.html", category: "Conversion", keywords: "weight mass kilograms pounds lbs grams ounces stones tons" },
+  { title: "Temperature Converter", url: "/convert/temperature-converter.html", category: "Conversion", keywords: "temperature celsius fahrenheit kelvin degrees" },
+  { title: "Speed Converter", url: "/convert/speed-converter.html", category: "Conversion", keywords: "speed velocity mph kmh knots m/s ft/s" },
+  { title: "Area Converter", url: "/convert/area-converter.html", category: "Conversion", keywords: "area acres hectares square meters square feet sq ft sq km" },
+  { title: "Volume Converter", url: "/convert/volume-converter.html", category: "Conversion", keywords: "volume capacity liters gallons ml cubic meters fluid ounces" },
+  { title: "Time Converter", url: "/convert/time-converter.html", category: "Conversion", keywords: "time seconds minutes hours days weeks years conversion" },
+  { title: "Data Storage Converter", url: "/convert/data-storage-converter.html", category: "Conversion", keywords: "data storage bytes kb mb gb tb pb bits bandwidth" },
+  { title: "Energy Converter", url: "/convert/energy-converter.html", category: "Conversion", keywords: "energy joules calories btu kwh work watt hours" },
+  { title: "Number Base Converter", url: "/convert/number-base-converter.html", category: "Conversion", keywords: "binary decimal hexadecimal octal base 2 10 16 8 hex bin dec" },
+
+  // Web & Online Tools
+  { title: "Online Notepad", url: "/tools/notepad.html", category: "Tools", keywords: "notepad online text editor notes autosave scratchpad memo" },
+  { title: "HTML Editor & Live Viewer", url: "/tools/html-editor.html", category: "Tools", keywords: "html editor html viewer live preview test code sandbox" },
+  { title: "URL Encoder & Decoder", url: "/tools/url-encoder-decoder.html", category: "Tools", keywords: "url encode decode percent encode uri component query string" },
+  { title: "Hash Generator (SHA-256, MD5)", url: "/tools/hash-generator.html", category: "Tools", keywords: "hash sha256 sha512 sha1 md5 crypto digest" },
+  { title: "Password Generator", url: "/tools/password-generator.html", category: "Tools", keywords: "password generator random secure strong password generator" },
+  { title: "Markdown Editor", url: "/tools/markdown-editor.html", category: "Tools", keywords: "markdown editor preview md to html live previewer" },
+  { title: "Word & Character Counter", url: "/tools/word-counter.html", category: "Tools", keywords: "word counter character counter count words characters reading time sentences paragraphs" },
+  { title: "Case Converter", url: "/tools/case-converter.html", category: "Tools", keywords: "case converter uppercase lowercase titlecase camelcase snakecase text" },
+  { title: "Base64 Encoder & Decoder", url: "/tools/base64-converter.html", category: "Tools", keywords: "base64 encode decode binary string converter web tool" },
+  { title: "JSON Formatter & Validator", url: "/tools/json-formatter.html", category: "Tools", keywords: "json format beautify minify validate json parser pretty print" },
+  { title: "Color Picker & Converter", url: "/tools/color-picker.html", category: "Tools", keywords: "color picker rgb hex hsl converter web colors css palette" },
+
+  // Reference Tables
+  { title: "ASCII Table", url: "/tables/ascii-table.html", category: "Tables", keywords: "ascii table characters binary hex decimal ascii code chart 0 to 127" },
+  { title: "Roman Numerals Table", url: "/tables/roman-numerals.html", category: "Tables", keywords: "roman numerals chart 1 to 1000 roman numbers converter i v x l c d m" },
+  { title: "Multiplication Table", url: "/tables/multiplication-table.html", category: "Tables", keywords: "multiplication table times table chart 1 to 12 1 to 20 math grid" }
+];

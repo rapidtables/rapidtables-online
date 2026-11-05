@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RapidTables.online - Free Online Calculators, Converters &amp; Web Tools</title>
+  <meta name="description" content="RapidTables.online provides fast, free, and accurate online calculators, unit converters, PDF tools, QR code generator, electrical tools, and web development utilities. 100% client-side and private.">
+  <meta name="keywords" content="calculators, converters, qr code generator, merge pdf, image to pdf, diff checker, stopwatch, percentage calculator, mortgage calculator, unit converter, ohms law, ascii table, tools">
+  <link rel="canonical" href="https://www.rapidtables.online/">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="./" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="calc/" class="header-nav-link">Calculators</a>
+        <a href="convert/" class="header-nav-link">Converters</a>
+        <a href="tools/" class="header-nav-link">Web Tools</a>
+        <a href="tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+          <button type="button" id="search-close-btn" class="search-close-btn" aria-label="Close search">✕</button>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="mobile-search-btn" class="btn-icon mobile-search-btn" title="Search Tools" aria-label="Open Search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+        <button id="mobile-menu-btn" class="btn-icon mobile-menu-btn" title="Open Menu" aria-label="Open Navigation Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="layout-container">
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Hero Section -->
+      <div class="page-title-section">
+        <h1>Free Online Calculators, Converters &amp; PDF Tools</h1>
+        <p class="subtitle">Over 100+ high-precision web utilities, converters, financial calculators, and PDF document tools. Powered by high-speed cloud infrastructure for 24/7 uptime, speed, and accuracy.</p>
+
+        <div class="hero-quick-jumps">
+          <a href="#pdf-tools" class="hero-jump-pill">📑 PDF Suite</a>
+          <a href="#web-tools" class="hero-jump-pill">🛠️ Web &amp; Dev Tools</a>
+          <a href="#math-calculators" class="hero-jump-pill">📐 Math &amp; Algebra</a>
+          <a href="#finance-calculators" class="hero-jump-pill">💵 Finance &amp; Tax</a>
+          <a href="#converters" class="hero-jump-pill">🔄 Unit Converters</a>
+          <a href="tools/notepad.html" class="hero-jump-pill">📝 Online Notepad</a>
+          <a href="tools/qr-code-generator.html" class="hero-jump-pill">📱 QR Designer</a>
+        </div>
+      </div>
+
+      <!-- Quick Jump Featured Tools -->
+      <h2 style="font-size: 1.15rem; margin-bottom: 14px; font-weight: 700; letter-spacing: -0.015em;">Popular &amp; Frequently Used Daily Tools</h2>
+      <div class="quick-tools-grid">
+        <a href="tools/qr-code-generator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0f2fe; color:#0284c7;">📱</div>
+          <div class="quick-tool-info">
+            <h4>QR Code Generator</h4>
+            <span>Custom shapes &amp; logo</span>
+          </div>
+        </a>
+        <a href="pdf/merge-pdf.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fee2e2; color:#dc2626;">📑</div>
+          <div class="quick-tool-info">
+            <h4>Merge PDF</h4>
+            <span>Combine multiple PDFs</span>
+          </div>
+        </a>
+        <a href="tools/notepad.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef3c7; color:#d97706;">📝</div>
+          <div class="quick-tool-info">
+            <h4>Online Notepad</h4>
+            <span>Autosaving multi-notes</span>
+          </div>
+        </a>
+        <a href="tools/image-compressor.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f3e8ff; color:#7e22ce;">🗜️</div>
+          <div class="quick-tool-info">
+            <h4>Image Compressor</h4>
+            <span>Reduce KB &amp; resize</span>
+          </div>
+        </a>
+        <a href="pdf/pdf-to-image.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#ecfdf5; color:#059669;">🖼️</div>
+          <div class="quick-tool-info">
+            <h4>PDF to Image</h4>
+            <span>Export JPG &amp; PNG</span>
+          </div>
+        </a>
+        <a href="pdf/sign-pdf.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdf4; color:#16a34a;">✍️</div>
+          <div class="quick-tool-info">
+            <h4>Sign PDF</h4>
+            <span>Draw or type signature</span>
+          </div>
+        </a>
+        <a href="calc/math/scientific-calculator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#eff6ff; color:#2563eb;">🧮</div>
+          <div class="quick-tool-info">
+            <h4>Scientific Calc</h4>
+            <span>Trig, log, algebra</span>
+          </div>
+        </a>
+        <a href="calc/math/percentage-calculator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fef2f2; color:#b91c1c;">%</div>
+          <div class="quick-tool-info">
+            <h4>Percentage Calc</h4>
+            <span>Discounts, changes</span>
+          </div>
+        </a>
+        <a href="calc/finance/mortgage-calculator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f0fdfa; color:#0d9488;">🏠</div>
+          <div class="quick-tool-info">
+            <h4>Mortgage Calculator</h4>
+            <span>Monthly P&amp;I payments</span>
+          </div>
+        </a>
+        <a href="calc/electric/ohms-law-calculator.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#fffbeb; color:#b45309;">⚡</div>
+          <div class="quick-tool-info">
+            <h4>Ohm's Law Calc</h4>
+            <span>Volts, amps, ohms</span>
+          </div>
+        </a>
+        <a href="tools/diff-checker.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#e0e7ff; color:#4338ca;">🔍</div>
+          <div class="quick-tool-info">
+            <h4>Diff Checker</h4>
+            <span>Compare text &amp; code</span>
+          </div>
+        </a>
+        <a href="tools/csv-json-converter.html" class="quick-tool-card">
+          <div class="tool-icon" style="background:#f1f5f9; color:#334155;">⇄</div>
+          <div class="quick-tool-info">
+            <h4>CSV ⇄ JSON</h4>
+            <span>Spreadsheet &amp; API</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Categories Directory -->
+
+      <!-- PDF Tools Suite -->
+      <section class="category-card" id="pdf-tools">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">📑</span>
+            <span>PDF Tools Suite (Fast, Secure &amp; Cloud Ready)</span>
+          </div>
+          <span class="category-badge-count">25+ Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="pdf/compress-pdf.html">Compress PDF (Reduce Size)</a></li>
+          <li><a href="pdf/pdf-to-word.html">PDF to Word (DOCX Converter)</a></li>
+          <li><a href="pdf/pdf-to-excel.html">PDF to Excel (XLSX Spreadsheet)</a></li>
+          <li><a href="pdf/pdf-to-ppt.html">PDF to PowerPoint (PPTX Slides)</a></li>
+          <li><a href="pdf/word-to-pdf.html">Word to PDF Converter</a></li>
+          <li><a href="pdf/excel-to-pdf.html">Excel to PDF Converter</a></li>
+          <li><a href="pdf/pdf-reader.html">Online PDF Reader &amp; Viewer</a></li>
+          <li><a href="pdf/edit-pdf.html">Edit PDF Document &amp; Annotate</a></li>
+          <li><a href="pdf/redact-pdf.html">Redact PDF (Blackout Text)</a></li>
+          <li><a href="pdf/crop-pdf.html">Crop PDF Margins</a></li>
+          <li><a href="pdf/delete-pdf-pages.html">Delete PDF Pages</a></li>
+          <li><a href="pdf/extract-pdf-pages.html">Extract PDF Pages</a></li>
+          <li><a href="pdf/pdf-ocr.html">PDF OCR (Scanned Text Extractor)</a></li>
+          <li><a href="pdf/pdf-converter.html">All-in-One PDF Converter</a></li>
+          <li><a href="pdf/pdf-to-jpg.html">PDF to JPG Images</a></li>
+          <li><a href="pdf/pdf-to-png.html">PDF to PNG Lossless</a></li>
+          <li><a href="pdf/jpg-to-pdf.html">JPG to PDF Photos</a></li>
+          <li><a href="pdf/merge-pdf.html">Merge PDF Files</a></li>
+          <li><a href="pdf/split-pdf.html">Split PDF &amp; Extract Pages</a></li>
+          <li><a href="pdf/sign-pdf.html">Sign PDF Online (Electronic Signature)</a></li>
+          <li><a href="pdf/watermark-pdf.html">Add Watermark to PDF</a></li>
+          <li><a href="pdf/page-numbers.html">Add Page Numbers to PDF</a></li>
+          <li><a href="pdf/pdf-form-filler.html">PDF Form Filler</a></li>
+          <li><a href="pdf/">All PDF Tools Directory &rarr;</a></li>
+        </ul>
+      </section>
+
+      <!-- Web & Online Everyday Tools -->
+      <section class="category-card" id="web-tools">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">🛠️</span>
+            <span>Web &amp; Online Everyday Tools</span>
+          </div>
+          <span class="category-badge-count">27 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="tools/qr-code-generator.html">Custom QR Code Designer (Frames, Shapes, Logos)</a></li>
+          <li><a href="tools/barcode-generator.html">🏷️ Barcode Generator (Code 128, EAN-13, UPC)</a></li>
+          <li><a href="tools/notepad.html">Online Notepad (Multi-Notes &amp; Browser Autosave)</a></li>
+          <li><a href="tools/voice-recorder.html">🎙️ Voice &amp; Audio Recorder (Mic Online)</a></li>
+          <li><a href="tools/text-to-speech.html">🔊 Text to Speech (TTS) Audio Reader</a></li>
+          <li><a href="tools/subnet-calculator.html">🌐 IPv4 Subnet &amp; CIDR Calculator</a></li>
+          <li><a href="tools/color-contrast-checker.html">🎨 WCAG Color Contrast Checker (AA/AAA)</a></li>
+          <li><a href="tools/regex-tester.html">🔣 Regex Tester &amp; Live Debugger</a></li>
+          <li><a href="tools/meta-tag-generator.html">🔍 SEO Meta Tag &amp; Social Card Generator</a></li>
+          <li><a href="tools/csv-json-converter.html">CSV ⇄ JSON Converter (Spreadsheet &amp; API)</a></li>
+          <li><a href="tools/base64-image-converter.html">Base64 Image Converter &amp; Decoder</a></li>
+          <li><a href="tools/stopwatch.html">Online Stopwatch &amp; Countdown Timer</a></li>
+          <li><a href="tools/diff-checker.html">Diff Checker (Compare Text &amp; Code)</a></li>
+          <li><a href="tools/image-compressor.html">Image Compressor &amp; Resizer (JPG, PNG)</a></li>
+          <li><a href="tools/uuid-generator.html">UUID / GUID v4 Generator</a></li>
+          <li><a href="tools/lorem-ipsum-generator.html">Lorem Ipsum Dummy Text Generator</a></li>
+          <li><a href="tools/css-formatter.html">CSS Formatter &amp; Minifier</a></li>
+          <li><a href="tools/html-editor.html">HTML Editor &amp; Real-Time Viewer</a></li>
+          <li><a href="tools/markdown-editor.html">Markdown Editor &amp; HTML Previewer</a></li>
+          <li><a href="tools/url-encoder-decoder.html">URL Encoder &amp; Decoder</a></li>
+          <li><a href="tools/hash-generator.html">Cryptographic Hash Generator (SHA-256, MD5)</a></li>
+          <li><a href="tools/password-generator.html">Secure Strong Password Generator</a></li>
+          <li><a href="tools/word-counter.html">Word &amp; Character Counter</a></li>
+          <li><a href="tools/case-converter.html">Text Case Converter (Upper, Lower, Title)</a></li>
+          <li><a href="tools/base64-converter.html">Base64 String Encoder &amp; Decoder</a></li>
+          <li><a href="tools/json-formatter.html">JSON Formatter, Validator &amp; Minifier</a></li>
+          <li><a href="tools/color-picker.html">Color Picker (HEX, RGB, HSL)</a></li>
+        </ul>
+      </section>
+      
+      <!-- Math Calculators -->
+      <section class="category-card" id="math-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">📐</span>
+            <span>Math &amp; Statistics Calculators</span>
+          </div>
+          <span class="category-badge-count">9 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="calc/math/aspect-ratio-calculator.html">Aspect Ratio &amp; Resolution Calculator</a></li>
+          <li><a href="calc/math/scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="calc/math/percentage-calculator.html">Percentage Calculator</a></li>
+          <li><a href="calc/math/fraction-calculator.html">Fraction Calculator</a></li>
+          <li><a href="calc/math/average-calculator.html">Average / Mean Calculator</a></li>
+          <li><a href="calc/math/quadratic-equation-solver.html">Quadratic Equation Solver</a></li>
+          <li><a href="calc/math/logarithm-calculator.html">Logarithm Calculator (log, ln)</a></li>
+          <li><a href="calc/math/exponent-calculator.html">Exponent Calculator (xʸ)</a></li>
+          <li><a href="calc/math/random-number-generator.html">Random Number Generator</a></li>
+        </ul>
+      </section>
+
+      <!-- Financial Calculators -->
+      <section class="category-card" id="finance-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">💵</span>
+            <span>Financial &amp; Investment Calculators</span>
+          </div>
+          <span class="category-badge-count">7 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="calc/finance/tip-calculator.html">Tip Calculator &amp; Bill Splitter</a></li>
+          <li><a href="calc/finance/discount-calculator.html">Discount &amp; Sale Price Calculator</a></li>
+          <li><a href="calc/finance/mortgage-calculator.html">Mortgage Payment Calculator</a></li>
+          <li><a href="calc/finance/compound-interest-calculator.html">Compound Interest Calculator</a></li>
+          <li><a href="calc/finance/loan-calculator.html">Personal &amp; Auto Loan Calculator</a></li>
+          <li><a href="calc/finance/salary-calculator.html">Salary &amp; Hourly Wage Calculator</a></li>
+          <li><a href="calc/finance/sales-tax-calculator.html">Sales Tax &amp; Discount Calculator</a></li>
+        </ul>
+      </section>
+
+      <!-- Electrical & Electronics -->
+      <section class="category-card" id="electric-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">⚡</span>
+            <span>Electricity &amp; Electronics</span>
+          </div>
+          <span class="category-badge-count">4 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="calc/electric/ohms-law-calculator.html">Ohm's Law Calculator (V, I, R, P)</a></li>
+          <li><a href="calc/electric/resistor-color-code.html">Resistor Color Code (4 &amp; 5 Bands)</a></li>
+          <li><a href="calc/electric/energy-cost-calculator.html">Electricity Bill &amp; Energy Cost Calculator</a></li>
+          <li><a href="calc/electric/voltage-divider.html">Voltage Divider Circuit Calculator</a></li>
+        </ul>
+      </section>
+
+      <!-- Unit Converters -->
+      <section class="category-card" id="converters">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">🔄</span>
+            <span>Unit Converters</span>
+          </div>
+          <span class="category-badge-count">10 Converters</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="convert/length-converter.html">Length &amp; Distance Converter</a></li>
+          <li><a href="convert/weight-converter.html">Weight &amp; Mass Converter</a></li>
+          <li><a href="convert/temperature-converter.html">Temperature Converter (°C, °F, K)</a></li>
+          <li><a href="convert/speed-converter.html">Speed &amp; Velocity Converter</a></li>
+          <li><a href="convert/area-converter.html">Area &amp; Land Converter (Acres, Sq Ft)</a></li>
+          <li><a href="convert/volume-converter.html">Volume &amp; Capacity Converter</a></li>
+          <li><a href="convert/time-converter.html">Time Unit Converter</a></li>
+          <li><a href="convert/data-storage-converter.html">Data Storage &amp; Bandwidth (MB, GB, TB)</a></li>
+          <li><a href="convert/energy-converter.html">Energy &amp; Work Converter (Joules, kWh)</a></li>
+          <li><a href="convert/number-base-converter.html">Binary, Decimal &amp; Hexadecimal Converter</a></li>
+        </ul>
+      </section>
+
+      <!-- Time & Date -->
+      <section class="category-card" id="time-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">⏱️</span>
+            <span>Time &amp; Date Calculators</span>
+          </div>
+          <span class="category-badge-count">3 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="tools/stopwatch.html">Stopwatch &amp; Countdown Timer</a></li>
+          <li><a href="calc/time/age-calculator.html">Age Calculator (Years, Months, Days)</a></li>
+          <li><a href="calc/time/date-calculator.html">Date Calculator (Days Between Dates)</a></li>
+        </ul>
+      </section>
+
+      <!-- Health & Fitness -->
+      <section class="category-card" id="health-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">🏃</span>
+            <span>Health &amp; Fitness Calculators</span>
+          </div>
+          <span class="category-badge-count">2 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="calc/health/bmi-calculator.html">BMI (Body Mass Index) Calculator</a></li>
+          <li><a href="calc/health/calorie-calculator.html">Daily Calorie &amp; BMR Calculator</a></li>
+        </ul>
+      </section>
+
+      <!-- Grade & Education -->
+      <section class="category-card" id="grade-calculators">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">🎓</span>
+            <span>Grade &amp; Education Calculators</span>
+          </div>
+          <span class="category-badge-count">2 Tools</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="calc/grade/gpa-calculator.html">College &amp; High School GPA Calculator</a></li>
+          <li><a href="calc/grade/grade-calculator.html">Weighted Grade Calculator</a></li>
+        </ul>
+      </section>
+
+      <!-- Reference Tables -->
+      <section class="category-card" id="reference-tables">
+        <div class="category-header">
+          <div class="category-title-group">
+            <span class="category-header-icon">📊</span>
+            <span>Reference Tables</span>
+          </div>
+          <span class="category-badge-count">3 Tables</span>
+        </div>
+        <ul class="category-links">
+          <li><a href="tables/ascii-table.html">ASCII Character Table &amp; Codes</a></li>
+          <li><a href="tables/roman-numerals.html">Roman Numerals Conversion Chart</a></li>
+          <li><a href="tables/multiplication-table.html">Multiplication Table (1-12 &amp; 1-20)</a></li>
+        </ul>
+      </section>
+
+      <!-- SEO Overview / About Section -->
+      <article class="seo-section">
+        <h2>About RapidTables.online</h2>
+        <p><strong>RapidTables.online</strong> is an all-in-one resource offering instant, browser-based calculation, PDF document processing, QR code generation, unit conversion, electrical formulas, and everyday web tools. All calculations run securely on your device with zero lag, ensuring full privacy and instant results.</p>
+        <p>Whether you need to generate custom QR codes, compress photos, compare text diffs, merge PDFs, convert JPGs to PDF, calculate Ohm's law, compute mortgage installments, convert units of measurement, check your Body Mass Index (BMI), format complex JSON data, write HTML snippets, or reference ASCII and Roman numeral charts, RapidTables.online provides fast, clean, and reliable solutions.</p>
+      </article>
+
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Main Categories</div>
+        <ul class="sidebar-list">
+          <li><a href="#pdf-tools">📑 PDF Suite</a></li>
+          <li><a href="#web-tools">🛠️ Everyday Web Tools</a></li>
+          <li><a href="#math-calculators">📐 Math &amp; Algebra</a></li>
+          <li><a href="#finance-calculators">💵 Financial Calculators</a></li>
+          <li><a href="#electric-calculators">⚡ Electricity &amp; Electronics</a></li>
+          <li><a href="#converters">🔄 Unit Converters</a></li>
+          <li><a href="#time-calculators">⏱️ Time &amp; Date</a></li>
+          <li><a href="#health-calculators">🏃 Health &amp; Fitness</a></li>
+          <li><a href="#grade-calculators">🎓 Grade &amp; GPA</a></li>
+          <li><a href="#reference-tables">📊 Reference Tables</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="sidebar-header">High-Demand Utilities</div>
+        <ul class="sidebar-list">
+          <li><a href="tools/qr-code-generator.html">Custom QR Designer</a></li>
+          <li><a href="tools/notepad.html">Online Notepad</a></li>
+          <li><a href="pdf/merge-pdf.html">Merge PDF Files</a></li>
+          <li><a href="pdf/pdf-to-image.html">PDF to JPG / PNG</a></li>
+          <li><a href="tools/image-compressor.html">Image Compressor</a></li>
+          <li><a href="calc/finance/mortgage-calculator.html">Mortgage Calculator</a></li>
+          <li><a href="calc/math/scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="tools/diff-checker.html">Text Diff Checker</a></li>
+          <li><a href="tools/voice-recorder.html">Voice Recorder</a></li>
+          <li><a href="tools/csv-json-converter.html">CSV ⇄ JSON</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="sidebar-header">RapidTables.online</div>
+        <ul class="sidebar-list">
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="contact.html">Contact &amp; Feedback</a></li>
+        </ul>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="./" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="tools/notepad.html">Online Notepad</a>
+          <a href="tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="tools/image-compressor.html">Image Compressor</a>
+          <a href="tools/regex-tester.html">Regex Live Tester</a>
+          <a href="tools/diff-checker.html">Text Diff Checker</a>
+          <a href="tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="about.html">About RapidTables</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="assets/js/search-index.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

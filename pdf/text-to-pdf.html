@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text to PDF Converter Online - RapidTables.online</title>
+  <meta name="description" content="Convert plain text, notes, and code snippets into clean, formatted PDF documents. Set page size (A4/Letter), fonts, margins, and auto-paginate. 100% free.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .text-editor-box {
+      width: 100%;
+      height: 340px;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.6;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      resize: vertical;
+      outline: none;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Text to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Text to PDF Converter</h1>
+        <p class="subtitle">Convert your plain text, notes, drafts, or code into clean, beautifully formatted PDF documents. Fully private &amp; in-browser.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="calc-input-group">
+          <label for="doc_title">Document Title / Header (Optional)</label>
+          <input type="text" id="doc_title" placeholder="e.g. Project Overview &amp; Meeting Minutes">
+        </div>
+
+        <div style="margin-top: 14px;">
+          <label for="doc_text" style="font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block;">Document Content / Text</label>
+          <textarea id="doc_text" class="text-editor-box" placeholder="Type or paste your text here...
+
+You can paste multiple paragraphs, notes, or articles. The tool will automatically paginate and wrap text across pages nicely."></textarea>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 16px;">
+          <div class="calc-input-group">
+            <label for="page_size">Page Size</label>
+            <select id="page_size">
+              <option value="A4" selected>A4 (210 × 297 mm)</option>
+              <option value="Letter">US Letter (8.5 × 11 in)</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="font_family">Font Family</label>
+            <select id="font_family">
+              <option value="Helvetica" selected>Helvetica / Arial (Modern Sans-Serif)</option>
+              <option value="TimesRoman">Times New Roman (Classic Serif)</option>
+              <option value="Courier">Courier (Monospaced / Code)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="font_size">Font Size</label>
+            <select id="font_size">
+              <option value="10">10 pt (Compact)</option>
+              <option value="12" selected>12 pt (Standard)</option>
+              <option value="14">14 pt (Large)</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="line_spacing">Line Spacing</label>
+            <select id="line_spacing">
+              <option value="1.2">Single (1.2x)</option>
+              <option value="1.5" selected>1.5 Spacing (Readable)</option>
+              <option value="1.8">Double (1.8x)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="generate_btn" onclick="generatePdfFromText()">📄 Generate &amp; Download PDF</button>
+          <button class="btn btn-secondary" onclick="clearTextForm()">Reset</button>
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Convert Text to PDF Online</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Enter Text:</strong> Type or paste your text into the text area.</li>
+          <li><strong>Add Title:</strong> Enter an optional document title to appear centered at the top.</li>
+          <li><strong>Select Formatting:</strong> Customize page format (A4 or US Letter), typography (Helvetica, Times, Courier), font size, and line height.</li>
+          <li><strong>Download:</strong> Click "Generate &amp; Download PDF" to save your clean document instantly.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">Features &amp; Advantages</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li>📄 <strong>Automatic Pagination:</strong> Long documents are smoothly split across multiple pages with consistent margins.</li>
+          <li>🔒 <strong>Confidential:</strong> None of your notes or writings leave your browser. Perfect for private memos and journal entries.</li>
+          <li>⚡ <strong>Lightweight &amp; Crisp:</strong> Produces compact vector PDFs with razor-sharp text on any screen or printer.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-text.html">📝 Extract Text from PDF</a></li>
+          <li><a href="image-to-pdf.html">🖼️ Image to PDF</a></li>
+          <li><a href="watermark-pdf.html">🏷️ Add Watermark to PDF</a></li>
+          <li><a href="page-numbers.html">🔢 Add Page Numbers</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF Pages</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Instant Export</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Generate clean, printable PDF documents directly from your notes in less than a second.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    async function generatePdfFromText() {
+      const text = document.getElementById('doc_text').value.trim();
+      if (!text) {
+        alert('Please enter or paste some text first.');
+        return;
+      }
+
+      const statusMsg = document.getElementById('status_msg');
+      const genBtn = document.getElementById('generate_btn');
+      statusMsg.textContent = 'Formatting and creating PDF...';
+      genBtn.disabled = true;
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.create();
+
+        // Font selection
+        const fontKey = document.getElementById('font_family').value;
+        let selectedFont;
+        let selectedBoldFont;
+        if (fontKey === 'TimesRoman') {
+          selectedFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+          selectedBoldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+        } else if (fontKey === 'Courier') {
+          selectedFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Courier);
+          selectedBoldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.CourierBold);
+        } else {
+          selectedFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+          selectedBoldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+        }
+
+        const fontSize = parseFloat(document.getElementById('font_size').value) || 12;
+        const lineSpacingFactor = parseFloat(document.getElementById('line_spacing').value) || 1.5;
+        const lineHeight = fontSize * lineSpacingFactor;
+
+        // Page dimensions (pt)
+        const isLetter = document.getElementById('page_size').value === 'Letter';
+        const pageWidth = isLetter ? 612 : 595.28;
+        const pageHeight = isLetter ? 792 : 841.89;
+        const margin = 48; // 48 pt margin (~0.67 in)
+        const usableWidth = pageWidth - (margin * 2);
+        const usableHeight = pageHeight - (margin * 2);
+
+        const title = document.getElementById('doc_title').value.trim();
+
+        // Helper to wrap text into lines fitting usableWidth
+        function wrapParagraph(para, font, size, maxWidth) {
+          const words = para.split(/\s+/);
+          const lines = [];
+          let currentLine = '';
+
+          for (const word of words) {
+            if (!word) continue;
+            const testLine = currentLine ? `${currentLine} ${word}` : word;
+            const width = font.widthOfTextAtSize(testLine, size);
+
+            if (width <= maxWidth) {
+              currentLine = testLine;
+            } else {
+              if (currentLine) lines.push(currentLine);
+              currentLine = word;
+            }
+          }
+          if (currentLine) lines.push(currentLine);
+          return lines.length > 0 ? lines : [''];
+        }
+
+        // Process all paragraphs
+        const rawParas = text.split('\n');
+        const formattedLines = [];
+
+        rawParas.forEach(p => {
+          if (p.trim() === '') {
+            formattedLines.push(''); // blank line
+          } else {
+            const wrapped = wrapParagraph(p, selectedFont, fontSize, usableWidth);
+            formattedLines.push(...wrapped);
+          }
+        });
+
+        let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+        let currentY = pageHeight - margin;
+
+        // Draw Title if provided
+        if (title) {
+          const titleSize = fontSize + 6;
+          const titleWidth = selectedBoldFont.widthOfTextAtSize(title, titleSize);
+          const titleX = (pageWidth - titleWidth) / 2;
+          currentPage.drawText(title, {
+            x: Math.max(margin, titleX),
+            y: currentY - titleSize,
+            size: titleSize,
+            font: selectedBoldFont,
+            color: PDFLib.rgb(0.1, 0.1, 0.1)
+          });
+          currentY -= (titleSize * 1.8);
+        }
+
+        // Draw body lines
+        for (let i = 0; i < formattedLines.length; i++) {
+          const line = formattedLines[i];
+
+          // Check if we need a new page
+          if (currentY - lineHeight < margin) {
+            currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+            currentY = pageHeight - margin;
+          }
+
+          if (line !== '') {
+            currentPage.drawText(line, {
+              x: margin,
+              y: currentY - fontSize,
+              size: fontSize,
+              font: selectedFont,
+              color: PDFLib.rgb(0.15, 0.15, 0.15)
+            });
+          }
+          currentY -= lineHeight;
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const a = document.createElement('a');
+        const fileName = (title ? title.toLowerCase().replace(/[^a-z0-9]+/g, '_') : 'notes') + '.pdf';
+        a.href = URL.createObjectURL(blob);
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        statusMsg.textContent = `✅ PDF generated successfully (${pdfDoc.getPageCount()} pages)!`;
+        showToast('Text PDF downloaded!');
+      } catch (err) {
+        alert("PDF creation error: " + err.message);
+        statusMsg.textContent = 'Failed to generate PDF.';
+      } finally {
+        genBtn.disabled = false;
+      }
+    }
+
+    function clearTextForm() {
+      document.getElementById('doc_title').value = '';
+      document.getElementById('doc_text').value = '';
+      document.getElementById('status_msg').textContent = '';
+      showToast('Form cleared');
+    }
+  </script>
+</body>
+</html>

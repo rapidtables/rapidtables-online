@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Form Filler Online Free - Fill &amp; Sign PDF Forms - RapidTables.online</title>
+  <meta name="description" content="Fill out PDF forms online for free. Complete interactive fields, type text into applications, tax forms, and contracts directly in your browser. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .field-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .field-card label {
+      font-size: 13px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .field-card input, .field-card select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-alt);
+      color: var(--text-main);
+      font-size: 14px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF Form Filler</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online PDF Form Filler</h1>
+        <p class="subtitle">Complete, fill out, and sign interactive PDF forms and official applications online without installing software.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📋✍️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF Form</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all AcroForms, tax forms, employment contracts, and applications.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <!-- Controls Bar -->
+        <div id="controls_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="file_name_lbl">form.pdf</strong>
+            <span id="fields_count_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" id="save_btn" onclick="saveFilledPdf()">💾 Save &amp; Download Form</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Load Another</button>
+          </div>
+        </div>
+
+        <div id="fields_grid" class="fields-grid" style="display: none;"></div>
+      </div>
+
+      <section class="info-card">
+        <h2>How to Fill Out PDF Forms Online</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload Form:</strong> Select your PDF tax form, visa application, job paperwork, or lease contract.</li>
+          <li><strong>Fill Fields:</strong> Our parser identifies all interactive form fields (text boxes, dates, checkboxes, and selection menus), making them quick to fill.</li>
+          <li><strong>Download:</strong> Click "Save &amp; Download Form" to export the completed document with fields preserved or flattened.</li>
+        </ol>
+
+        <h3 style="margin-top: 16px;">100% Confidential</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your private social security numbers, banking details, and personal contact info are never saved on any server.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="sign-pdf.html">✍️ Sign PDF Document</a></li>
+          <li><a href="edit-pdf.html">✏️ Edit PDF</a></li>
+          <li><a href="pdf-reader.html">📖 PDF Reader</a></li>
+          <li><a href="redact-pdf.html">⬛ Redact PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Private &amp; Secure</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          All form fields are populated in memory.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-form-filler.html">PDF Form Filler</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/edit-pdf.html">Edit PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentFile = null;
+    let currentArrayBuffer = null;
+    let loadedPdfDoc = null;
+    let formFields = [];
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      currentArrayBuffer = await file.arrayBuffer();
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Scanning form fields in ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        loadedPdfDoc = await PDFLib.PDFDocument.load(currentArrayBuffer);
+        const form = loadedPdfDoc.getForm();
+        const fields = form.getFields();
+
+        formFields = [];
+        const grid = document.getElementById('fields_grid');
+        grid.innerHTML = '';
+
+        if (fields.length === 0) {
+          status.textContent = 'This PDF does not contain interactive AcroForm fields. You can use our "Edit PDF" or "Sign PDF" tool to place text anywhere on this document.';
+          document.getElementById('controls_bar').style.display = 'none';
+          return;
+        }
+
+        fields.forEach(field => {
+          const name = field.getName();
+          const type = field.constructor.name;
+
+          formFields.push({ field: field, name: name, type: type });
+
+          const card = document.createElement('div');
+          card.className = 'field-card';
+
+          const label = document.createElement('label');
+          label.textContent = name;
+          card.appendChild(label);
+
+          if (type.includes('CheckBox')) {
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.style.width = 'auto';
+            chk.id = `field_${name}`;
+            card.appendChild(chk);
+          } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = `field_${name}`;
+            input.placeholder = `Enter ${name}...`;
+            card.appendChild(input);
+          }
+
+          grid.appendChild(card);
+        });
+
+        document.getElementById('file_name_lbl').textContent = file.name;
+        document.getElementById('fields_count_lbl').textContent = `• ${fields.length} interactive fields detected`;
+        document.getElementById('controls_bar').style.display = 'flex';
+        document.getElementById('fields_grid').style.display = 'grid';
+        status.textContent = 'Fill in the fields below and click Save Form.';
+      } catch (err) {
+        status.textContent = 'Error parsing PDF form: ' + err.message;
+      }
+    }
+
+    async function saveFilledPdf() {
+      if (!loadedPdfDoc) return;
+      const btn = document.getElementById('save_btn');
+      btn.disabled = true;
+      btn.textContent = 'Filling form...';
+
+      try {
+        const form = loadedPdfDoc.getForm();
+
+        formFields.forEach(item => {
+          const el = document.getElementById(`field_${item.name}`);
+          if (!el) return;
+
+          try {
+            if (item.type.includes('CheckBox')) {
+              if (el.checked) form.getCheckBox(item.name).check();
+              else form.getCheckBox(item.name).uncheck();
+            } else {
+              const val = el.value.trim();
+              if (val) {
+                form.getTextField(item.name).setText(val);
+              }
+            }
+          } catch (e) {
+            // Ignore minor field-type mismatches
+          }
+        });
+
+        const filledBytes = await loadedPdfDoc.save();
+        const blob = new Blob([filledBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+        a.href = url;
+        a.download = baseName + '-completed.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Save & Download Form';
+      } catch (err) {
+        alert('Saving form failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Save & Download Form';
+      }
+    }
+
+    function resetTool() {
+      currentFile = null;
+      loadedPdfDoc = null;
+      formFields = [];
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('controls_bar').style.display = 'none';
+      document.getElementById('fields_grid').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Percentage Calculator - RapidTables.online</title>
+  <meta name="description" content="Free online percentage calculator. Calculate percentage of a number, percentage change, increase, decrease, and difference with step-by-step formulas.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Percentage Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      
+      <div class="page-title-section">
+        <h1>Percentage Calculator</h1>
+        <p class="subtitle">Quickly solve all common percentage problems: find percentage of a value, percentage change, and percentage ratios.</p>
+      </div>
+
+      <!-- Tool 1: What is P% of X? -->
+      <div class="tool-box">
+        <h2 style="font-size: 1.15rem; margin-bottom: 14px;">1. What is P% of X?</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <span>What is</span>
+          <input type="number" id="p1_rate" class="input-control" style="width: 110px;" placeholder="e.g. 15" value="15" step="any">
+          <span>% of</span>
+          <input type="number" id="p1_val" class="input-control" style="width: 140px;" placeholder="e.g. 200" value="200" step="any">
+          <button class="btn btn-primary" onclick="calcP1()">Calculate</button>
+          <button class="btn btn-secondary" onclick="resetP1()">Reset</button>
+        </div>
+        <div id="res_p1" class="result-card hidden">
+          <h3>Result</h3>
+          <div class="result-value" id="res_p1_val">30</div>
+          <div class="result-details" id="res_p1_detail">Calculation: (15 / 100) × 200 = 30</div>
+        </div>
+      </div>
+
+      <!-- Tool 2: X is what percent of Y? -->
+      <div class="tool-box">
+        <h2 style="font-size: 1.15rem; margin-bottom: 14px;">2. X is what percent of Y?</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <input type="number" id="p2_num" class="input-control" style="width: 120px;" placeholder="e.g. 30" value="30" step="any">
+          <span>is what percent of</span>
+          <input type="number" id="p2_den" class="input-control" style="width: 120px;" placeholder="e.g. 150" value="150" step="any">
+          <button class="btn btn-primary" onclick="calcP2()">Calculate</button>
+          <button class="btn btn-secondary" onclick="resetP2()">Reset</button>
+        </div>
+        <div id="res_p2" class="result-card hidden">
+          <h3>Result</h3>
+          <div class="result-value" id="res_p2_val">20%</div>
+          <div class="result-details" id="res_p2_detail">Calculation: (30 / 150) × 100 = 20%</div>
+        </div>
+      </div>
+
+      <!-- Tool 3: Percentage Increase / Decrease -->
+      <div class="tool-box">
+        <h2 style="font-size: 1.15rem; margin-bottom: 14px;">3. Percentage Change (Increase / Decrease)</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <span>From</span>
+          <input type="number" id="p3_v1" class="input-control" style="width: 120px;" placeholder="e.g. 100" value="100" step="any">
+          <span>to</span>
+          <input type="number" id="p3_v2" class="input-control" style="width: 120px;" placeholder="e.g. 125" value="125" step="any">
+          <button class="btn btn-primary" onclick="calcP3()">Calculate</button>
+          <button class="btn btn-secondary" onclick="resetP3()">Reset</button>
+        </div>
+        <div id="res_p3" class="result-card hidden">
+          <h3>Result</h3>
+          <div class="result-value" id="res_p3_val">+25%</div>
+          <div class="result-details" id="res_p3_detail">Increase of 25.00%</div>
+        </div>
+      </div>
+
+      <!-- SEO & Formulas -->
+      <article class="seo-section">
+        <h2>How to Calculate Percentage</h2>
+        <p>A percentage is a number or ratio expressed as a fraction of 100. It is often denoted using the percent sign, "<strong>%</strong>".</p>
+        
+        <h3>1. Percentage of a Value Formula</h3>
+        <p>To find <code>P%</code> of number <code>X</code>:</p>
+        <div class="formula-box">Result = (P / 100) × X</div>
+
+        <h3>2. What Percent is X of Y?</h3>
+        <p>To determine what percentage number <code>X</code> is of total <code>Y</code>:</p>
+        <div class="formula-box">Percentage = (X / Y) × 100%</div>
+
+        <h3>3. Percentage Change Formula</h3>
+        <p>To calculate the percentage increase or decrease between initial value <code>V1</code> and new value <code>V2</code>:</p>
+        <div class="formula-box">Percentage Change = ((V2 - V1) / |V1|) × 100%</div>
+        <p>If the result is positive, it represents an <strong>increase</strong>. If the result is negative, it represents a <strong>decrease</strong>.</p>
+      </article>
+
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Related Math Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="fraction-calculator.html">Fraction Calculator</a></li>
+          <li><a href="average-calculator.html">Average Calculator</a></li>
+          <li><a href="../../convert/number-base-converter.html">Number Base Converter</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Financial Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="../finance/mortgage-calculator.html">Mortgage Calculator</a></li>
+          <li><a href="../finance/compound-interest-calculator.html">Compound Interest</a></li>
+          <li><a href="../finance/loan-calculator.html">Loan Payment Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function calcP1() {
+      const p = parseFloat(document.getElementById('p1_rate').value);
+      const x = parseFloat(document.getElementById('p1_val').value);
+      if (isNaN(p) || isNaN(x)) return;
+      const res = (p / 100) * x;
+      document.getElementById('res_p1_val').textContent = Number(res.toFixed(6)).toString();
+      document.getElementById('res_p1_detail').textContent = `Calculation: (${p} ÷ 100) × ${x} = ${res}`;
+      document.getElementById('res_p1').classList.remove('hidden');
+    }
+    function resetP1() {
+      document.getElementById('p1_rate').value = '';
+      document.getElementById('p1_val').value = '';
+      document.getElementById('res_p1').classList.add('hidden');
+    }
+
+    function calcP2() {
+      const x = parseFloat(document.getElementById('p2_num').value);
+      const y = parseFloat(document.getElementById('p2_den').value);
+      if (isNaN(x) || isNaN(y) || y === 0) return;
+      const res = (x / y) * 100;
+      document.getElementById('res_p2_val').textContent = Number(res.toFixed(4)).toString() + '%';
+      document.getElementById('res_p2_detail').textContent = `Calculation: (${x} ÷ ${y}) × 100% = ${res.toFixed(4)}%`;
+      document.getElementById('res_p2').classList.remove('hidden');
+    }
+    function resetP2() {
+      document.getElementById('p2_num').value = '';
+      document.getElementById('p2_den').value = '';
+      document.getElementById('res_p2').classList.add('hidden');
+    }
+
+    function calcP3() {
+      const v1 = parseFloat(document.getElementById('p3_v1').value);
+      const v2 = parseFloat(document.getElementById('p3_v2').value);
+      if (isNaN(v1) || isNaN(v2) || v1 === 0) return;
+      const diff = v2 - v1;
+      const pct = (diff / Math.abs(v1)) * 100;
+      const type = pct > 0 ? 'Increase' : (pct < 0 ? 'Decrease' : 'No change');
+      const sign = pct > 0 ? '+' : '';
+      document.getElementById('res_p3_val').textContent = `${sign}${pct.toFixed(2)}%`;
+      document.getElementById('res_p3_detail').textContent = `${type} of ${Math.abs(pct).toFixed(2)}% (Absolute Difference: ${diff})`;
+      document.getElementById('res_p3').classList.remove('hidden');
+    }
+    function resetP3() {
+      document.getElementById('p3_v1').value = '';
+      document.getElementById('p3_v2').value = '';
+      document.getElementById('res_p3').classList.add('hidden');
+    }
+
+    // Auto-calculate on load
+    calcP1();
+    calcP2();
+    calcP3();
+  </script>
+</body>
+</html>

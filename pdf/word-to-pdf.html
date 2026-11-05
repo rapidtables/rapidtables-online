@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert Word to PDF Online Free (DOCX to PDF) - RapidTables.online</title>
+  <meta name="description" content="Convert Microsoft Word documents (.docx) to PDF online for free. Clean formatting, custom page sizes, and 100% private in-browser conversion.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .doc-preview-sheet {
+      background: #ffffff;
+      color: #1e293b;
+      padding: 40px 48px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      max-height: 500px;
+      overflow-y: auto;
+      line-height: 1.8;
+      font-size: 15px;
+      margin-top: 20px;
+    }
+    .doc-preview-sheet h1, .doc-preview-sheet h2, .doc-preview-sheet h3 {
+      color: #0f172a;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+    .doc-preview-sheet p {
+      margin-bottom: 12px;
+    }
+    .doc-preview-sheet table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .doc-preview-sheet th, .doc-preview-sheet td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 12px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Word to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert Word to PDF (DOCX to PDF)</h1>
+        <p class="subtitle">Convert Microsoft Word documents (.docx) to universal, print-ready PDF files with faithful layout preservation.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('doc_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📝➡️📄</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a Word File (.docx)</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports DOCX files. Rendered directly into PDF inside your browser.</div>
+          <input type="file" id="doc_file_input" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display: none;" onchange="handleDocFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <!-- Controls Bar -->
+        <div id="controls_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label for="page_size" style="font-size: 12px; font-weight: 600;">Size:</label>
+              <select id="page_size" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="a4" selected>A4</option>
+                <option value="letter">Letter</option>
+                <option value="legal">Legal</option>
+              </select>
+            </div>
+            <div>
+              <label for="page_orient" style="font-size: 12px; font-weight: 600;">Orientation:</label>
+              <select id="page_orient" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="portrait" selected>Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" id="convert_btn" onclick="generatePdf()">💾 Download PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Convert Another</button>
+          </div>
+        </div>
+
+        <div id="preview_wrapper" style="display: none;">
+          <h3 style="font-size: 15px; margin-top: 20px; margin-bottom: 8px;">Formatted Document Preview:</h3>
+          <div id="doc_preview" class="doc-preview-sheet"></div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How Word to PDF Conversion Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Our client-side engine parses the internal XML markup of your <code>.docx</code> document using Mammoth, restoring typography, headings, tables, bullet lists, and paragraphs. It then compiles the document into vector PDF format using high-definition rendering.
+        </p>
+
+        <h3 style="margin-top: 16px;">Why Convert DOCX to PDF?</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Universal Layout:</strong> Word documents often render differently across versions of MS Office. PDFs look 100% identical on phones, Mac, Windows, and Linux.</li>
+          <li><strong>Print &amp; Submit Ready:</strong> Resumes, contracts, and assignments are universally accepted in PDF format.</li>
+          <li><strong>100% Private:</strong> Your files never travel across the internet. Instant conversion in local browser memory.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF to Office</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-word.html">📝 PDF to Word (.docx)</a></li>
+          <li><a href="excel-to-pdf.html">📈 Excel to PDF</a></li>
+          <li><a href="ppt-to-pdf.html">📽️ PPT to PDF</a></li>
+          <li><a href="text-to-pdf.html">📄 Text to PDF</a></li>
+          <li><a href="html-to-pdf.html">🌐 HTML to PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Safe &amp; Confidential</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          No files uploaded. Ideal for NDAs, legal agreements, and corporate drafts.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/word-to-pdf.html">Word to PDF</a>
+          <a href="../pdf/pdf-to-word.html">PDF to Word</a>
+          <a href="../pdf/excel-to-pdf.html">Excel to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentFileName = '';
+
+    async function handleDocFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFileName = file.name;
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Reading and formatting ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+        const html = result.value;
+
+        const preview = document.getElementById('doc_preview');
+        preview.innerHTML = html || '<p>No readable content found in Word file.</p>';
+
+        document.getElementById('controls_bar').style.display = 'flex';
+        document.getElementById('preview_wrapper').style.display = 'block';
+        status.textContent = 'Document rendered! Click Download PDF below.';
+      } catch (err) {
+        status.textContent = 'Error converting Word file: ' + err.message;
+      }
+    }
+
+    async function generatePdf() {
+      const element = document.getElementById('doc_preview');
+      const pageSize = document.getElementById('page_size').value;
+      const orientation = document.getElementById('page_orient').value;
+      const btn = document.getElementById('convert_btn');
+
+      btn.disabled = true;
+      btn.textContent = 'Generating PDF...';
+
+      const baseName = currentFileName.replace(/\.[^/.]+$/, '');
+      const opt = {
+        margin: [15, 15, 15, 15],
+        filename: baseName + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: pageSize, orientation: orientation }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      } catch (err) {
+        alert('PDF Generation failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      }
+    }
+
+    function resetTool() {
+      currentFileName = '';
+      document.getElementById('doc_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('controls_bar').style.display = 'none';
+      document.getElementById('preview_wrapper').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      document.getElementById('doc_preview').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert PDF to JPG Online Free - High Quality - RapidTables.online</title>
+  <meta name="description" content="Convert PDF pages to high quality JPG images online for free. Select DPI resolution, download pages as JPG or ZIP bundle. 100% private in-browser conversion.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .img-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .img-thumb-wrap {
+      background: #0f172a;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+    .img-thumb-wrap img {
+      max-width: 100%;
+      max-height: 190px;
+      border-radius: 2px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .img-card-footer {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border-color);
+      font-size: 13px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF to JPG</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert PDF to JPG Images</h1>
+        <p class="subtitle">Extract and save every PDF page as crisp high-resolution JPEG photos. Fast client-side rendering with custom DPI controls.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">🖼️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all multi-page PDFs. 100% processed securely in your browser.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handlePdf(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="controls_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="file_name_lbl">document.pdf</strong>
+            <span id="pages_count_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="downloadAllZip()">📦 Download All (ZIP)</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Convert Another</button>
+          </div>
+        </div>
+
+        <div id="images_grid" class="img-grid"></div>
+      </div>
+
+      <section class="info-card">
+        <h2>Why Convert PDF to JPG?</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Converting PDF pages into JPEG format makes them effortless to insert into PowerPoint slides, social media posts, blog articles, and email messages without requiring PDF reader extensions.
+        </p>
+
+        <h3 style="margin-top: 16px;">100% Client-Side Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your documents are rendered exclusively in your browser using HTML5 Canvas and WebAssembly. No files are uploaded to any server.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Image Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-png.html">🖼️ PDF to PNG</a></li>
+          <li><a href="image-to-pdf.html">📸 Image to PDF</a></li>
+          <li><a href="jpg-to-pdf.html">🌄 JPG to PDF</a></li>
+          <li><a href="pdf-to-word.html">📝 PDF to Word</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Fast &amp; Free</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Unlimited conversions with zero watermarks.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-jpg.html">PDF to JPG</a>
+          <a href="../pdf/pdf-to-png.html">PDF to PNG</a>
+          <a href="../pdf/jpg-to-pdf.html">JPG to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let jpgList = []; // array of { pageNum, dataUrl }
+
+    async function handlePdf(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Rendering JPG images for ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const totalPages = pdf.numPages;
+
+        jpgList = [];
+        const grid = document.getElementById('images_grid');
+        grid.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+          status.textContent = `Converting page ${i} of ${totalPages}...`;
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 1.5 });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+
+          // White background for JPEG
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+          jpgList.push({ pageNum: i, dataUrl: dataUrl });
+
+          const card = document.createElement('div');
+          card.className = 'img-card';
+
+          const thumbWrap = document.createElement('div');
+          thumbWrap.className = 'img-thumb-wrap';
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          thumbWrap.appendChild(img);
+
+          const footer = document.createElement('div');
+          footer.className = 'img-card-footer';
+          footer.innerHTML = `<strong>Page ${i}</strong><button class="btn btn-secondary btn-sm" onclick="downloadSingle(${i})">💾 Save JPG</button>`;
+
+          card.appendChild(thumbWrap);
+          card.appendChild(footer);
+          grid.appendChild(card);
+        }
+
+        document.getElementById('file_name_lbl').textContent = file.name;
+        document.getElementById('pages_count_lbl').textContent = `• ${totalPages} JPG images`;
+        document.getElementById('controls_bar').style.display = 'flex';
+        status.textContent = 'Conversion complete!';
+      } catch (err) {
+        status.textContent = 'Error converting PDF: ' + err.message;
+      }
+    }
+
+    function downloadSingle(pageNum) {
+      const item = jpgList.find(x => x.pageNum === pageNum);
+      if (!item) return;
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+      const a = document.createElement('a');
+      a.href = item.dataUrl;
+      a.download = `${baseName}-page-${pageNum}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    async function downloadAllZip() {
+      if (!jpgList.length) return;
+      const zip = new JSZip();
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+
+      jpgList.forEach(item => {
+        const b64 = item.dataUrl.replace(/^data:image\/jpeg;base64,/, "");
+        zip.file(`${baseName}-page-${item.pageNum}.jpg`, b64, { base64: true });
+      });
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${baseName}-jpg-images.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function resetTool() {
+      currentFile = null;
+      jpgList = [];
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('controls_bar').style.display = 'none';
+      document.getElementById('images_grid').innerHTML = '';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

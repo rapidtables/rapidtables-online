@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert CSV to PDF Online Free - RapidTables.online</title>
+  <meta name="description" content="Convert CSV files and tabular data to printable PDF spreadsheets online for free. Clean grid styling, custom page orientations, and 100% private in-browser tool.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 30px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .csv-textarea {
+      width: 100%;
+      height: 160px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      resize: vertical;
+      margin-top: 10px;
+    }
+    .table-preview-wrapper {
+      background: #ffffff;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    .csv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      color: #1e293b;
+    }
+    .csv-table th, .csv-table td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .csv-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>CSV to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert CSV to PDF Online</h1>
+        <p class="subtitle">Convert comma-separated data and raw spreadsheet exports into beautifully formatted PDF documents.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('csv_file_input').click()">
+          <div style="font-size: 36px; margin-bottom: 6px;">📊➡️📄</div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a CSV File</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Or paste your comma-separated values into the box below.</div>
+          <input type="file" id="csv_file_input" accept=".csv,.txt" style="display: none;" onchange="handleCsvFile(event)">
+        </div>
+
+        <textarea id="csv_text_input" class="csv-textarea" oninput="parseCsvInput()" placeholder="Item, Quantity, Unit Price, Total Price&#10;Widget A, 10, $15.00, $150.00&#10;Widget B, 5, $42.00, $210.00"></textarea>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px;">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <div>
+              <label for="page_orient" style="font-size: 12px; font-weight: 600;">Orientation:</label>
+              <select id="page_orient" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="landscape" selected>Landscape (Best for Wide Tables)</option>
+                <option value="portrait">Portrait</option>
+              </select>
+            </div>
+            <div>
+              <label for="page_size" style="font-size: 12px; font-weight: 600;">Size:</label>
+              <select id="page_size" style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <option value="a4" selected>A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="convert_btn" onclick="downloadPdf()">💾 Download PDF</button>
+        </div>
+
+        <div class="table-preview-wrapper" id="preview_wrapper" style="display: none;">
+          <div id="print_area">
+            <h3 style="margin-bottom: 10px; color: #0f172a;" id="table_title">Spreadsheet Data</h3>
+            <table id="csv_table" class="csv-table"></table>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How CSV to PDF Conversion Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online auto-detects row separators and delimiter tokens (commas, semicolons, tabs), structuring unformatted data into a crisp, paginated PDF spreadsheet.
+        </p>
+
+        <h3 style="margin-top: 16px;">100% In-Browser Privacy</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your business databases and inventory figures are rendered exclusively inside local browser memory. No data is transmitted to external servers.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="excel-to-pdf.html">📈 Excel to PDF</a></li>
+          <li><a href="pdf-to-excel.html">📊 PDF to Excel</a></li>
+          <li><a href="text-to-pdf.html">📄 Text to PDF</a></li>
+          <li><a href="html-to-pdf.html">🌐 HTML to PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Safe &amp; Free</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Export unlimited tables without watermarks.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/csv-to-pdf.html">CSV to PDF</a>
+          <a href="../pdf/excel-to-pdf.html">Excel to PDF</a>
+          <a href="../pdf/pdf-to-excel.html">PDF to Excel</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentFileName = 'spreadsheet.pdf';
+
+    function handleCsvFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFileName = file.name.replace(/\.[^/.]+$/, '') + '.pdf';
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        document.getElementById('csv_text_input').value = re.target.result;
+        parseCsvInput();
+      };
+      reader.readAsText(file);
+    }
+
+    function parseCsvInput() {
+      const text = document.getElementById('csv_text_input').value.trim();
+      if (!text) {
+        document.getElementById('preview_wrapper').style.display = 'none';
+        return;
+      }
+
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (!lines.length) return;
+
+      // Determine delimiter
+      const firstLine = lines[0];
+      let delim = ',';
+      if ((firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length) delim = ';';
+      if ((firstLine.match(/\t/g) || []).length > (firstLine.match(/,/g) || []).length) delim = '\t';
+
+      const table = document.getElementById('csv_table');
+      table.innerHTML = '';
+
+      // Header
+      const headerCols = lines[0].split(delim);
+      const thead = document.createElement('thead');
+      const headerTr = document.createElement('tr');
+      headerCols.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col.replace(/^"(.*)"$/, '$1').trim();
+        headerTr.appendChild(th);
+      });
+      thead.appendChild(headerTr);
+      table.appendChild(thead);
+
+      // Body
+      const tbody = document.createElement('tbody');
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(delim);
+        const tr = document.createElement('tr');
+        for (let c = 0; c < headerCols.length; c++) {
+          const td = document.createElement('td');
+          td.textContent = (cols[c] || '').replace(/^"(.*)"$/, '$1').trim();
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+
+      document.getElementById('preview_wrapper').style.display = 'block';
+    }
+
+    async function downloadPdf() {
+      const element = document.getElementById('print_area');
+      const pageSize = document.getElementById('page_size').value;
+      const orientation = document.getElementById('page_orient').value;
+      const btn = document.getElementById('convert_btn');
+
+      btn.disabled = true;
+      btn.textContent = 'Generating PDF...';
+
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: currentFileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: pageSize, orientation: orientation }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      } catch (err) {
+        alert('PDF Generation failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Download PDF';
+      }
+    }
+
+    // Initialize sample
+    parseCsvInput();
+  </script>
+</body>
+</html>

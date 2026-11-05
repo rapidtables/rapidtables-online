@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom QR Code Generator with Multiple Designs - RapidTables.online</title>
+  <meta name="description" content="Free online custom QR code generator with multiple designs, shapes (dots, rounded, circles), custom colors, gradients, frames, logos, and high-res PNG download.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .qr-workspace {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .qr-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Tab Navigation */
+    .qr-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 6px;
+      overflow-x: auto;
+    }
+    .qr-tab-btn {
+      padding: 8px 16px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .qr-tab-btn:hover {
+      color: var(--primary);
+      background: var(--bg-alt);
+    }
+    .qr-tab-btn.active {
+      color: #fff;
+      background: var(--primary);
+    }
+    /* Design Selector Grids */
+    .design-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .design-card {
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 6px;
+      text-align: center;
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .design-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .design-card.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--primary);
+    }
+    .design-icon-preview {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: var(--bg-alt);
+      border-radius: 4px;
+    }
+    /* Presets Strip */
+    .presets-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+    }
+    .preset-chip {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition);
+    }
+    .preset-chip:hover {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    /* Preview Sticky Panel */
+    .qr-sticky-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 20px;
+    }
+    .canvas-wrapper {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+    }
+    #qr_custom_canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Custom QR Code Generator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Custom QR Code Designer &amp; Generator</h1>
+        <p class="subtitle">Design high-resolution QR codes with custom dot shapes, corner eye styles, gradient colors, center logos, and 'Scan Me' marketing frames.</p>
+      </div>
+
+      <!-- Quick Style Presets -->
+      <div class="presets-strip">
+        <span style="font-size: 12px; font-weight: 700; align-self: center; color: var(--text-muted);">Quick Themes:</span>
+        <button type="button" class="preset-chip" onclick="applyPresetTheme('corporate')">💼 Corporate Blue</button>
+        <button type="button" class="preset-chip" onclick="applyPresetTheme('sunset')">🌇 Sunset Glow</button>
+        <button type="button" class="preset-chip" onclick="applyPresetTheme('emerald')">🌿 Emerald Mint</button>
+        <button type="button" class="preset-chip" onclick="applyPresetTheme('neon')">⚡ Cyberpunk Neon</button>
+        <button type="button" class="preset-chip" onclick="applyPresetTheme('classic')">🖤 Classic Black</button>
+      </div>
+
+      <div class="qr-workspace">
+        
+        <!-- Left: Configuration Panels -->
+        <div class="tool-box" style="margin-top: 0;">
+          
+          <!-- Tabs -->
+          <div class="qr-tabs">
+            <button class="qr-tab-btn active" id="tab_content_btn" onclick="switchTab('content')">1. Content</button>
+            <button class="qr-tab-btn" id="tab_shapes_btn" onclick="switchTab('shapes')">2. Shapes &amp; Eyes</button>
+            <button class="qr-tab-btn" id="tab_colors_btn" onclick="switchTab('colors')">3. Colors &amp; Gradients</button>
+            <button class="qr-tab-btn" id="tab_logo_btn" onclick="switchTab('logo')">4. Logo &amp; Frame</button>
+          </div>
+
+          <!-- TAB 1: Content -->
+          <div id="pane_content">
+            <div style="margin-bottom: 14px;">
+              <label style="font-weight: 600; margin-right: 14px; font-size: 13px;">Type:</label>
+              <label><input type="radio" name="qr_type" value="url" checked onchange="setQrType('url')"> Website URL</label>
+              &nbsp;&nbsp;
+              <label><input type="radio" name="qr_type" value="text" onchange="setQrType('text')"> Plain Text</label>
+              &nbsp;&nbsp;
+              <label><input type="radio" name="qr_type" value="wifi" onchange="setQrType('wifi')"> WiFi Network</label>
+            </div>
+
+            <!-- Generic Input -->
+            <div id="box_generic" class="calc-input-group">
+              <label for="qr_text" id="qr_text_label">Website URL or Message</label>
+              <input type="text" id="qr_text" value="https://www.rapidtables.online" oninput="renderCustomQR()">
+            </div>
+
+            <!-- WiFi Input -->
+            <div id="box_wifi" style="display: none; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+              <div class="calc-input-group">
+                <label for="wifi_ssid">WiFi SSID (Network Name)</label>
+                <input type="text" id="wifi_ssid" value="MyHomeWiFi" oninput="buildWifiString()">
+              </div>
+              <div class="calc-input-group">
+                <label for="wifi_pass">WiFi Password</label>
+                <input type="text" id="wifi_pass" value="SecretPassword123" oninput="buildWifiString()">
+              </div>
+              <div class="calc-input-group">
+                <label for="wifi_enc">Encryption</label>
+                <select id="wifi_enc" onchange="buildWifiString()">
+                  <option value="WPA" selected>WPA / WPA2 (Standard)</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">None (Open Network)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Shapes & Eyes -->
+          <div id="pane_shapes" style="display: none;">
+            <label style="font-size: 13px; font-weight: 700; margin-bottom: 6px; display: block;">Body Dot Style</label>
+            <div class="design-grid">
+              <div class="design-card active" data-body="square" onclick="selectBodyShape('square')">
+                <div class="design-icon-preview">⬛</div>
+                <span>Square</span>
+              </div>
+              <div class="design-card" data-body="rounded" onclick="selectBodyShape('rounded')">
+                <div class="design-icon-preview">🔲</div>
+                <span>Rounded</span>
+              </div>
+              <div class="design-card" data-body="dots" onclick="selectBodyShape('dots')">
+                <div class="design-icon-preview">🔘</div>
+                <span>Circle Dots</span>
+              </div>
+              <div class="design-card" data-body="diamond" onclick="selectBodyShape('diamond')">
+                <div class="design-icon-preview">🔶</div>
+                <span>Diamond</span>
+              </div>
+            </div>
+
+            <label style="font-size: 13px; font-weight: 700; margin-top: 20px; margin-bottom: 6px; display: block;">Corner Eye / Marker Style</label>
+            <div class="design-grid">
+              <div class="design-card active" data-eye="square" onclick="selectEyeStyle('square')">
+                <div class="design-icon-preview">⏹️</div>
+                <span>Square</span>
+              </div>
+              <div class="design-card" data-eye="rounded" onclick="selectEyeStyle('rounded')">
+                <div class="design-icon-preview">🔲</div>
+                <span>Rounded</span>
+              </div>
+              <div class="design-card" data-eye="circle" onclick="selectEyeStyle('circle')">
+                <div class="design-icon-preview">🎯</div>
+                <span>Full Circle</span>
+              </div>
+              <div class="design-card" data-eye="leaf" onclick="selectEyeStyle('leaf')">
+                <div class="design-icon-preview">🍃</div>
+                <span>Leaf / Drop</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Colors & Gradients -->
+          <div id="pane_colors" style="display: none;">
+            <div class="calc-input-group" style="margin-bottom: 14px;">
+              <label for="color_mode_select">Color Fill Mode</label>
+              <select id="color_mode_select" onchange="toggleColorMode()">
+                <option value="solid">Single Solid Color</option>
+                <option value="gradient" selected>Two-Color Gradient</option>
+              </select>
+            </div>
+
+            <div class="calc-grid-2">
+              <div class="calc-input-group">
+                <label for="qr_color_1" id="lbl_color_1">Primary Color (Start)</label>
+                <input type="color" id="qr_color_1" value="#1e3a8a" style="height: 40px; padding: 2px;" onchange="renderCustomQR()">
+              </div>
+              <div class="calc-input-group" id="box_color_2">
+                <label for="qr_color_2">Gradient Color (End)</label>
+                <input type="color" id="qr_color_2" value="#06b6d4" style="height: 40px; padding: 2px;" onchange="renderCustomQR()">
+              </div>
+            </div>
+
+            <div class="calc-grid-2" style="margin-top: 14px;">
+              <div class="calc-input-group">
+                <label for="qr_bg_color">Background Color</label>
+                <input type="color" id="qr_bg_color" value="#ffffff" style="height: 40px; padding: 2px;" onchange="renderCustomQR()">
+              </div>
+              <div class="calc-input-group">
+                <label for="qr_eye_color">Corner Eye Accent Color</label>
+                <input type="color" id="qr_eye_color" value="#1e3a8a" style="height: 40px; padding: 2px;" onchange="renderCustomQR()">
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: Logo & Frame -->
+          <div id="pane_logo" style="display: none;">
+            <label style="font-size: 13px; font-weight: 700; margin-bottom: 6px; display: block;">Center Icon / Logo</label>
+            <div class="design-grid">
+              <div class="design-card active" data-logo="none" onclick="selectCenterLogo('none')">
+                <div class="design-icon-preview">🚫</div>
+                <span>None</span>
+              </div>
+              <div class="design-card" data-logo="globe" onclick="selectCenterLogo('globe')">
+                <div class="design-icon-preview">🌐</div>
+                <span>Web / Globe</span>
+              </div>
+              <div class="design-card" data-logo="wifi" onclick="selectCenterLogo('wifi')">
+                <div class="design-icon-preview">📶</div>
+                <span>WiFi</span>
+              </div>
+              <div class="design-card" data-logo="whatsapp" onclick="selectCenterLogo('whatsapp')">
+                <div class="design-icon-preview">💬</div>
+                <span>Chat</span>
+              </div>
+              <div class="design-card" data-logo="instagram" onclick="selectCenterLogo('instagram')">
+                <div class="design-icon-preview">📷</div>
+                <span>Social</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px;">
+              <label style="font-size: 13px; font-weight: 600;">Or Upload Custom Logo / Brand Image:</label>
+              <input type="file" id="custom_logo_file" accept="image/*" style="margin-top: 6px;" onchange="handleCustomLogoUpload(event)">
+            </div>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+
+            <label style="font-size: 13px; font-weight: 700; margin-bottom: 6px; display: block;">Marketing Frame / Banner</label>
+            <div class="calc-grid-2">
+              <div class="calc-input-group">
+                <label for="qr_frame_style">Frame Style</label>
+                <select id="qr_frame_style" onchange="renderCustomQR()">
+                  <option value="none" selected>No Frame (Minimal QR)</option>
+                  <option value="bottom">Bottom 'SCAN ME' Banner</option>
+                  <option value="top">Top 'SCAN ME' Banner</option>
+                </select>
+              </div>
+              <div class="calc-input-group">
+                <label for="qr_frame_text">Frame Text / Caption</label>
+                <input type="text" id="qr_frame_text" value="SCAN ME" oninput="renderCustomQR()">
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+            <div class="calc-grid-2">
+              <div class="calc-input-group">
+                <label for="export_size">Export Resolution</label>
+                <select id="export_size">
+                  <option value="300">Standard Web (300 × 300 px)</option>
+                  <option value="600" selected>High Definition (600 × 600 px)</option>
+                  <option value="1200">Print Quality (1200 × 1200 px)</option>
+                  <option value="2000">Ultra HD 4K (2000 × 2000 px)</option>
+                </select>
+              </div>
+              <div class="calc-input-group" style="justify-content: flex-end;">
+                <button class="btn btn-primary" onclick="downloadCustomQR()" style="margin-top: 24px;">⬇️ Download Custom QR (PNG)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live Canvas Preview Panel -->
+        <div class="qr-sticky-preview">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 14px;">Live Design Preview</div>
+          <div class="canvas-wrapper">
+            <canvas id="qr_custom_canvas" width="600" height="600"></canvas>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="copyQrImage()">📋 Copy QR Image</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetDefaults()">🔄 Reset Design</button>
+          </div>
+          <span style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">Scannable by all iPhone, iPad &amp; Android cameras</span>
+        </div>
+
+      </div>
+
+      <!-- Hidden Offscreen Container for QR Generator Matrix -->
+      <div id="hidden_qr_raw" style="display: none;"></div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card" style="margin-top: 32px;">
+        <h2>Custom QR Codes for Business, Marketing &amp; Menus</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Standard black-and-white QR codes often get overlooked. Customizing your QR code with vibrant gradients, rounded dots, and branded center logos increases scan rates by up to <strong>80%</strong> on printed flyers, business cards, restaurant menus, and packaging.
+        </p>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted); margin-top: 10px;">
+          <li>🔒 <strong>100% High Error Correction (Level H):</strong> Recovers up to 30% of obscured data, ensuring your code remains 100% scannable even with embedded logos.</li>
+          <li>📱 <strong>Universal Compatibility:</strong> Fully compatible with native iOS Camera, Google Lens, Samsung Camera, and all QR barcode scanning apps.</li>
+          <li>⚡ <strong>Zero Server Storage:</strong> Your text, WiFi passwords, and custom brand logos are rendered strictly in your browser.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Web Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="barcode-generator.html">🏷️ Barcode Generator</a></li>
+          <li><a href="color-picker.html">🎨 Color Picker</a></li>
+          <li><a href="image-compressor.html">🗜️ Image Compressor</a></li>
+          <li><a href="url-encoder-decoder.html">🔗 URL Encoder</a></li>
+          <li><a href="meta-tag-generator.html">🔍 SEO Meta Tag Generator</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Vector Precision</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Crisp canvas rendering produces sharp, print-ready QR codes up to 2000px resolution for high-end offset printing.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // State Variables
+    let selectedBodyShape = 'square';
+    let selectedEyeStyle = 'square';
+    let selectedLogo = 'none';
+    let customUploadedLogoImg = null;
+
+    function switchTab(tabId) {
+      const tabs = ['content', 'shapes', 'colors', 'logo'];
+      tabs.forEach(t => {
+        document.getElementById(`tab_${t}_btn`).classList.toggle('active', t === tabId);
+        document.getElementById(`pane_${t}`).style.display = t === tabId ? 'block' : 'none';
+      });
+    }
+
+    function setQrType(type) {
+      if (type === 'wifi') {
+        document.getElementById('box_generic').style.display = 'none';
+        document.getElementById('box_wifi').style.display = 'grid';
+        buildWifiString();
+      } else {
+        document.getElementById('box_generic').style.display = 'block';
+        document.getElementById('box_wifi').style.display = 'none';
+        document.getElementById('qr_text_label').textContent = type === 'url' ? 'Website URL:' : 'Plain Text:';
+        renderCustomQR();
+      }
+    }
+
+    function buildWifiString() {
+      const ssid = document.getElementById('wifi_ssid').value || 'MyWiFi';
+      const pass = document.getElementById('wifi_pass').value || '';
+      const enc = document.getElementById('wifi_enc').value;
+      const str = `WIFI:S:${ssid};T:${enc};P:${pass};;`;
+      renderFromRawString(str);
+    }
+
+    function selectBodyShape(shape) {
+      selectedBodyShape = shape;
+      document.querySelectorAll('[data-body]').forEach(el => {
+        el.classList.toggle('active', el.dataset.body === shape);
+      });
+      renderCustomQR();
+    }
+
+    function selectEyeStyle(style) {
+      selectedEyeStyle = style;
+      document.querySelectorAll('[data-eye]').forEach(el => {
+        el.classList.toggle('active', el.dataset.eye === style);
+      });
+      renderCustomQR();
+    }
+
+    function selectCenterLogo(logo) {
+      selectedLogo = logo;
+      customUploadedLogoImg = null;
+      document.querySelectorAll('[data-logo]').forEach(el => {
+        el.classList.toggle('active', el.dataset.logo === logo);
+      });
+      renderCustomQR();
+    }
+
+    function handleCustomLogoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          customUploadedLogoImg = img;
+          selectedLogo = 'custom';
+          document.querySelectorAll('[data-logo]').forEach(el => el.classList.remove('active'));
+          renderCustomQR();
+          showToast('Custom logo applied!');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function toggleColorMode() {
+      const mode = document.getElementById('color_mode_select').value;
+      document.getElementById('box_color_2').style.display = mode === 'gradient' ? 'block' : 'none';
+      document.getElementById('lbl_color_1').textContent = mode === 'gradient' ? 'Primary Color (Start)' : 'QR Code Color';
+      renderCustomQR();
+    }
+
+    function applyPresetTheme(theme) {
+      if (theme === 'corporate') {
+        selectBodyShape('rounded');
+        selectEyeStyle('leaf');
+        document.getElementById('color_mode_select').value = 'gradient';
+        document.getElementById('qr_color_1').value = '#1e3a8a';
+        document.getElementById('qr_color_2').value = '#06b6d4';
+        document.getElementById('qr_eye_color').value = '#1e3a8a';
+        document.getElementById('qr_bg_color').value = '#ffffff';
+      } else if (theme === 'sunset') {
+        selectBodyShape('dots');
+        selectEyeStyle('circle');
+        document.getElementById('color_mode_select').value = 'gradient';
+        document.getElementById('qr_color_1').value = '#ea580c';
+        document.getElementById('qr_color_2').value = '#db2777';
+        document.getElementById('qr_eye_color').value = '#be185d';
+        document.getElementById('qr_bg_color').value = '#ffffff';
+      } else if (theme === 'emerald') {
+        selectBodyShape('rounded');
+        selectEyeStyle('rounded');
+        document.getElementById('color_mode_select').value = 'gradient';
+        document.getElementById('qr_color_1').value = '#065f46';
+        document.getElementById('qr_color_2').value = '#10b981';
+        document.getElementById('qr_eye_color').value = '#047857';
+        document.getElementById('qr_bg_color').value = '#ffffff';
+      } else if (theme === 'neon') {
+        selectBodyShape('diamond');
+        selectEyeStyle('rounded');
+        document.getElementById('color_mode_select').value = 'gradient';
+        document.getElementById('qr_color_1').value = '#7c3aed';
+        document.getElementById('qr_color_2').value = '#2563eb';
+        document.getElementById('qr_eye_color').value = '#7c3aed';
+        document.getElementById('qr_bg_color').value = '#ffffff';
+      } else if (theme === 'classic') {
+        selectBodyShape('square');
+        selectEyeStyle('square');
+        document.getElementById('color_mode_select').value = 'solid';
+        document.getElementById('qr_color_1').value = '#0f172a';
+        document.getElementById('qr_eye_color').value = '#0f172a';
+        document.getElementById('qr_bg_color').value = '#ffffff';
+      }
+      toggleColorMode();
+      showToast(`Applied ${theme} design!`);
+    }
+
+    function renderCustomQR() {
+      const type = document.querySelector('input[name="qr_type"]:checked').value;
+      if (type === 'wifi') {
+        buildWifiString();
+      } else {
+        const text = document.getElementById('qr_text').value.trim() || 'https://www.rapidtables.online';
+        renderFromRawString(text);
+      }
+    }
+
+    function renderFromRawString(rawStr) {
+      const hiddenContainer = document.getElementById('hidden_qr_raw');
+      hiddenContainer.innerHTML = '';
+
+      // Generate base QR model using Level H (highest error correction for reliable scanning)
+      const qrModel = new QRCode(hiddenContainer, {
+        text: rawStr,
+        width: 128,
+        height: 128,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const qr = qrModel._oQRCode;
+      if (!qr) return;
+
+      const moduleCount = qr.getModuleCount();
+      drawStyledQrOnCanvas(qr, moduleCount);
+    }
+
+    // Helper: draw rounded rectangle fallback
+    function drawRoundRect(ctx, x, y, w, h, r) {
+      if (w < 2 * r) r = w / 2;
+      if (h < 2 * r) r = h / 2;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawStyledQrOnCanvas(qr, count) {
+      const canvas = document.getElementById('qr_custom_canvas');
+      const ctx = canvas.getContext('2d');
+
+      const frameStyle = document.getElementById('qr_frame_style').value;
+      const frameText = document.getElementById('qr_frame_text').value.trim() || 'SCAN ME';
+
+      const baseSize = 600;
+      const bannerHeight = (frameStyle !== 'none') ? 90 : 0;
+      canvas.width = baseSize;
+      canvas.height = baseSize + bannerHeight;
+
+      const bgColor = document.getElementById('qr_bg_color').value;
+      const colorMode = document.getElementById('color_mode_select').value;
+      const color1 = document.getElementById('qr_color_1').value;
+      const color2 = document.getElementById('qr_color_2').value;
+      const eyeColor = document.getElementById('qr_eye_color').value;
+
+      // Fill canvas background
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Create QR Color Style (Solid or Linear Gradient)
+      let qrFillStyle;
+      if (colorMode === 'gradient') {
+        const grad = ctx.createLinearGradient(0, 0, baseSize, baseSize);
+        grad.addColorStop(0, color1);
+        grad.addColorStop(1, color2);
+        qrFillStyle = grad;
+      } else {
+        qrFillStyle = color1;
+      }
+
+      // Calculate Grid Geometry
+      const margin = 42;
+      const qrAreaSize = baseSize - (margin * 2);
+      const moduleSize = qrAreaSize / count;
+      const qrOffsetY = (frameStyle === 'top') ? bannerHeight : 0;
+
+      // Identify Finder Areas (7x7 modules at 3 corners)
+      function isFinderPattern(r, c) {
+        if (r < 7 && c < 7) return true; // Top Left
+        if (r < 7 && c >= count - 7) return true; // Top Right
+        if (r >= count - 7 && c < 7) return true; // Bottom Left
+        return false;
+      }
+
+      // Identify Center Logo Area
+      const hasLogo = selectedLogo !== 'none';
+      const logoModuleSpan = hasLogo ? Math.floor(count * 0.22) : 0;
+      const centerStart = Math.floor((count - logoModuleSpan) / 2);
+      const centerEnd = centerStart + logoModuleSpan;
+
+      function isCenterLogoArea(r, c) {
+        if (!hasLogo) return false;
+        return (r >= centerStart && r < centerEnd && c >= centerStart && c < centerEnd);
+      }
+
+      // 1. Draw Body Modules
+      ctx.fillStyle = qrFillStyle;
+
+      for (let r = 0; r < count; r++) {
+        for (let c = 0; c < count; c++) {
+          if (isFinderPattern(r, c)) continue;
+          if (isCenterLogoArea(r, c)) continue;
+
+          if (qr.isDark(r, c)) {
+            const x = margin + (c * moduleSize);
+            const y = margin + qrOffsetY + (r * moduleSize);
+
+            if (selectedBodyShape === 'dots') {
+              ctx.beginPath();
+              ctx.arc(x + moduleSize / 2, y + moduleSize / 2, (moduleSize / 2) * 0.92, 0, Math.PI * 2);
+              ctx.fill();
+            } else if (selectedBodyShape === 'rounded') {
+              drawRoundRect(ctx, x + 0.5, y + 0.5, moduleSize - 1, moduleSize - 1, moduleSize * 0.38);
+            } else if (selectedBodyShape === 'diamond') {
+              ctx.beginPath();
+              ctx.moveTo(x + moduleSize / 2, y + 1);
+              ctx.lineTo(x + moduleSize - 1, y + moduleSize / 2);
+              ctx.lineTo(x + moduleSize / 2, y + moduleSize - 1);
+              ctx.lineTo(x + 1, y + moduleSize / 2);
+              ctx.closePath();
+              ctx.fill();
+            } else { // square
+              ctx.fillRect(x, y, moduleSize, moduleSize);
+            }
+          }
+        }
+      }
+
+      // 2. Draw 3 Corner Eyes (Position Markers)
+      const eyeLocations = [
+        { r: 0, c: 0, type: 'TL' },
+        { r: 0, c: count - 7, type: 'TR' },
+        { r: count - 7, c: 0, type: 'BL' }
+      ];
+
+      eyeLocations.forEach(loc => {
+        const eyeX = margin + (loc.c * moduleSize);
+        const eyeY = margin + qrOffsetY + (loc.r * moduleSize);
+        const eyeSize = 7 * moduleSize;
+
+        drawSingleCornerEye(ctx, eyeX, eyeY, eyeSize, moduleSize, selectedEyeStyle, eyeColor, bgColor, loc.type);
+      });
+
+      // 3. Draw Center Logo / Icon if enabled
+      if (hasLogo) {
+        const logoPixelSize = logoModuleSpan * moduleSize;
+        const logoX = margin + (centerStart * moduleSize);
+        const logoY = margin + qrOffsetY + (centerStart * moduleSize);
+
+        // White circular badge background
+        const cx = logoX + logoPixelSize / 2;
+        const cy = logoY + logoPixelSize / 2;
+        const rad = (logoPixelSize / 2) * 1.15;
+
+        ctx.fillStyle = bgColor;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = eyeColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Render Icon / Image
+        if (selectedLogo === 'custom' && customUploadedLogoImg) {
+          const imgPad = rad * 1.25;
+          ctx.drawImage(customUploadedLogoImg, cx - imgPad / 2, cy - imgPad / 2, imgPad, imgPad);
+        } else {
+          const iconGlyphs = {
+            globe: '🌐',
+            wifi: '📶',
+            whatsapp: '💬',
+            instagram: '📷'
+          };
+          ctx.font = `${Math.round(rad * 1.05)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(iconGlyphs[selectedLogo] || '⚡', cx, cy + 2);
+        }
+      }
+
+      // 4. Draw Marketing Frame / Banner if enabled
+      if (frameStyle !== 'none') {
+        const bannerY = (frameStyle === 'top') ? 16 : baseSize + 6;
+        const bannerX = margin;
+        const bannerW = baseSize - (margin * 2);
+        const bannerH = 68;
+
+        ctx.fillStyle = eyeColor;
+        drawRoundRect(ctx, bannerX, bannerY, bannerW, bannerH, 12);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(frameText, bannerX + bannerW / 2, bannerY + bannerH / 2);
+      }
+    }
+
+    function drawSingleCornerEye(ctx, x, y, size, ms, style, eyeColor, bgColor, cornerType) {
+      ctx.fillStyle = eyeColor;
+
+      if (style === 'circle') {
+        const cx = x + size / 2;
+        const cy = y + size / 2;
+        // Outer ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner white gap
+        ctx.fillStyle = bgColor;
+        ctx.beginPath();
+        ctx.arc(cx, cy, (size / 2) - ms, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Center pupil
+        ctx.fillStyle = eyeColor;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 1.5 * ms, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (style === 'rounded') {
+        // Outer rounded rect
+        drawRoundRect(ctx, x, y, size, size, 2.5 * ms);
+
+        // Inner white gap
+        ctx.fillStyle = bgColor;
+        drawRoundRect(ctx, x + ms, y + ms, size - (2 * ms), size - (2 * ms), 1.8 * ms);
+
+        // Center pupil
+        ctx.fillStyle = eyeColor;
+        drawRoundRect(ctx, x + (2 * ms), y + (2 * ms), 3 * ms, 3 * ms, 1 * ms);
+
+      } else if (style === 'leaf') {
+        // Outer with distinct rounded corner based on position
+        drawRoundRect(ctx, x, y, size, size, 2.5 * ms);
+
+        ctx.fillStyle = bgColor;
+        drawRoundRect(ctx, x + ms, y + ms, size - (2 * ms), size - (2 * ms), 1.8 * ms);
+
+        ctx.fillStyle = eyeColor;
+        // Round pupil
+        ctx.beginPath();
+        ctx.arc(x + size / 2, y + size / 2, 1.5 * ms, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else { // square
+        // Outer square frame
+        ctx.fillRect(x, y, size, size);
+
+        // Inner white cutout
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(x + ms, y + ms, size - (2 * ms), size - (2 * ms));
+
+        // Center pupil
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(x + (2 * ms), y + (2 * ms), 3 * ms, 3 * ms);
+      }
+    }
+
+    function downloadCustomQR() {
+      const sourceCanvas = document.getElementById('qr_custom_canvas');
+      const targetResolution = parseInt(document.getElementById('export_size').value, 10);
+
+      // Create high-res export canvas
+      const exportCanvas = document.createElement('canvas');
+      const ratio = targetResolution / 600;
+      exportCanvas.width = sourceCanvas.width * ratio;
+      exportCanvas.height = sourceCanvas.height * ratio;
+
+      const eCtx = exportCanvas.getContext('2d');
+      eCtx.imageSmoothingEnabled = true;
+      eCtx.imageSmoothingQuality = 'high';
+      eCtx.drawImage(sourceCanvas, 0, 0, exportCanvas.width, exportCanvas.height);
+
+      const a = document.createElement('a');
+      a.href = exportCanvas.toDataURL('image/png');
+      a.download = `custom_qr_code_${targetResolution}px.png`;
+      a.click();
+      showToast(`Exported ${targetResolution}px QR code!`);
+    }
+
+    async function copyQrImage() {
+      const canvas = document.getElementById('qr_custom_canvas');
+      try {
+        canvas.toBlob(async blob => {
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          showToast('QR code copied to clipboard!');
+        });
+      } catch (err) {
+        alert('Could not copy image: ' + err.message);
+      }
+    }
+
+    function resetDefaults() {
+      applyPresetTheme('corporate');
+      document.getElementById('qr_frame_style').value = 'none';
+      document.getElementById('qr_frame_text').value = 'SCAN ME';
+      selectCenterLogo('none');
+      document.getElementById('custom_logo_file').value = '';
+      customUploadedLogoImg = null;
+      renderCustomQR();
+      showToast('Reset to default design');
+    }
+
+    // Initialize with corporate theme
+    applyPresetTheme('corporate');
+    renderCustomQR();
+  </script>
+</body>
+</html>

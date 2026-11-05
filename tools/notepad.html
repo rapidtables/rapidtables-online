@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Notepad - Free Browser Text Editor - RapidTables.online</title>
+  <meta name="description" content="Free online notepad with autosave, multi-note sidebar, find & replace, special characters, emoji picker, font formatting, and word count. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    /* Notepad App Layout */
+    .notepad-app-container {
+      display: flex;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-surface);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      height: 720px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 860px) {
+      .notepad-app-container {
+        flex-direction: column;
+        height: auto;
+      }
+    }
+
+    /* Notes Sidebar */
+    .notes-sidebar {
+      width: 270px;
+      background: var(--bg-alt);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    @media (max-width: 860px) {
+      .notes-sidebar {
+        width: 100%;
+        max-height: 280px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+    }
+    .sidebar-top {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .notes-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      list-style: none;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .note-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: var(--bg-surface);
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .note-item:hover {
+      border-color: var(--border-color);
+      transform: translateY(-1px);
+    }
+    .note-item.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.08);
+    }
+    .note-item-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 20px;
+    }
+    .note-item-preview {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 3px;
+    }
+    .note-item-date {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .note-item-del {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: #94a3b8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px;
+    }
+    .note-item-del:hover {
+      color: #ef4444;
+    }
+    .sidebar-bottom {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    /* Editor Main Area */
+    .editor-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-surface);
+      min-width: 0;
+    }
+
+    /* Application Menu Bar */
+    .editor-menubar {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border-color);
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .menu-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .menu-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .menu-btn:hover {
+      background: var(--border-color);
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      background: var(--bg-surface);
+      min-width: 170px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      z-index: 50;
+      padding: 4px 0;
+    }
+    .menu-dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .dropdown-content button, .dropdown-content label {
+      width: 100%;
+      text-align: left;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--text-main);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dropdown-content button:hover, .dropdown-content label:hover {
+      background: var(--bg-alt);
+      color: var(--primary);
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 4px 0;
+    }
+
+    /* Title & Textarea */
+    .note-title-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .note-title-input {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      border: none;
+      background: transparent;
+      outline: none;
+    }
+    .notepad-textarea {
+      flex: 1;
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .notepad-textarea.no-wrap {
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Status Bar */
+    .notepad-statusbar {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border-color);
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+      gap: 6px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .char-btn {
+      height: 36px;
+      font-size: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-alt);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .char-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    /* Fullscreen mode */
+    .notepad-app-container.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      border-radius: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Online Notepad</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Notepad &amp; Text Editor</h1>
+        <p class="subtitle">Multi-note scratchpad inspired by onlinenotepad.org with instant auto-save, find &amp; replace, spellcheck, formatting, and offline storage.</p>
+      </div>
+
+      <!-- Main Notepad Application Box -->
+      <div class="notepad-app-container" id="app_container">
+        
+        <!-- Left Sidebar: Saved Notes Manager -->
+        <aside class="notes-sidebar">
+          <div class="sidebar-top">
+            <button class="btn btn-primary btn-sm" onclick="createNewNote()">+ Create New Note</button>
+            <input type="text" id="notes_search_input" placeholder="🔍 Search notes..." style="font-size: 12px; padding: 6px 10px;" oninput="renderNotesList()">
+          </div>
+
+          <ul class="notes-list" id="notes_list"></ul>
+
+          <div class="sidebar-bottom">
+            <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 4px 8px;" onclick="backupNotesJson()" title="Download all notes as JSON">💾 Backup</button>
+            <label class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 4px 8px; cursor: pointer;" title="Import notes JSON">
+              📥 Restore
+              <input type="file" id="import_json_input" accept=".json" style="display: none;" onchange="restoreNotesJson(event)">
+            </label>
+            <button class="btn btn-secondary btn-sm" style="font-size: 11px; padding: 4px 8px; color: #ef4444;" onclick="clearAllNotes()" title="Delete all notes">Clear All</button>
+          </div>
+        </aside>
+
+        <!-- Right Main: Editor Workspace -->
+        <div class="editor-pane">
+          
+          <!-- Dropdown Menubar -->
+          <div class="editor-menubar">
+            <!-- File Menu -->
+            <div class="menu-dropdown">
+              <button class="menu-btn">File ▾</button>
+              <div class="dropdown-content">
+                <button onclick="createNewNote()">➕ New Note</button>
+                <label>
+                  📂 Open .txt File
+                  <input type="file" id="txt_file_loader" accept=".txt,.md,.json,.html" style="display: none;" onchange="openTextFile(event)">
+                </label>
+                <button onclick="saveNoteImmediately()">💾 Save Changes</button>
+                <button onclick="downloadAsTxt()">⬇️ Save as .txt</button>
+                <div class="dropdown-divider"></div>
+                <button onclick="printNote()">🖨️ Print / Save PDF</button>
+              </div>
+            </div>
+
+            <!-- Edit Menu -->
+            <div class="menu-dropdown">
+              <button class="menu-btn">Edit ▾</button>
+              <div class="dropdown-content">
+                <button onclick="document.execCommand('undo')">↩️ Undo (Ctrl+Z)</button>
+                <button onclick="document.execCommand('redo')">↪️ Redo (Ctrl+Y)</button>
+                <div class="dropdown-divider"></div>
+                <button onclick="copyAllText()">📋 Copy All (Ctrl+A, C)</button>
+                <button onclick="openFindReplaceModal()">🔍 Find &amp; Replace</button>
+                <div class="dropdown-divider"></div>
+                <button onclick="convertCase('upper')">🔠 To UPPERCASE</button>
+                <button onclick="convertCase('lower')">🔡 To lowercase</button>
+                <button onclick="convertCase('title')">🔤 To Title Case</button>
+              </div>
+            </div>
+
+            <!-- Insert Menu -->
+            <div class="menu-dropdown">
+              <button class="menu-btn">Insert ▾</button>
+              <div class="dropdown-content">
+                <button onclick="insertDateTime()">📅 Date &amp; Time</button>
+                <button onclick="openSpecialCharsModal()">🔣 Special Characters</button>
+                <button onclick="openEmojiModal()">😀 Emoji List</button>
+              </div>
+            </div>
+
+            <!-- Format Menu -->
+            <div class="menu-dropdown">
+              <button class="menu-btn">Format ▾</button>
+              <div class="dropdown-content">
+                <button onclick="toggleWordWrap()"><span id="wrap_check">✓</span> Word Wrap</button>
+                <div class="dropdown-divider"></div>
+                <button onclick="setFontFamily('inherit')">Font: Default Sans</button>
+                <button onclick="setFontFamily('Arial, sans-serif')">Font: Arial</button>
+                <button onclick="setFontFamily('Georgia, serif')">Font: Georgia Serif</button>
+                <button onclick="setFontFamily('Courier New, monospace')">Font: Monospace Code</button>
+                <div class="dropdown-divider"></div>
+                <button onclick="setFontSize('13px')">Size: 13px (Small)</button>
+                <button onclick="setFontSize('15px')">Size: 15px (Standard)</button>
+                <button onclick="setFontSize('18px')">Size: 18px (Medium)</button>
+                <button onclick="setFontSize('22px')">Size: 22px (Large)</button>
+              </div>
+            </div>
+
+            <!-- View Menu -->
+            <div class="menu-dropdown">
+              <button class="menu-btn">View ▾</button>
+              <div class="dropdown-content">
+                <button onclick="toggleFullscreen()">⛶ Toggle Fullscreen</button>
+                <button onclick="toggleSidebar()"><span id="sidebar_check">✓</span> Show Sidebar</button>
+              </div>
+            </div>
+
+            <!-- Quick Action Icon Buttons -->
+            <div style="margin-left: auto; display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm" onclick="openFindReplaceModal()" title="Find & Replace">🔍</button>
+              <button class="btn btn-secondary btn-sm" onclick="downloadAsTxt()" title="Download Text">💾</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+            </div>
+          </div>
+
+          <!-- Note Title Header -->
+          <div class="note-title-bar">
+            <input type="text" id="note_title_input" class="note-title-input" placeholder="Untitled Note" oninput="onTitleChange()">
+            <span id="autosave_badge" style="font-size: 11px; font-weight: 700; color: #16a34a; white-space: nowrap;">✓ Auto-saved</span>
+          </div>
+
+          <!-- Text Writing Area -->
+          <textarea id="notepad_textarea" class="notepad-textarea" placeholder="Start typing your note here... Changes are saved automatically every second." oninput="onContentChange()" onkeyup="updateCaretAndStats()" onclick="updateCaretAndStats()"></textarea>
+
+          <!-- Status Bar -->
+          <div class="notepad-statusbar">
+            <div id="caret_pos_lbl">Ln 1, Col 1</div>
+            <div style="display: flex; gap: 14px;">
+              <span id="stats_words">Words: 0</span>
+              <span id="stats_chars">Characters: 0</span>
+              <span id="stats_reading_time">Reading time: ~1 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>Features of RapidTables.online Notepad</h2>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li>💾 <strong>Multi-Note Local Autosave:</strong> Create and switch between multiple notes seamlessly. All notes are saved to your browser's <code>localStorage</code> every second.</li>
+          <li>🔍 <strong>Find and Replace:</strong> Search for phrases and replace them one-by-one or in bulk with case-matching support.</li>
+          <li>🔣 <strong>Special Characters &amp; Emojis:</strong> Insert currency signs, math symbols (±, ÷, ∞, √), and emojis with a single click.</li>
+          <li>🖨️ <strong>Print &amp; PDF Export:</strong> Print your notes cleanly or save them directly as a PDF document.</li>
+          <li>🔒 <strong>100% Private &amp; Offline:</strong> Your notes never leave your personal computer. Works completely offline.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Writing Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="word-counter.html">📊 Word &amp; Character Counter</a></li>
+          <li><a href="case-converter.html">🔤 Text Case Converter</a></li>
+          <li><a href="diff-checker.html">🔍 Diff Checker (Compare)</a></li>
+          <li><a href="markdown-editor.html">📝 Markdown Editor</a></li>
+          <li><a href="../pdf/text-to-pdf.html">📄 Text to PDF Converter</a></li>
+          <li><a href="text-to-speech.html">🔊 Text to Speech Reader</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Safe &amp; Encrypted</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Backup your entire notes database to a JSON file on your hard drive anytime to ensure you never lose important drafts.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Find & Replace Modal -->
+  <div class="modal-overlay" id="find_replace_modal" onclick="if(event.target===this) closeFindReplaceModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong style="font-size: 16px;">🔍 Find &amp; Replace</strong>
+        <button class="btn btn-secondary btn-sm" onclick="closeFindReplaceModal()">✕</button>
+      </div>
+      <div class="calc-input-group">
+        <label for="find_input">Find Text</label>
+        <input type="text" id="find_input" placeholder="Text to search...">
+      </div>
+      <div class="calc-input-group" style="margin-top: 10px;">
+        <label for="replace_input">Replace With</label>
+        <input type="text" id="replace_input" placeholder="New replacement text...">
+      </div>
+      <div style="margin-top: 10px; display: flex; gap: 14px; font-size: 13px;">
+        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+          <input type="checkbox" id="match_case_check"> Match case
+        </label>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="executeReplace(false)">Replace Next</button>
+        <button class="btn btn-primary btn-sm" onclick="executeReplace(true)">Replace All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Special Characters Modal -->
+  <div class="modal-overlay" id="special_chars_modal" onclick="if(event.target===this) closeSpecialCharsModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong style="font-size: 16px;">🔣 Insert Special Character</strong>
+        <button class="btn btn-secondary btn-sm" onclick="closeSpecialCharsModal()">✕</button>
+      </div>
+      <div class="char-grid" id="special_chars_grid"></div>
+    </div>
+  </div>
+
+  <!-- Emoji Modal -->
+  <div class="modal-overlay" id="emoji_modal" onclick="if(event.target===this) closeEmojiModal()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong style="font-size: 16px;">😀 Insert Emoji</strong>
+        <button class="btn btn-secondary btn-sm" onclick="closeEmojiModal()">✕</button>
+      </div>
+      <div class="char-grid" id="emoji_grid"></div>
+    </div>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // LocalStorage Data Structure: Array of { id, title, content, updatedAt }
+    const STORAGE_KEY = 'rapidtables_notepad_notes';
+    let notes = [];
+    let activeNoteId = null;
+    let autosaveTimer = null;
+    let isWordWrap = true;
+
+    function initNotepad() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          notes = JSON.parse(stored);
+        }
+      } catch (e) {
+        notes = [];
+      }
+
+      // If empty, create initial welcome note
+      if (!notes || notes.length === 0) {
+        const initialNote = {
+          id: 'note_' + Date.now(),
+          title: 'Welcome Note',
+          content: 'Welcome to your new Online Notepad!\n\nFeatures:\n• Auto-saved to your browser every second\n• Multiple notes support in the left sidebar\n• Find & Replace (under Edit menu)\n• Special Characters & Emoji picker\n• Save as .txt and Print / PDF export\n\nFeel free to delete this note and start writing!',
+          updatedAt: Date.now()
+        };
+        notes = [initialNote];
+        saveNotesToStorage();
+      }
+
+      activeNoteId = notes[0].id;
+      renderNotesList();
+      loadActiveNote();
+      initCharacterPalettes();
+    }
+
+    function saveNotesToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    function createNewNote() {
+      const newNote = {
+        id: 'note_' + Date.now(),
+        title: 'Untitled Note',
+        content: '',
+        updatedAt: Date.now()
+      };
+      notes.unshift(newNote);
+      activeNoteId = newNote.id;
+      saveNotesToStorage();
+      renderNotesList();
+      loadActiveNote();
+      document.getElementById('note_title_input').focus();
+      showToast('Created new note');
+    }
+
+    function loadActiveNote() {
+      const note = notes.find(n => n.id === activeNoteId);
+      if (!note) return;
+
+      document.getElementById('note_title_input').value = note.title;
+      document.getElementById('notepad_textarea').value = note.content;
+      updateCaretAndStats();
+    }
+
+    function renderNotesList() {
+      const listEl = document.getElementById('notes_list');
+      const searchQuery = document.getElementById('notes_search_input').value.toLowerCase().trim();
+      listEl.innerHTML = '';
+
+      const filtered = notes.filter(n => {
+        if (!searchQuery) return true;
+        return n.title.toLowerCase().includes(searchQuery) || n.content.toLowerCase().includes(searchQuery);
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<li style="padding: 12px; font-size: 12px; color: var(--text-muted); text-align: center;">No notes found</li>';
+        return;
+      }
+
+      filtered.forEach(note => {
+        const li = document.createElement('li');
+        li.className = `note-item ${note.id === activeNoteId ? 'active' : ''}`;
+        li.onclick = (e) => {
+          if (e.target.classList.contains('note-item-del')) return;
+          activeNoteId = note.id;
+          renderNotesList();
+          loadActiveNote();
+        };
+
+        const previewSnippet = note.content.replace(/\s+/g, ' ').trim() || 'Empty note';
+        const dateStr = new Date(note.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        li.innerHTML = `
+          <div class="note-item-title">${escapeHtml(note.title || 'Untitled Note')}</div>
+          <div class="note-item-preview">${escapeHtml(previewSnippet)}</div>
+          <div class="note-item-date">${dateStr}</div>
+          <button class="note-item-del" onclick="deleteNote('${note.id}')" title="Delete note">✕</button>
+        `;
+        listEl.appendChild(li);
+      });
+    }
+
+    function onTitleChange() {
+      const note = notes.find(n => n.id === activeNoteId);
+      if (!note) return;
+      note.title = document.getElementById('note_title_input').value.trim() || 'Untitled Note';
+      note.updatedAt = Date.now();
+      triggerAutosave();
+    }
+
+    function onContentChange() {
+      const note = notes.find(n => n.id === activeNoteId);
+      if (!note) return;
+      note.content = document.getElementById('notepad_textarea').value;
+      note.updatedAt = Date.now();
+      triggerAutosave();
+      updateCaretAndStats();
+    }
+
+    function triggerAutosave() {
+      const badge = document.getElementById('autosave_badge');
+      badge.textContent = 'Saving...';
+      badge.style.color = '#eab308';
+
+      clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(() => {
+        saveNotesToStorage();
+        renderNotesList();
+        badge.textContent = '✓ Auto-saved';
+        badge.style.color = '#16a34a';
+      }, 500);
+    }
+
+    function saveNoteImmediately() {
+      saveNotesToStorage();
+      renderNotesList();
+      showToast('Note saved locally');
+    }
+
+    function deleteNote(id) {
+      if (notes.length <= 1) {
+        if (!confirm('This is your last note. Do you want to clear it?')) return;
+        notes[0].title = 'Untitled Note';
+        notes[0].content = '';
+        notes[0].updatedAt = Date.now();
+      } else {
+        notes = notes.filter(n => n.id !== id);
+        if (activeNoteId === id) {
+          activeNoteId = notes[0].id;
+        }
+      }
+      saveNotesToStorage();
+      renderNotesList();
+      loadActiveNote();
+      showToast('Note deleted');
+    }
+
+    function clearAllNotes() {
+      if (!confirm('Are you sure you want to delete ALL notes? This action cannot be undone.')) return;
+      notes = [];
+      initNotepad();
+      showToast('All notes cleared');
+    }
+
+    function updateCaretAndStats() {
+      const textarea = document.getElementById('notepad_textarea');
+      const text = textarea.value;
+
+      // Stats
+      const words = (text.match(/\b\S+\b/g) || []).length;
+      const chars = text.length;
+      const readMinutes = Math.max(1, Math.ceil(words / 200));
+
+      document.getElementById('stats_words').textContent = `Words: ${words.toLocaleString()}`;
+      document.getElementById('stats_chars').textContent = `Characters: ${chars.toLocaleString()}`;
+      document.getElementById('stats_reading_time').textContent = `Reading time: ~${readMinutes} min`;
+
+      // Caret Line & Column
+      const pos = textarea.selectionStart;
+      const linesBefore = text.substring(0, pos).split('\n');
+      const lineNum = linesBefore.length;
+      const colNum = linesBefore[linesBefore.length - 1].length + 1;
+      document.getElementById('caret_pos_lbl').textContent = `Ln ${lineNum}, Col ${colNum}`;
+    }
+
+    // File Actions
+    function downloadAsTxt() {
+      const note = notes.find(n => n.id === activeNoteId);
+      const content = document.getElementById('notepad_textarea').value;
+      const title = (note ? note.title : 'note').replace(/[^a-zA-Z0-9_-]/g, '_');
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${title}.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Text file downloaded');
+    }
+
+    function openTextFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        const newNote = {
+          id: 'note_' + Date.now(),
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          content: content,
+          updatedAt: Date.now()
+        };
+        notes.unshift(newNote);
+        activeNoteId = newNote.id;
+        saveNotesToStorage();
+        renderNotesList();
+        loadActiveNote();
+        showToast(`Opened ${file.name}`);
+      };
+      reader.readAsText(file);
+    }
+
+    function printNote() {
+      const title = document.getElementById('note_title_input').value;
+      const content = document.getElementById('notepad_textarea').value;
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${escapeHtml(title)}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; line-height: 1.6; color: #111; }
+            h1 { font-size: 24px; border-bottom: 2px solid #ccc; padding-bottom: 8px; margin-bottom: 20px; }
+            pre { white-space: pre-wrap; font-family: inherit; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <h1>${escapeHtml(title)}</h1>
+          <pre>${escapeHtml(content)}</pre>
+          <script>window.onload = function() { window.print(); window.close(); }<\/script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+
+    function copyAllText() {
+      const text = document.getElementById('notepad_textarea').value;
+      copyToClipboard(text, 'All text copied to clipboard!');
+    }
+
+    function backupNotesJson() {
+      const jsonStr = JSON.stringify(notes, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `rapidtables_notepad_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Notes backup downloaded');
+    }
+
+    function restoreNotesJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported) && imported.length > 0) {
+            notes = imported;
+            activeNoteId = notes[0].id;
+            saveNotesToStorage();
+            renderNotesList();
+            loadActiveNote();
+            showToast(`Restored ${notes.length} notes!`);
+          } else {
+            alert('Invalid backup JSON format.');
+          }
+        } catch (err) {
+          alert('Failed to parse JSON backup: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Formatting & View
+    function toggleWordWrap() {
+      const textarea = document.getElementById('notepad_textarea');
+      isWordWrap = !isWordWrap;
+      textarea.classList.toggle('no-wrap', !isWordWrap);
+      document.getElementById('wrap_check').textContent = isWordWrap ? '✓' : ' ';
+      showToast(`Word wrap: ${isWordWrap ? 'ON' : 'OFF'}`);
+    }
+
+    function setFontFamily(font) {
+      document.getElementById('notepad_textarea').style.fontFamily = font;
+      showToast('Font family updated');
+    }
+
+    function setFontSize(size) {
+      document.getElementById('notepad_textarea').style.fontSize = size;
+      showToast(`Font size: ${size}`);
+    }
+
+    function toggleFullscreen() {
+      document.getElementById('app_container').classList.toggle('fullscreen');
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.notes-sidebar');
+      const isHidden = sidebar.style.display === 'none';
+      sidebar.style.display = isHidden ? 'flex' : 'none';
+      document.getElementById('sidebar_check').textContent = isHidden ? '✓' : ' ';
+    }
+
+    function convertCase(type) {
+      const textarea = document.getElementById('notepad_textarea');
+      let text = textarea.value;
+
+      if (type === 'upper') {
+        textarea.value = text.toUpperCase();
+      } else if (type === 'lower') {
+        textarea.value = text.toLowerCase();
+      } else if (type === 'title') {
+        textarea.value = text.replace(/\b\w/g, c => c.toUpperCase());
+      }
+      onContentChange();
+      showToast(`Converted to ${type}case`);
+    }
+
+    function insertDateTime() {
+      const now = new Date();
+      const str = now.toLocaleString([], { dateStyle: 'full', timeStyle: 'short' });
+      insertAtCursor(str + ' ');
+      showToast('Date/time inserted');
+    }
+
+    function insertAtCursor(text) {
+      const textarea = document.getElementById('notepad_textarea');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const val = textarea.value;
+
+      textarea.value = val.substring(0, start) + text + val.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + text.length;
+      textarea.focus();
+      onContentChange();
+    }
+
+    // Find and Replace Modal
+    function openFindReplaceModal() {
+      document.getElementById('find_replace_modal').style.display = 'flex';
+      document.getElementById('find_input').focus();
+    }
+
+    function closeFindReplaceModal() {
+      document.getElementById('find_replace_modal').style.display = 'none';
+    }
+
+    function executeReplace(replaceAll) {
+      const findText = document.getElementById('find_input').value;
+      const replaceText = document.getElementById('replace_input').value;
+      const matchCase = document.getElementById('match_case_check').checked;
+      const textarea = document.getElementById('notepad_textarea');
+
+      if (!findText) {
+        alert('Please enter text to find.');
+        return;
+      }
+
+      let content = textarea.value;
+      const flags = matchCase ? (replaceAll ? 'g' : '') : (replaceAll ? 'gi' : 'i');
+      const regex = new RegExp(escapeRegex(findText), flags);
+
+      if (!regex.test(content)) {
+        alert('Text not found.');
+        return;
+      }
+
+      textarea.value = content.replace(regex, replaceText);
+      onContentChange();
+      showToast(replaceAll ? 'Replaced all occurrences' : 'Replaced next occurrence');
+      if (!replaceAll) closeFindReplaceModal();
+    }
+
+    function escapeRegex(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Special Characters & Emojis
+    function initCharacterPalettes() {
+      const specialChars = [
+        '$', '€', '£', '¥', '₹', '¢', '©', '®', '™', '±', '×', '÷', '=', '≠', '≈',
+        '≤', '≥', '∞', '√', 'π', 'µ', '°', '‰', '§', '¶', '←', '→', '↑', '↓', '↔',
+        '•', '—', '–', '…', '«', '»', '“', '”', '‘', '’', '✓', '✕', '★', '☆', '♥'
+      ];
+      const charGrid = document.getElementById('special_chars_grid');
+      specialChars.forEach(ch => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'char-btn';
+        btn.textContent = ch;
+        btn.onclick = () => {
+          insertAtCursor(ch);
+          closeSpecialCharsModal();
+        };
+        charGrid.appendChild(btn);
+      });
+
+      const emojis = [
+        '😀', '😂', '🤣', '😊', '😍', '😎', '🤔', '🙄', '👍', '👎', '👏', '🙏',
+        '🎉', '🔥', '✨', '💡', '📌', '🚀', '⭐', '❤️', '💼', '📊', '📅', '📝',
+        '⚡', '✔️', '❌', '⚠️', '❗', '❓', '☕', '🍕', '💻', '📱', '🔒', '🔑'
+      ];
+      const emojiGrid = document.getElementById('emoji_grid');
+      emojis.forEach(emo => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'char-btn';
+        btn.textContent = emo;
+        btn.onclick = () => {
+          insertAtCursor(emo);
+          closeEmojiModal();
+        };
+        emojiGrid.appendChild(btn);
+      });
+    }
+
+    function openSpecialCharsModal() {
+      document.getElementById('special_chars_modal').style.display = 'flex';
+    }
+    function closeSpecialCharsModal() {
+      document.getElementById('special_chars_modal').style.display = 'none';
+    }
+
+    function openEmojiModal() {
+      document.getElementById('emoji_modal').style.display = 'flex';
+    }
+    function closeEmojiModal() {
+      document.getElementById('emoji_modal').style.display = 'none';
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveNoteImmediately();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        openFindReplaceModal();
+      }
+    });
+
+    initNotepad();
+  </script>
+</body>
+</html>

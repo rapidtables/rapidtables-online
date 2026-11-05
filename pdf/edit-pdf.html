@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit PDF Online Free - Add Text, Draw &amp; Annotate - RapidTables.online</title>
+  <meta name="description" content="Edit PDF files online for free. Add text, draw freehand, highlight lines, stamp approvals, and annotate documents directly in your browser. 100% private.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .editor-layout {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .editor-canvas-stage {
+      flex: 1;
+      min-width: 320px;
+      background: #1e293b;
+      padding: 24px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .canvas-wrap {
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .canvas-wrap canvas {
+      display: block;
+    }
+    #annotation_canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: crosshair;
+    }
+    .editor-tools-panel {
+      width: 290px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .tool-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tool-choice-btn {
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: var(--bg-alt);
+      color: var(--text-main);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tool-choice-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Edit PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Edit PDF Document &amp; Annotate</h1>
+        <p class="subtitle">Add text, draw freehand lines, highlight critical sentences, and stamp approvals on your PDF pages online.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">✏️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File to Edit</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all PDF files. 100% processed securely in your browser.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handlePdf(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="editor_workspace" class="editor-layout" style="display: none;">
+          <div class="editor-canvas-stage">
+            <div class="canvas-wrap">
+              <canvas id="pdf_canvas"></canvas>
+              <canvas id="annotation_canvas"></canvas>
+            </div>
+            <div style="margin-top: 10px; color: #94a3b8; font-size: 13px;">
+              💡 <em>Click anywhere on the document to apply your chosen tool.</em>
+            </div>
+          </div>
+
+          <div class="editor-tools-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="font-size: 16px; margin: 0;">Editing Tools</h3>
+              <div style="font-size: 12px; color: var(--text-muted);">
+                Page: <span id="cur_page_lbl">1</span> / <span id="total_pages_lbl">1</span>
+              </div>
+            </div>
+
+            <!-- Page Navigation -->
+            <div style="display: flex; gap: 8px; justify-content: space-between;">
+              <button class="btn btn-secondary btn-sm" onclick="prevPage()">◀ Prev</button>
+              <button class="btn btn-secondary btn-sm" onclick="nextPage()">Next ▶</button>
+            </div>
+
+            <div class="tool-btn-grid">
+              <button class="tool-choice-btn active" id="tool_text_btn" onclick="selectTool('text')">🔤 Add Text</button>
+              <button class="tool-choice-btn" id="tool_draw_btn" onclick="selectTool('draw')">✏️ Draw Pen</button>
+              <button class="tool-choice-btn" id="tool_high_btn" onclick="selectTool('highlight')">🖍️ Highlight</button>
+              <button class="tool-choice-btn" id="tool_stamp_btn" onclick="selectTool('stamp')">🏷️ Stamp</button>
+            </div>
+
+            <!-- Context Options -->
+            <div id="text_options">
+              <label for="text_to_insert" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Text Content:</label>
+              <input type="text" id="text_to_insert" value="Type here..." style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-alt); color: var(--text-main);">
+              
+              <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <div style="flex: 1;">
+                  <label for="text_font_size" style="font-size: 11px; font-weight: 600;">Size (px):</label>
+                  <input type="number" id="text_font_size" value="18" min="8" max="72" style="width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px;">
+                </div>
+                <div>
+                  <label for="text_color" style="font-size: 11px; font-weight: 600;">Color:</label>
+                  <input type="color" id="text_color" value="#dc2626" style="height: 32px; padding: 0; border: none; cursor: pointer; display: block;">
+                </div>
+              </div>
+            </div>
+
+            <div id="stamp_options" style="display: none;">
+              <label for="stamp_select" style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">Preset Stamp:</label>
+              <select id="stamp_select" style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-alt); color: var(--text-main);">
+                <option value="APPROVED">✅ APPROVED</option>
+                <option value="CONFIDENTIAL">🔒 CONFIDENTIAL</option>
+                <option value="DRAFT">📝 DRAFT</option>
+                <option value="FINAL">🏆 FINAL VERSION</option>
+                <option value="PAID">💵 PAID</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm" onclick="undoLastAction()" style="flex: 1;">↩ Undo</button>
+              <button class="btn btn-secondary btn-sm" onclick="clearCurrentPage()" style="flex: 1;">Clear Page</button>
+            </div>
+
+            <button class="btn btn-primary" id="save_btn" onclick="saveAndDownloadPdf()" style="width: 100%; padding: 12px; font-size: 15px;">
+              💾 Save &amp; Download PDF
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()" style="width: 100%;">
+              🔄 Choose Another File
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How to Edit and Annotate PDF Documents Online</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Select your file to open it in the visual editor.</li>
+          <li><strong>Choose a Tool:</strong>
+            <ul>
+              <li><strong>Add Text:</strong> Type your words, pick font color and size, and click anywhere to insert.</li>
+              <li><strong>Draw Pen:</strong> Sketch freehand signatures, circles, checkmarks, or arrows.</li>
+              <li><strong>Highlight:</strong> Drag a translucent highlighter over important sections.</li>
+              <li><strong>Stamp:</strong> One-click stamp approvals like APPROVED, CONFIDENTIAL, or PAID.</li>
+            </ul>
+          </li>
+          <li><strong>Export:</strong> Click "Save &amp; Download PDF" to get your newly annotated file instantly.</li>
+        </ol>
+
+        <h3 style="margin-top: 16px;">100% In-Browser Security</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          No files are transmitted over the web. All text rendering, layer flattening, and document generation occur inside your device's memory.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="sign-pdf.html">✍️ Sign PDF</a></li>
+          <li><a href="pdf-reader.html">📖 PDF Reader</a></li>
+          <li><a href="watermark-pdf.html">🏷️ Watermark PDF</a></li>
+          <li><a href="redact-pdf.html">⬛ Redact PDF</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="page-numbers.html">🔢 Add Page Numbers</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Free &amp; Uncapped</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          No watermark or subscription. Unlimited document annotations.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/edit-pdf.html">Edit PDF</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/pdf-reader.html">PDF Reader</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let currentArrayBuffer = null;
+    let pdfDoc = null;
+    let totalPages = 0;
+    let currentPage = 1;
+    let activeTool = 'text'; // 'text', 'draw', 'highlight', 'stamp'
+    let currentScale = 1.0;
+    let pageActions = {}; // { pageNum: [ actionObjects ] }
+    let isDrawing = false;
+    let currentStroke = [];
+
+    async function handlePdf(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      currentArrayBuffer = await file.arrayBuffer();
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Loading ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        pdfDoc = await pdfjsLib.getDocument({ data: currentArrayBuffer.slice(0) }).promise;
+        totalPages = pdfDoc.numPages;
+        currentPage = 1;
+        pageActions = {};
+
+        document.getElementById('total_pages_lbl').textContent = totalPages;
+        document.getElementById('editor_workspace').style.display = 'flex';
+        status.textContent = '';
+
+        setupCanvasInteractions();
+        renderPage(currentPage);
+      } catch (err) {
+        status.textContent = 'Error opening PDF: ' + err.message;
+      }
+    }
+
+    function selectTool(tool) {
+      activeTool = tool;
+      document.querySelectorAll('.tool-choice-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tool_${tool.substring(0, 4)}_btn`)?.classList.add('active');
+
+      document.getElementById('text_options').style.display = (tool === 'text') ? 'block' : 'none';
+      document.getElementById('stamp_options').style.display = (tool === 'stamp') ? 'block' : 'none';
+    }
+
+    async function renderPage(num) {
+      if (!pdfDoc) return;
+      currentPage = num;
+      document.getElementById('cur_page_lbl').textContent = num;
+
+      const page = await pdfDoc.getPage(num);
+      const unscaledViewport = page.getViewport({ scale: 1.0 });
+      const maxWidth = 560;
+      currentScale = Math.min(1.2, maxWidth / unscaledViewport.width);
+      const viewport = page.getViewport({ scale: currentScale });
+
+      const pdfCanvas = document.getElementById('pdf_canvas');
+      const annoCanvas = document.getElementById('annotation_canvas');
+
+      pdfCanvas.width = viewport.width;
+      pdfCanvas.height = viewport.height;
+      annoCanvas.width = viewport.width;
+      annoCanvas.height = viewport.height;
+
+      const ctx = pdfCanvas.getContext('2d');
+      await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+      redrawAnnotations();
+    }
+
+    function setupCanvasInteractions() {
+      const annoCanvas = document.getElementById('annotation_canvas');
+
+      annoCanvas.onmousedown = (e) => {
+        const rect = annoCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (!pageActions[currentPage]) pageActions[currentPage] = [];
+
+        if (activeTool === 'text') {
+          const txt = document.getElementById('text_to_insert').value || 'Text';
+          const size = parseInt(document.getElementById('text_font_size').value, 10) || 18;
+          const color = document.getElementById('text_color').value;
+          pageActions[currentPage].push({
+            type: 'text',
+            text: txt,
+            x: x,
+            y: y,
+            size: size,
+            color: color
+          });
+          redrawAnnotations();
+        } else if (activeTool === 'stamp') {
+          const stampText = document.getElementById('stamp_select').value;
+          pageActions[currentPage].push({
+            type: 'stamp',
+            text: stampText,
+            x: x,
+            y: y
+          });
+          redrawAnnotations();
+        } else if (activeTool === 'draw' || activeTool === 'highlight') {
+          isDrawing = true;
+          currentStroke = [{ x: x, y: y }];
+        }
+      };
+
+      annoCanvas.onmousemove = (e) => {
+        if (!isDrawing) return;
+        const rect = annoCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        currentStroke.push({ x: x, y: y });
+
+        redrawAnnotations();
+
+        // Draw active in-progress stroke
+        const ctx = annoCanvas.getContext('2d');
+        ctx.beginPath();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (activeTool === 'draw') {
+          ctx.strokeStyle = document.getElementById('text_color').value;
+          ctx.lineWidth = 3;
+        } else {
+          ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+          ctx.lineWidth = 14;
+        }
+
+        ctx.moveTo(currentStroke[0].x, currentStroke[0].y);
+        for (let i = 1; i < currentStroke.length; i++) {
+          ctx.lineTo(currentStroke[i].x, currentStroke[i].y);
+        }
+        ctx.stroke();
+      };
+
+      const stopDrawing = () => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        if (currentStroke.length > 1) {
+          pageActions[currentPage].push({
+            type: activeTool,
+            points: currentStroke,
+            color: activeTool === 'draw' ? document.getElementById('text_color').value : 'rgba(250, 204, 21, 0.45)',
+            width: activeTool === 'draw' ? 3 : 14
+          });
+        }
+        currentStroke = [];
+        redrawAnnotations();
+      };
+
+      annoCanvas.onmouseup = stopDrawing;
+      annoCanvas.onmouseleave = stopDrawing;
+    }
+
+    function redrawAnnotations() {
+      const annoCanvas = document.getElementById('annotation_canvas');
+      const ctx = annoCanvas.getContext('2d');
+      ctx.clearRect(0, 0, annoCanvas.width, annoCanvas.height);
+
+      const actions = pageActions[currentPage] || [];
+      actions.forEach(a => {
+        if (a.type === 'text') {
+          ctx.font = `bold ${a.size}px sans-serif`;
+          ctx.fillStyle = a.color;
+          ctx.fillText(a.text, a.x, a.y);
+        } else if (a.type === 'stamp') {
+          ctx.save();
+          ctx.translate(a.x, a.y);
+          ctx.rotate(-0.15);
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 3;
+          ctx.strokeRect(-80, -22, 160, 44);
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 20px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(a.text, 0, 7);
+          ctx.restore();
+        } else if (a.type === 'draw' || a.type === 'highlight') {
+          if (a.points && a.points.length > 1) {
+            ctx.beginPath();
+            ctx.strokeStyle = a.color;
+            ctx.lineWidth = a.width;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.moveTo(a.points[0].x, a.points[0].y);
+            for (let i = 1; i < a.points.length; i++) {
+              ctx.lineTo(a.points[i].x, a.points[i].y);
+            }
+            ctx.stroke();
+          }
+        }
+      });
+    }
+
+    function undoLastAction() {
+      if (pageActions[currentPage] && pageActions[currentPage].length > 0) {
+        pageActions[currentPage].pop();
+        redrawAnnotations();
+      }
+    }
+
+    function clearCurrentPage() {
+      pageActions[currentPage] = [];
+      redrawAnnotations();
+    }
+
+    function prevPage() {
+      if (currentPage > 1) renderPage(currentPage - 1);
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) renderPage(currentPage + 1);
+    }
+
+    async function saveAndDownloadPdf() {
+      const btn = document.getElementById('save_btn');
+      btn.disabled = true;
+      btn.textContent = 'Assembling PDF...';
+
+      try {
+        const doc = await PDFLib.PDFDocument.create();
+
+        for (let i = 1; i <= totalPages; i++) {
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 1.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          // Render annotations onto export canvas
+          const actions = pageActions[i] || [];
+          const scaleFactor = viewport.width / document.getElementById('annotation_canvas').width;
+
+          actions.forEach(a => {
+            if (a.type === 'text') {
+              ctx.font = `bold ${a.size * scaleFactor}px sans-serif`;
+              ctx.fillStyle = a.color;
+              ctx.fillText(a.text, a.x * scaleFactor, a.y * scaleFactor);
+            } else if (a.type === 'stamp') {
+              ctx.save();
+              ctx.translate(a.x * scaleFactor, a.y * scaleFactor);
+              ctx.rotate(-0.15);
+              ctx.strokeStyle = '#dc2626';
+              ctx.lineWidth = 3 * scaleFactor;
+              ctx.strokeRect(-80 * scaleFactor, -22 * scaleFactor, 160 * scaleFactor, 44 * scaleFactor);
+              ctx.fillStyle = '#dc2626';
+              ctx.font = `bold ${20 * scaleFactor}px sans-serif`;
+              ctx.textAlign = 'center';
+              ctx.fillText(a.text, 0, 7 * scaleFactor);
+              ctx.restore();
+            } else if (a.type === 'draw' || a.type === 'highlight') {
+              if (a.points && a.points.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = a.color;
+                ctx.lineWidth = a.width * scaleFactor;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.moveTo(a.points[0].x * scaleFactor, a.points[0].y * scaleFactor);
+                for (let p = 1; p < a.points.length; p++) {
+                  ctx.lineTo(a.points[p].x * scaleFactor, a.points[p].y * scaleFactor);
+                }
+                ctx.stroke();
+              }
+            }
+          });
+
+          const pngDataUrl = canvas.toDataURL('image/png');
+          const pngBytes = await fetch(pngDataUrl).then(r => r.arrayBuffer());
+          const embeddedImage = await doc.embedPng(pngBytes);
+
+          const origViewport = page.getViewport({ scale: 1.0 });
+          const newPage = doc.addPage([origViewport.width, origViewport.height]);
+          newPage.drawImage(embeddedImage, {
+            x: 0,
+            y: 0,
+            width: origViewport.width,
+            height: origViewport.height
+          });
+        }
+
+        const pdfBytes = await doc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+        a.href = url;
+        a.download = baseName + '-edited.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        btn.disabled = false;
+        btn.textContent = '💾 Save & Download PDF';
+      } catch (err) {
+        alert('Saving failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '💾 Save & Download PDF';
+      }
+    }
+
+    function resetTool() {
+      currentFile = null;
+      currentArrayBuffer = null;
+      pdfDoc = null;
+      pageActions = {};
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('editor_workspace').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

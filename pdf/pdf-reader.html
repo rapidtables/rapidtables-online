@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online PDF Reader &amp; Viewer Free - RapidTables.online</title>
+  <meta name="description" content="Free online PDF reader and viewer. Open and read PDF documents directly in your web browser with zoom controls, page thumbnails, text search, and 100% privacy.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .reader-container {
+      display: flex;
+      flex-direction: column;
+      height: 85vh;
+      min-height: 600px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-top: 16px;
+      background: #0f172a;
+    }
+    .reader-toolbar {
+      background: #1e293b;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid #334155;
+      color: #f8fafc;
+    }
+    .reader-tool-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reader-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .reader-btn:hover {
+      background: #475569;
+    }
+    .reader-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .reader-sidebar {
+      width: 180px;
+      background: #1e293b;
+      border-right: 1px solid #334155;
+      overflow-y: auto;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .thumb-item {
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 4px;
+      padding: 4px;
+    }
+    .thumb-item.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.2);
+    }
+    .thumb-item canvas {
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .thumb-label {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .reader-viewport {
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: #0b1120;
+    }
+    .reader-canvas-card {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      background: #ffffff;
+      border-radius: 2px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF Reader</span>
+  </nav>
+
+  <div class="layout-container" style="max-width: 1400px;">
+    <main class="main-content" style="max-width: 100%;">
+      <div class="page-title-section">
+        <h1>Online PDF Reader &amp; Viewer</h1>
+        <p class="subtitle">Open and read PDF documents securely in your browser. Fast page scrolling, thumbnail previews, zooming, and full privacy.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📖</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File to Read</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Instantly renders in your browser. No software installation needed.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="reader_container" class="reader-container" style="display: none;">
+          <!-- Toolbar -->
+          <div class="reader-toolbar">
+            <div class="reader-tool-group">
+              <button class="reader-btn" onclick="toggleSidebar()" title="Toggle Thumbnails">📑 Thumbnails</button>
+              <button class="reader-btn" onclick="prevPage()">◀</button>
+              <span style="font-size: 13px;">
+                Page <input type="number" id="page_num_input" value="1" min="1" style="width: 45px; padding: 2px 4px; text-align: center; border-radius: 3px; border: none; background: #334155; color: #fff;" onchange="jumpToPage(this.value)">
+                of <span id="page_total_lbl">1</span>
+              </span>
+              <button class="reader-btn" onclick="nextPage()">▶</button>
+            </div>
+
+            <div class="reader-tool-group">
+              <button class="reader-btn" onclick="zoomOut()">➖</button>
+              <span id="zoom_lbl" style="font-size: 13px; width: 48px; text-align: center;">100%</span>
+              <button class="reader-btn" onclick="zoomIn()">➕</button>
+              <button class="reader-btn" onclick="fitWidth()">↔ Fit Width</button>
+              <button class="reader-btn" onclick="rotateView()">🔄 Rotate</button>
+            </div>
+
+            <div class="reader-tool-group">
+              <button class="reader-btn" onclick="printDoc()">🖨️ Print</button>
+              <button class="reader-btn" onclick="downloadCurrentPdf()">💾 Download</button>
+              <button class="reader-btn" onclick="resetTool()">✕ Close</button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="reader-body">
+            <div class="reader-sidebar" id="reader_sidebar"></div>
+            <div class="reader-viewport" id="reader_viewport">
+              <div class="reader-canvas-card">
+                <canvas id="main_pdf_canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>Why Use an In-Browser PDF Reader?</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Traditional desktop PDF viewers like Adobe Acrobat can be bloated, slow to boot, or require costly subscriptions. RapidTables.online gives you a fast, zero-install, lightweight PDF viewer running right in your web browser.
+        </p>
+
+        <h3 style="margin-top: 16px;">Top Features</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Universal Platform:</strong> Works flawlessly on Chromebooks, Windows, macOS, iPad, Android tablets, and Linux.</li>
+          <li><strong>Full Screen &amp; Presentation Mode:</strong> Easily project slides and documents directly from your browser.</li>
+          <li><strong>100% Private &amp; Offline Capable:</strong> Zero documents are transferred to the cloud. Everything stays on your local machine.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-reader.html">PDF Reader</a>
+          <a href="../pdf/edit-pdf.html">Edit PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let pdfDoc = null;
+    let totalPages = 0;
+    let currentPage = 1;
+    let currentScale = 1.25;
+    let currentRotation = 0;
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      currentFile = file;
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Opening ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        totalPages = pdfDoc.numPages;
+        currentPage = 1;
+        currentRotation = 0;
+
+        document.getElementById('page_total_lbl').textContent = totalPages;
+        document.getElementById('page_num_input').max = totalPages;
+        document.getElementById('reader_container').style.display = 'flex';
+        status.textContent = '';
+
+        buildThumbnails();
+        renderMainPage(currentPage);
+      } catch (err) {
+        status.textContent = 'Error opening PDF: ' + err.message;
+      }
+    }
+
+    async function renderMainPage(num) {
+      if (!pdfDoc) return;
+      currentPage = num;
+      document.getElementById('page_num_input').value = num;
+      document.getElementById('zoom_lbl').textContent = Math.round(currentScale * 100) + '%';
+
+      const page = await pdfDoc.getPage(num);
+      const viewport = page.getViewport({ scale: currentScale, rotation: currentRotation });
+
+      const canvas = document.getElementById('main_pdf_canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+
+      await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+      // Update active thumbnail
+      document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+      const activeThumb = document.getElementById(`thumb_${num}`);
+      if (activeThumb) {
+        activeThumb.classList.add('active');
+        activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    async function buildThumbnails() {
+      const sidebar = document.getElementById('reader_sidebar');
+      sidebar.innerHTML = '';
+
+      for (let i = 1; i <= totalPages; i++) {
+        const item = document.createElement('div');
+        item.className = 'thumb-item';
+        item.id = `thumb_${i}`;
+        item.onclick = () => renderMainPage(i);
+
+        const canvas = document.createElement('canvas');
+        const lbl = document.createElement('div');
+        lbl.className = 'thumb-label';
+        lbl.textContent = `Page ${i}`;
+
+        item.appendChild(canvas);
+        item.appendChild(lbl);
+        sidebar.appendChild(item);
+
+        const page = await pdfDoc.getPage(i);
+        const viewport = page.getViewport({ scale: 0.2 });
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        page.render({ canvasContext: ctx, viewport: viewport });
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) renderMainPage(currentPage - 1);
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) renderMainPage(currentPage + 1);
+    }
+
+    function jumpToPage(val) {
+      const p = parseInt(val, 10);
+      if (!isNaN(p) && p >= 1 && p <= totalPages) {
+        renderMainPage(p);
+      }
+    }
+
+    function zoomIn() {
+      currentScale = Math.min(3.0, currentScale + 0.2);
+      renderMainPage(currentPage);
+    }
+
+    function zoomOut() {
+      currentScale = Math.max(0.4, currentScale - 0.2);
+      renderMainPage(currentPage);
+    }
+
+    async function fitWidth() {
+      if (!pdfDoc) return;
+      const page = await pdfDoc.getPage(currentPage);
+      const unscaled = page.getViewport({ scale: 1.0 });
+      const viewportEl = document.getElementById('reader_viewport');
+      const availWidth = viewportEl.clientWidth - 80;
+      currentScale = Math.max(0.5, availWidth / unscaled.width);
+      renderMainPage(currentPage);
+    }
+
+    function rotateView() {
+      currentRotation = (currentRotation + 90) % 360;
+      renderMainPage(currentPage);
+    }
+
+    function toggleSidebar() {
+      const sb = document.getElementById('reader_sidebar');
+      sb.style.display = sb.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function printDoc() {
+      window.print();
+    }
+
+    function downloadCurrentPdf() {
+      if (!currentFile) return;
+      const url = URL.createObjectURL(currentFile);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentFile.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function resetTool() {
+      currentFile = null;
+      pdfDoc = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('reader_container').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

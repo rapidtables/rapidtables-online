@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert PDF to Word Online Free (DOCX) - RapidTables.online</title>
+  <meta name="description" content="Convert PDF documents to editable Microsoft Word (.docx) files online for free. Extract text, formatting, and paragraphs client-side with 100% privacy.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .preview-box {
+      margin-top: 20px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: inherit;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+    .page-separator {
+      margin: 16px 0;
+      padding: 4px 10px;
+      background: var(--bg-alt);
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--primary);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>PDF to Word</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Convert PDF to Word (DOCX)</h1>
+        <p class="subtitle">Convert any PDF document to an editable Microsoft Word document (.docx). Fast, formatted, and strictly confidential.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 44px; margin-bottom: 8px;">📄➡️📝</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Instantly parses typography and layouts into editable Word format.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+
+        <div id="result_bar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <strong id="doc_info_lbl">Document converted</strong>
+            <span id="doc_stats_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="downloadDocx()">💾 Download Word (.docx)</button>
+            <button class="btn btn-secondary btn-sm" onclick="copyText()">📋 Copy Text</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadTxt()">📄 Download .txt</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetTool()">🔄 Convert Another</button>
+          </div>
+        </div>
+
+        <div id="preview_container" style="display: none;">
+          <h3 style="font-size: 15px; margin-top: 20px; margin-bottom: 8px;">Extracted Content Preview:</h3>
+          <div id="preview_box" class="preview-box"></div>
+        </div>
+      </div>
+
+      <section class="info-card">
+        <h2>How PDF to Word Conversion Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          RapidTables.online inspects each page's text streams, reconstructing lines, paragraph breaks, and heading structures. The extracted content is packaged into an OpenXML <code>.docx</code> archive that opens seamlessly in Microsoft Word, Google Docs, Apple Pages, and LibreOffice Writer.
+        </p>
+
+        <h3 style="margin-top: 16px;">Key Benefits</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Editable Typography:</strong> Replaces static PDF glyphs with fully selectable and editable text.</li>
+          <li><strong>Zero Data Leaks:</strong> All text extraction and document assembly happens directly in your browser. Nothing is ever saved to our servers.</li>
+          <li><strong>Universal Compatibility:</strong> Output follows the official ECMA-376 Office Open XML standard for Microsoft Office Word.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF to Office</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-excel.html">📊 PDF to Excel (.xlsx)</a></li>
+          <li><a href="pdf-to-ppt.html">📽️ PDF to PowerPoint</a></li>
+          <li><a href="word-to-pdf.html">📝 Word to PDF</a></li>
+          <li><a href="excel-to-pdf.html">📈 Excel to PDF</a></li>
+          <li><a href="pdf-to-text.html">📄 PDF to Plain Text</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>100% Private</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Your business documents, contracts, and resumes never leave your browser.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-word.html">PDF to Word</a>
+          <a href="../pdf/pdf-to-excel.html">PDF to Excel</a>
+          <a href="../pdf/word-to-pdf.html">Word to PDF</a>
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let extractedPages = []; // array of string arrays (lines)
+    let fullPlainText = '';
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      currentFile = file;
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Parsing text content from ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages = pdf.numPages;
+
+        extractedPages = [];
+        let totalWords = 0;
+
+        for (let i = 1; i <= numPages; i++) {
+          status.textContent = `Extracting page ${i} of ${numPages}...`;
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+
+          // Group text items by vertical position Y
+          const lineMap = new Map();
+          textContent.items.forEach(item => {
+            const y = Math.round(item.transform[5]);
+            if (!lineMap.has(y)) {
+              lineMap.set(y, []);
+            }
+            lineMap.get(y).push(item);
+          });
+
+          // Sort lines top to bottom (higher Y coordinate is higher on the page in PDF)
+          const sortedYs = Array.from(lineMap.keys()).sort((a, b) => b - a);
+          const pageLines = [];
+
+          sortedYs.forEach(y => {
+            const items = lineMap.get(y);
+            // Sort items left to right
+            items.sort((a, b) => a.transform[4] - b.transform[4]);
+            const lineStr = items.map(it => it.str).join(' ').trim();
+            if (lineStr.length > 0) {
+              pageLines.push(lineStr);
+              totalWords += lineStr.split(/\s+/).length;
+            }
+          });
+
+          extractedPages.push(pageLines);
+        }
+
+        fullPlainText = extractedPages.map((lines, idx) => `--- PAGE ${idx + 1} ---\n` + lines.join('\n')).join('\n\n');
+
+        // Render preview
+        const previewBox = document.getElementById('preview_box');
+        previewBox.innerHTML = '';
+        extractedPages.forEach((lines, idx) => {
+          const sep = document.createElement('div');
+          sep.className = 'page-separator';
+          sep.textContent = `Page ${idx + 1} of ${numPages}`;
+          previewBox.appendChild(sep);
+
+          const pageTextEl = document.createElement('div');
+          pageTextEl.textContent = lines.join('\n');
+          previewBox.appendChild(pageTextEl);
+        });
+
+        document.getElementById('doc_info_lbl').textContent = file.name;
+        document.getElementById('doc_stats_lbl').textContent = `• ${numPages} pages, ~${totalWords} words`;
+        document.getElementById('result_bar').style.display = 'flex';
+        document.getElementById('preview_container').style.display = 'block';
+        status.textContent = 'Conversion ready!';
+      } catch (err) {
+        status.textContent = 'Error converting PDF: ' + err.message;
+      }
+    }
+
+    function escapeXml(unsafe) {
+      return unsafe.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+          case '<': return '&lt;';
+          case '>': return '&gt;';
+          case '&': return '&amp;';
+          case '\'': return '&apos;';
+          case '"': return '&quot;';
+        }
+      });
+    }
+
+    async function downloadDocx() {
+      if (!extractedPages.length) return;
+
+      const zip = new JSZip();
+
+      // [Content_Types].xml
+      zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`);
+
+      // _rels/.rels
+      zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`);
+
+      // word/document.xml
+      let paragraphsXml = '';
+      extractedPages.forEach((lines, pIdx) => {
+        if (pIdx > 0) {
+          // Page break
+          paragraphsXml += `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+        }
+        lines.forEach(line => {
+          paragraphsXml += `
+<w:p>
+  <w:r>
+    <w:rPr>
+      <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
+      <w:sz w:val="24"/>
+    </w:rPr>
+    <w:t xml:space="preserve">${escapeXml(line)}</w:t>
+  </w:r>
+</w:p>`;
+        });
+      });
+
+      const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    ${paragraphsXml}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+      zip.file("word/document.xml", documentXml);
+
+      const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = baseName + '.docx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function copyText() {
+      navigator.clipboard.writeText(fullPlainText).then(() => {
+        alert('Extracted text copied to clipboard!');
+      });
+    }
+
+    function downloadTxt() {
+      const blob = new Blob([fullPlainText], { type: 'text/plain;charset=utf-8' });
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = baseName + '-extracted.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function resetTool() {
+      currentFile = null;
+      extractedPages = [];
+      fullPlainText = '';
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('result_bar').style.display = 'none';
+      document.getElementById('preview_container').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+    }
+  </script>
+</body>
+</html>

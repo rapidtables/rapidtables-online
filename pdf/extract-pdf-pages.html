@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extract PDF Pages Online Free - RapidTables.online</title>
+  <meta name="description" content="Extract specific pages or page ranges from your PDF document online for free. Choose pages visually or by range and download your extracted PDF instantly.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .page-thumb-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .page-thumb-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .page-thumb-card.selected {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.05);
+      box-shadow: 0 0 0 2px #10b981;
+    }
+    .page-canvas-wrapper {
+      background: #1e293b;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+    .page-canvas-wrapper canvas {
+      max-width: 100%;
+      max-height: 190px;
+      background: #ffffff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+      border-radius: 2px;
+    }
+    .page-footer-info {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-alt);
+      font-size: 13px;
+      font-weight: 600;
+      border-top: 1px solid var(--border-color);
+    }
+    .extract-check-badge {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #10b981;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+    .page-thumb-card.selected .extract-check-badge {
+      display: flex;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Extract PDF Pages</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Extract PDF Pages</h1>
+        <p class="subtitle">Separate high-priority pages from any PDF document. Select pages visually or by custom page ranges and export clean individual or unified files.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 42px; margin-bottom: 8px;">📑</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all PDF files. 100% processed securely in your browser.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+
+        <!-- Toolbar -->
+        <div id="toolbar" style="display: none; margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <strong>Total Pages:</strong> <span id="pages_count_lbl">0</span> &bull;
+              <strong style="color: #10b981;">Selected to Extract:</strong> <span id="selected_count_lbl">0</span>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="selectAllPages()">Select All</button>
+              <button class="btn btn-secondary btn-sm" onclick="clearSelection()">Clear</button>
+              <button class="btn btn-primary btn-sm" id="extract_single_btn" onclick="extractPages(false)">💾 Extract to 1 PDF</button>
+              <button class="btn btn-secondary btn-sm" id="extract_zip_btn" onclick="extractPages(true)">📦 Separate PDFs (ZIP)</button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px;">
+            <label for="range_input"><strong>Select by range:</strong></label>
+            <input type="text" id="range_input" placeholder="e.g. 1-3, 5, 8-10" style="padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-surface); color: var(--text-main); font-size: 13px; width: 170px;">
+            <button class="btn btn-secondary btn-sm" onclick="applyRangeInput()">Apply Range</button>
+          </div>
+        </div>
+
+        <div id="pages_grid" class="pages-grid"></div>
+      </div>
+
+      <section class="info-card">
+        <h2>How to Extract Specific Pages from a PDF</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Select your file to view high-resolution visual previews of each page.</li>
+          <li><strong>Choose Pages:</strong> Click the thumbnails you want to extract or type custom page ranges like <code>1-3, 6, 8-10</code>.</li>
+          <li><strong>Export:</strong> Click "Extract to 1 PDF" to combine the chosen pages into one neat document, or "Separate PDFs (ZIP)" to save each page as an individual file.</li>
+        </ol>
+
+        <h3 style="margin-top: 16px;">Fast &amp; Fully Private</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Your documents are processed 100% inside your browser's local memory. No files are transferred to any server, guaranteeing confidential handling of invoices, medical files, and financial records.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="delete-pdf-pages.html">🗑️ Delete PDF Pages</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF</a></li>
+          <li><a href="organize-pdf.html">📂 Organize PDF Pages</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="compress-pdf.html">🗜️ Compress PDF</a></li>
+          <li><a href="crop-pdf.html">📐 Crop PDF Margins</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Zero Cloud Storage</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          RapidTables.online never stores user documents. Full client-side security.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/extract-pdf-pages.html">Extract PDF Pages</a>
+          <a href="../pdf/delete-pdf-pages.html">Delete PDF Pages</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let currentArrayBuffer = null;
+    let totalPages = 0;
+    let selectedPages = new Set();
+
+    async function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      currentFile = file;
+      currentArrayBuffer = await file.arrayBuffer();
+
+      const status = document.getElementById('status_msg');
+      status.textContent = 'Rendering thumbnails for ' + file.name + '...';
+      document.getElementById('drop_zone').style.display = 'none';
+
+      try {
+        const pdf = await pdfjsLib.getDocument({ data: currentArrayBuffer.slice(0) }).promise;
+        totalPages = pdf.numPages;
+        selectedPages.clear();
+
+        document.getElementById('pages_count_lbl').textContent = totalPages;
+        document.getElementById('selected_count_lbl').textContent = '0';
+        document.getElementById('toolbar').style.display = 'flex';
+
+        const grid = document.getElementById('pages_grid');
+        grid.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+          const card = document.createElement('div');
+          card.className = 'page-thumb-card';
+          card.dataset.page = i;
+
+          const badge = document.createElement('div');
+          badge.className = 'extract-check-badge';
+          badge.textContent = '✓';
+          card.appendChild(badge);
+
+          const canvasWrap = document.createElement('div');
+          canvasWrap.className = 'page-canvas-wrapper';
+
+          const canvas = document.createElement('canvas');
+          canvasWrap.appendChild(canvas);
+
+          const footer = document.createElement('div');
+          footer.className = 'page-footer-info';
+          footer.innerHTML = '<span>Page ' + i + '</span><span>📑</span>';
+
+          card.appendChild(canvasWrap);
+          card.appendChild(footer);
+
+          card.onclick = () => togglePageSelect(i, card);
+          grid.appendChild(card);
+
+          // Render thumbnail
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 0.35 });
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          page.render({ canvasContext: ctx, viewport: viewport });
+        }
+
+        status.textContent = 'Select pages to extract into your new document.';
+      } catch (err) {
+        status.textContent = 'Error loading PDF: ' + err.message;
+      }
+    }
+
+    function togglePageSelect(pageIndex, card) {
+      if (selectedPages.has(pageIndex)) {
+        selectedPages.delete(pageIndex);
+        card.classList.remove('selected');
+      } else {
+        selectedPages.add(pageIndex);
+        card.classList.add('selected');
+      }
+      updateCount();
+    }
+
+    function updateCount() {
+      document.getElementById('selected_count_lbl').textContent = selectedPages.size;
+    }
+
+    function selectAllPages() {
+      for (let i = 1; i <= totalPages; i++) {
+        selectedPages.add(i);
+        const card = document.querySelector(`.page-thumb-card[data-page="${i}"]`);
+        if (card) card.classList.add('selected');
+      }
+      updateCount();
+    }
+
+    function clearSelection() {
+      selectedPages.clear();
+      document.querySelectorAll('.page-thumb-card').forEach(c => c.classList.remove('selected'));
+      updateCount();
+    }
+
+    function applyRangeInput() {
+      const val = document.getElementById('range_input').value.trim();
+      if (!val) return;
+
+      const parts = val.split(',');
+      parts.forEach(part => {
+        const item = part.trim();
+        if (item.includes('-')) {
+          const [startStr, endStr] = item.split('-');
+          const start = parseInt(startStr, 10);
+          const end = parseInt(endStr, 10);
+          if (!isNaN(start) && !isNaN(end)) {
+            for (let i = Math.max(1, start); i <= Math.min(totalPages, end); i++) {
+              selectedPages.add(i);
+              const card = document.querySelector(`.page-thumb-card[data-page="${i}"]`);
+              if (card) card.classList.add('selected');
+            }
+          }
+        } else {
+          const num = parseInt(item, 10);
+          if (!isNaN(num) && num >= 1 && num <= totalPages) {
+            selectedPages.add(num);
+            const card = document.querySelector(`.page-thumb-card[data-page="${num}"]`);
+            if (card) card.classList.add('selected');
+          }
+        }
+      });
+      updateCount();
+    }
+
+    async function extractPages(asZip) {
+      if (selectedPages.size === 0) {
+        alert('Please select at least one page to extract.');
+        return;
+      }
+
+      const btn = asZip ? document.getElementById('extract_zip_btn') : document.getElementById('extract_single_btn');
+      btn.disabled = true;
+      btn.textContent = 'Extracting...';
+
+      try {
+        const srcDoc = await PDFLib.PDFDocument.load(currentArrayBuffer);
+        const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+        const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+
+        if (!asZip) {
+          // Single PDF
+          const newDoc = await PDFLib.PDFDocument.create();
+          const pageIndices = sortedPages.map(p => p - 1);
+          const copiedPages = await newDoc.copyPages(srcDoc, pageIndices);
+          copiedPages.forEach(p => newDoc.addPage(p));
+
+          const pdfBytes = await newDoc.save();
+          const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = baseName + '-extracted.pdf';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        } else {
+          // Multiple PDFs in ZIP
+          const zip = new JSZip();
+          for (const pNum of sortedPages) {
+            const pageDoc = await PDFLib.PDFDocument.create();
+            const [copied] = await pageDoc.copyPages(srcDoc, [pNum - 1]);
+            pageDoc.addPage(copied);
+            const bytes = await pageDoc.save();
+            zip.file(`${baseName}-page-${pNum}.pdf`, bytes);
+          }
+
+          const zipBlob = await zip.generateAsync({ type: 'blob' });
+          const url = URL.createObjectURL(zipBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = baseName + '-pages.zip';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        btn.disabled = false;
+        btn.textContent = asZip ? '📦 Separate PDFs (ZIP)' : '💾 Extract to 1 PDF';
+      } catch (err) {
+        alert('Extraction failed: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = asZip ? '📦 Separate PDFs (ZIP)' : '💾 Extract to 1 PDF';
+      }
+    }
+  </script>
+</body>
+</html>

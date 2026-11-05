@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Converter (Seconds, Minutes, Hours, Days) - RapidTables.online</title>
+  <meta name="description" content="Free online time converter. Convert between seconds, minutes, hours, days, weeks, months, and years with instant live synchronization.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Time Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Time Unit Converter</h1>
+        <p class="subtitle">Convert between seconds, minutes, hours, days, weeks, months, and years in real time.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="t_sec">Seconds (s)</label>
+            <input type="number" id="t_sec" class="input-control" value="3600" step="any" oninput="fromSec(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="t_min">Minutes (min)</label>
+            <input type="number" id="t_min" class="input-control" step="any" oninput="fromMin(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="t_hrs">Hours (hr)</label>
+            <input type="number" id="t_hrs" class="input-control" step="any" oninput="fromHrs(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="t_days">Days (d)</label>
+            <input type="number" id="t_days" class="input-control" step="any" oninput="fromDays(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="t_wks">Weeks (wk)</label>
+            <input type="number" id="t_wks" class="input-control" step="any" oninput="fromWks(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="t_yrs">Years (yr)</label>
+            <input type="number" id="t_yrs" class="input-control" step="any" oninput="fromYrs(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Time Conversion Standards</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Unit</th><th>Equivalent in Seconds</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Minute</td><td>60 s</td></tr>
+              <tr><td>1 Hour</td><td>3,600 s</td></tr>
+              <tr><td>1 Day</td><td>86,400 s</td></tr>
+              <tr><td>1 Week</td><td>604,800 s</td></tr>
+              <tr><td>1 Year (Gregorian)</td><td>31,557,600 s (365.25 days)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Time Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="../calc/time/age-calculator.html">Age Calculator</a></li>
+          <li><a href="../calc/time/date-calculator.html">Date Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateAllTime(seconds, source) {
+      if (seconds === '' || isNaN(seconds)) return;
+      const s = parseFloat(seconds);
+      const fmt = (n) => Number(n.toPrecision(7)).toString();
+
+      if (source !== 's') document.getElementById('t_sec').value = fmt(s);
+      if (source !== 'min') document.getElementById('t_min').value = fmt(s / 60);
+      if (source !== 'hr') document.getElementById('t_hrs').value = fmt(s / 3600);
+      if (source !== 'd') document.getElementById('t_days').value = fmt(s / 86400);
+      if (source !== 'wk') document.getElementById('t_wks').value = fmt(s / 604800);
+      if (source !== 'yr') document.getElementById('t_yrs').value = fmt(s / (86400 * 365.25));
+    }
+
+    function fromSec(v) { updateAllTime(v, 's'); }
+    function fromMin(v) { updateAllTime(v * 60, 'min'); }
+    function fromHrs(v) { updateAllTime(v * 3600, 'hr'); }
+    function fromDays(v) { updateAllTime(v * 86400, 'd'); }
+    function fromWks(v) { updateAllTime(v * 604800, 'wk'); }
+    function fromYrs(v) { updateAllTime(v * 86400 * 365.25, 'yr'); }
+
+    fromSec(3600);
+  </script>
+</body>
+</html>

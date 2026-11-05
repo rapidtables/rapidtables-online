@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weight &amp; Mass Converter - RapidTables.online</title>
+  <meta name="description" content="Free online weight and mass converter. Convert between kilograms, grams, milligrams, pounds, ounces, stones, and metric tons instantly.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Weight Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Weight &amp; Mass Converter</h1>
+        <p class="subtitle">Convert between standard metric and imperial mass units with instant real-time synchronization.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="w_kg">Kilograms (kg)</label>
+            <input type="number" id="w_kg" class="input-control" value="1" step="any" oninput="fromKg(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_g">Grams (g)</label>
+            <input type="number" id="w_g" class="input-control" step="any" oninput="fromG(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_mg">Milligrams (mg)</label>
+            <input type="number" id="w_mg" class="input-control" step="any" oninput="fromMg(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_lbs">Pounds (lbs)</label>
+            <input type="number" id="w_lbs" class="input-control" step="any" oninput="fromLbs(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_oz">Ounces (oz)</label>
+            <input type="number" id="w_oz" class="input-control" step="any" oninput="fromOz(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_stone">Stones (st)</label>
+            <input type="number" id="w_stone" class="input-control" step="any" oninput="fromStone(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="w_ton">Metric Tons (t)</label>
+            <input type="number" id="w_ton" class="input-control" step="any" oninput="fromTon(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Weight &amp; Mass Conversion Factors</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Unit</th><th>Equivalent in Kilograms (kg)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Gram (g)</td><td>0.001 kg</td></tr>
+              <tr><td>1 Milligram (mg)</td><td>0.000001 kg</td></tr>
+              <tr><td>1 Pound (lb)</td><td>0.45359237 kg</td></tr>
+              <tr><td>1 Ounce (oz)</td><td>0.02834952 kg (1/16 lb)</td></tr>
+              <tr><td>1 Stone (st)</td><td>6.350293 kg (14 lbs)</td></tr>
+              <tr><td>1 Metric Ton (t)</td><td>1,000 kg</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Unit Converters</div>
+        <ul class="sidebar-list">
+          <li><a href="length-converter.html">Length Converter</a></li>
+          <li><a href="temperature-converter.html">Temperature Converter</a></li>
+          <li><a href="number-base-converter.html">Number Base Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateAllWeight(kg, source) {
+      if (kg === '' || isNaN(kg)) return;
+      const k = parseFloat(kg);
+      const fmt = (v) => Number(v.toPrecision(7)).toString();
+
+      if (source !== 'kg') document.getElementById('w_kg').value = fmt(k);
+      if (source !== 'g') document.getElementById('w_g').value = fmt(k * 1000);
+      if (source !== 'mg') document.getElementById('w_mg').value = fmt(k * 1000000);
+      if (source !== 'lbs') document.getElementById('w_lbs').value = fmt(k / 0.45359237);
+      if (source !== 'oz') document.getElementById('w_oz').value = fmt(k / 0.028349523125);
+      if (source !== 'stone') document.getElementById('w_stone').value = fmt(k / 6.35029318);
+      if (source !== 'ton') document.getElementById('w_ton').value = fmt(k / 1000);
+    }
+
+    function fromKg(v) { updateAllWeight(v, 'kg'); }
+    function fromG(v) { updateAllWeight(v / 1000, 'g'); }
+    function fromMg(v) { updateAllWeight(v / 1000000, 'mg'); }
+    function fromLbs(v) { updateAllWeight(v * 0.45359237, 'lbs'); }
+    function fromOz(v) { updateAllWeight(v * 0.028349523125, 'oz'); }
+    function fromStone(v) { updateAllWeight(v * 6.35029318, 'stone'); }
+    function fromTon(v) { updateAllWeight(v * 1000, 'ton'); }
+
+    fromKg(1);
+  </script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fraction Calculator - RapidTables.online</title>
+  <meta name="description" content="Free online fraction calculator. Add, subtract, multiply, and divide fractions and mixed numbers with step-by-step reduced results.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .fraction-input-group {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+    }
+    .fraction-input-group input {
+      width: 70px;
+      text-align: center;
+      padding: 6px;
+    }
+    .fraction-divider {
+      width: 100%;
+      height: 2px;
+      background: var(--text-main);
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#math-calculators">Math</a>
+    <span class="sep">&gt;</span>
+    <span>Fraction Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Fraction Calculator</h1>
+        <p class="subtitle">Perform arithmetic on fractions: addition, subtraction, multiplication, and division with reduced simplest form.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <!-- Fraction 1 -->
+          <div class="fraction-input-group">
+            <input type="number" id="f1_num" class="input-control" placeholder="Num" value="3">
+            <div class="fraction-divider"></div>
+            <input type="number" id="f1_den" class="input-control" placeholder="Den" value="4">
+          </div>
+
+          <!-- Operation -->
+          <select id="f_op" class="select-control" style="width: 70px; font-weight: bold; font-size: 18px; text-align: center;">
+            <option value="+">+</option>
+            <option value="-">−</option>
+            <option value="*">×</option>
+            <option value="/">÷</option>
+          </select>
+
+          <!-- Fraction 2 -->
+          <div class="fraction-input-group">
+            <input type="number" id="f2_num" class="input-control" placeholder="Num" value="1">
+            <div class="fraction-divider"></div>
+            <input type="number" id="f2_den" class="input-control" placeholder="Den" value="6">
+          </div>
+
+          <span style="font-size: 22px; font-weight: bold;">=</span>
+
+          <button class="btn btn-primary" onclick="calcFraction()">Calculate</button>
+        </div>
+
+        <div id="res_fraction" class="result-card hidden">
+          <h3>Result</h3>
+          <div class="result-value" id="res_fraction_val">11 / 12</div>
+          <div class="result-details" id="res_fraction_detail">Decimal: 0.916667 | Mixed Number: 11/12</div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>How to Calculate Fractions</h2>
+        <p>A fraction represents part of a whole, written as <code>Numerator / Denominator</code>.</p>
+        <ul>
+          <li><strong>Adding &amp; Subtracting:</strong> Convert fractions to a common denominator before adding or subtracting the numerators.</li>
+          <li><strong>Multiplying:</strong> Multiply the numerators together and denominators together: <code>(a/b) × (c/d) = (a×c) / (b×d)</code>.</li>
+          <li><strong>Dividing:</strong> Multiply by the reciprocal of the second fraction: <code>(a/b) ÷ (c/d) = (a×d) / (b×c)</code>.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Math Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="percentage-calculator.html">Percentage Calculator</a></li>
+          <li><a href="scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="average-calculator.html">Average Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    function calcFraction() {
+      const n1 = parseInt(document.getElementById('f1_num').value, 10);
+      const d1 = parseInt(document.getElementById('f1_den').value, 10);
+      const n2 = parseInt(document.getElementById('f2_num').value, 10);
+      const d2 = parseInt(document.getElementById('f2_den').value, 10);
+      const op = document.getElementById('f_op').value;
+
+      if (isNaN(n1) || isNaN(d1) || isNaN(n2) || isNaN(d2) || d1 === 0 || d2 === 0) {
+        alert("Please enter valid numerators and non-zero denominators.");
+        return;
+      }
+
+      let resNum, resDen;
+      if (op === '+') {
+        resNum = n1 * d2 + n2 * d1;
+        resDen = d1 * d2;
+      } else if (op === '-') {
+        resNum = n1 * d2 - n2 * d1;
+        resDen = d1 * d2;
+      } else if (op === '*') {
+        resNum = n1 * n2;
+        resDen = d1 * d2;
+      } else if (op === '/') {
+        if (n2 === 0) {
+          alert("Cannot divide by zero.");
+          return;
+        }
+        resNum = n1 * d2;
+        resDen = d1 * n2;
+      }
+
+      if (resDen < 0) {
+        resNum = -resNum;
+        resDen = -resDen;
+      }
+
+      const common = gcd(resNum, resDen);
+      const simpNum = resNum / common;
+      const simpDen = resDen / common;
+      const dec = (simpNum / simpDen).toFixed(6).replace(/\.?0+$/, '');
+
+      let mixed = "";
+      if (Math.abs(simpNum) >= simpDen && simpDen !== 1) {
+        const whole = Math.trunc(simpNum / simpDen);
+        const rem = Math.abs(simpNum % simpDen);
+        mixed = ` | Mixed Number: ${whole} ${rem}/${simpDen}`;
+      }
+
+      document.getElementById('res_fraction_val').textContent = simpDen === 1 ? `${simpNum}` : `${simpNum} / ${simpDen}`;
+      document.getElementById('res_fraction_detail').textContent = `Decimal: ${dec}${mixed}`;
+      document.getElementById('res_fraction').classList.remove('hidden');
+    }
+
+    calcFraction();
+  </script>
+</body>
+</html>

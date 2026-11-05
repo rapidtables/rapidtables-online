@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roman Numerals Converter &amp; Chart - RapidTables.online</title>
+  <meta name="description" content="Free Roman numerals converter and complete chart. Convert numbers (1 to 3999) to Roman numerals and Roman numerals to numbers with conversion rules.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../#reference-tables">Tables</a>
+    <span class="sep">&gt;</span>
+    <span>Roman Numerals</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Roman Numerals Converter &amp; Chart</h1>
+        <p class="subtitle">Convert standard numbers to Roman numerals and vice versa, with reference symbols and charts.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="num_val">Decimal Number (1 - 3999):</label>
+            <input type="number" id="num_val" class="input-control" value="2026" min="1" max="3999" oninput="fromDec(this.value)">
+          </div>
+
+          <div class="form-group">
+            <label for="rom_val">Roman Numeral:</label>
+            <input type="text" id="rom_val" class="input-control" value="MMXXVI" style="text-transform: uppercase;" oninput="fromRom(this.value)">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="copyText('rom_val')">📋 Copy Roman Numeral</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('num_val').value=''; document.getElementById('rom_val').value='';">Clear</button>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Basic Roman Numeral Symbols</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Symbol</th><th>Value</th><th>Latin Name</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>I</strong></td><td>1</td><td>Unus</td></tr>
+              <tr><td><strong>V</strong></td><td>5</td><td>Quinque</td></tr>
+              <tr><td><strong>X</strong></td><td>10</td><td>Decem</td></tr>
+              <tr><td><strong>L</strong></td><td>50</td><td>Quinquaginta</td></tr>
+              <tr><td><strong>C</strong></td><td>100</td><td>Centum</td></tr>
+              <tr><td><strong>D</strong></td><td>500</td><td>Quingenti</td></tr>
+              <tr><td><strong>M</strong></td><td>1,000</td><td>Mille</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Roman Numerals 1 to 20</h3>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <tbody>
+              <tr>
+                <td>1 = I</td><td>2 = II</td><td>3 = III</td><td>4 = IV</td><td>5 = V</td>
+              </tr>
+              <tr>
+                <td>6 = VI</td><td>7 = VII</td><td>8 = VIII</td><td>9 = IX</td><td>10 = X</td>
+              </tr>
+              <tr>
+                <td>11 = XI</td><td>12 = XII</td><td>13 = XIII</td><td>14 = XIV</td><td>15 = XV</td>
+              </tr>
+              <tr>
+                <td>16 = XVI</td><td>17 = XVII</td><td>18 = XVIII</td><td>19 = XIX</td><td>20 = XX</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Reference Tables</div>
+        <ul class="sidebar-list">
+          <li><a href="ascii-table.html">ASCII Character Table</a></li>
+          <li><a href="../convert/number-base-converter.html">Number Base Converter</a></li>
+          <li><a href="../calc/math/scientific-calculator.html">Scientific Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const romanMap = [
+      { val: 1000, sym: 'M' }, { val: 900, sym: 'CM' },
+      { val: 500, sym: 'D' },  { val: 400, sym: 'CD' },
+      { val: 100, sym: 'C' },  { val: 90, sym: 'XC' },
+      { val: 50, sym: 'L' },   { val: 40, sym: 'XL' },
+      { val: 10, sym: 'X' },   { val: 9, sym: 'IX' },
+      { val: 5, sym: 'V' },    { val: 4, sym: 'IV' },
+      { val: 1, sym: 'I' }
+    ];
+
+    function toRoman(num) {
+      if (num < 1 || num > 3999) return "";
+      let res = "";
+      for (const item of romanMap) {
+        while (num >= item.val) {
+          res += item.sym;
+          num -= item.val;
+        }
+      }
+      return res;
+    }
+
+    const romanValues = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+
+    function fromRoman(str) {
+      str = str.toUpperCase().trim();
+      let total = 0;
+      for (let i = 0; i < str.length; i++) {
+        const cur = romanValues[str[i]];
+        const next = romanValues[str[i + 1]];
+        if (!cur) return NaN;
+        if (next && cur < next) {
+          total -= cur;
+        } else {
+          total += cur;
+        }
+      }
+      return total;
+    }
+
+    function fromDec(val) {
+      const n = parseInt(val, 10);
+      if (!isNaN(n)) {
+        document.getElementById('rom_val').value = toRoman(n);
+      }
+    }
+
+    function fromRom(val) {
+      const n = fromRoman(val);
+      if (!isNaN(n) && n > 0 && n <= 3999) {
+        document.getElementById('num_val').value = n;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Picker &amp; Converter (HEX, RGB, HSL) - RapidTables.online</title>
+  <meta name="description" content="Free online color picker and converter. Inspect and convert colors between HEX, RGB, and HSL formats with live color preview and palette presets.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .color-swatch-large {
+      height: 120px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      transition: background-color 0.15s ease;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .palette-item {
+      height: 38px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      transition: transform 0.1s;
+    }
+    .palette-item:hover {
+      transform: scale(1.15);
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Color Picker &amp; Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Color Picker &amp; Converter</h1>
+        <p class="subtitle">Select colors and convert between HEX, RGB, and HSL color models in real time.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="swatch_preview" class="color-swatch-large" style="background-color: #1976d2;">
+          #1976D2
+        </div>
+
+        <div class="form-group" style="text-align: center; margin-bottom: 24px;">
+          <label for="color_native" style="cursor: pointer; display: inline-block;">
+            <input type="color" id="color_native" value="#1976d2" style="width: 80px; height: 42px; cursor: pointer; border: none; background: none;" oninput="fromColorInput(this.value)">
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Click above to open system color spectrum</div>
+          </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="c_hex">HEX Code</label>
+            <div class="input-row">
+              <input type="text" id="c_hex" class="input-control" value="#1976D2" oninput="fromHex(this.value)">
+              <button class="btn btn-secondary btn-sm" onclick="copyText('c_hex')">Copy</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="c_rgb">RGB Code</label>
+            <div class="input-row">
+              <input type="text" id="c_rgb" class="input-control" value="rgb(25, 118, 210)" oninput="fromRgbStr(this.value)">
+              <button class="btn btn-secondary btn-sm" onclick="copyText('c_rgb')">Copy</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="c_hsl">HSL Code</label>
+            <div class="input-row">
+              <input type="text" id="c_hsl" class="input-control" value="hsl(210, 79%, 46%)" readonly style="background:var(--bg-alt);">
+              <button class="btn btn-secondary btn-sm" onclick="copyText('c_hsl')">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 24px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">Popular Web Colors</h3>
+        <div class="palette-grid" id="palette_box"></div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Color Models Explained</h2>
+        <ul>
+          <li><strong>HEX (#RRGGBB):</strong> Hexadecimal representation of Red, Green, and Blue intensity from 00 to FF (0 to 255).</li>
+          <li><strong>RGB (Red, Green, Blue):</strong> Additive color model where colors are created by combining primary colors of light.</li>
+          <li><strong>HSL (Hue, Saturation, Lightness):</strong> Cylindrical-coordinate representation that aligns closer to human perception of color.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Web Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="json-formatter.html">JSON Formatter</a></li>
+          <li><a href="base64-converter.html">Base64 Converter</a></li>
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="../convert/number-base-converter.html">Number Base Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const sampleColors = [
+      "#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5",
+      "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50",
+      "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800",
+      "#ff5722", "#795548", "#607d8b", "#1e293b", "#000000"
+    ];
+
+    const paletteEl = document.getElementById('palette_box');
+    sampleColors.forEach(col => {
+      const p = document.createElement('div');
+      p.className = 'palette-item';
+      p.style.backgroundColor = col;
+      p.title = col;
+      p.onclick = () => updateFromRgb(hexToRgb(col));
+      paletteEl.appendChild(p);
+    });
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+    }
+
+    function hexToRgb(hex) {
+      hex = hex.replace('#', '');
+      if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+      const n = parseInt(hex, 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    function updateFromRgb([r, g, b]) {
+      const hex = rgbToHex(r, g, b);
+      const [h, s, l] = rgbToHsl(r, g, b);
+      
+      document.getElementById('c_hex').value = hex;
+      document.getElementById('c_rgb').value = `rgb(${r}, ${g}, ${b})`;
+      document.getElementById('c_hsl').value = `hsl(${h}, ${s}%, ${l}%)`;
+      document.getElementById('color_native').value = hex.toLowerCase();
+
+      const swatch = document.getElementById('swatch_preview');
+      swatch.style.backgroundColor = hex;
+      swatch.textContent = hex;
+    }
+
+    function fromColorInput(hex) {
+      updateFromRgb(hexToRgb(hex));
+    }
+
+    function fromHex(val) {
+      val = val.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(val)) {
+        updateFromRgb(hexToRgb(val));
+      }
+    }
+
+    function fromRgbStr(val) {
+      const m = val.match(/\d+/g);
+      if (m && m.length >= 3) {
+        updateFromRgb([parseInt(m[0], 10), parseInt(m[1], 10), parseInt(m[2], 10)]);
+      }
+    }
+
+    updateFromRgb([25, 118, 210]);
+  </script>
+</body>
+</html>

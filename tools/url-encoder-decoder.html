@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Encoder &amp; Decoder - RapidTables.online</title>
+  <meta name="description" content="Free online URL encoder and decoder tool. Percent-encode special characters or decode percent-encoded URLs and query strings safely.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>URL Encoder &amp; Decoder</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>URL Encoder &amp; Decoder</h1>
+        <p class="subtitle">Convert text and parameters into percent-encoded URLs or decode encoded URL strings back into readable text.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="form-group">
+          <label for="url_input">Input Text / URL:</label>
+          <textarea id="url_input" class="input-control" rows="5" placeholder="Enter text or URL here...">https://www.rapidtables.online/search?q=online calculators & converters#math</textarea>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 20px;">
+          <button class="btn btn-primary" onclick="doUrlEncode()">🔒 Encode URL</button>
+          <button class="btn btn-primary" onclick="doUrlDecode()">🔓 Decode URL</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('url_input').value=''; document.getElementById('url_output').value='';">Clear</button>
+        </div>
+
+        <div class="form-group">
+          <label for="url_output">Result:</label>
+          <textarea id="url_output" class="input-control" rows="5" readonly placeholder="Result will appear here..."></textarea>
+          <div class="btn-row" style="margin-top: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="copyText('url_output')">📋 Copy Result</button>
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>What is URL Encoding (Percent-Encoding)?</h2>
+        <p>URL encoding converts characters into a format that can be safely transmitted over the Internet. URLs can only be sent over the Internet using the standard ASCII character-set.</p>
+        <ul>
+          <li>Non-ASCII characters and reserved characters (e.g. spaces, <code>&amp;</code>, <code>=</code>, <code>?</code>, <code>/</code>) are replaced with a <code>%</code> followed by two hexadecimal digits.</li>
+          <li>For example, a space character becomes <code>%20</code>.</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Web Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="base64-converter.html">Base64 Converter</a></li>
+          <li><a href="html-editor.html">HTML Editor</a></li>
+          <li><a href="json-formatter.html">JSON Formatter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function doUrlEncode() {
+      const val = document.getElementById('url_input').value;
+      document.getElementById('url_output').value = encodeURIComponent(val);
+    }
+
+    function doUrlDecode() {
+      const val = document.getElementById('url_input').value;
+      try {
+        document.getElementById('url_output').value = decodeURIComponent(val);
+      } catch (err) {
+        alert("Invalid URL encoding sequence: " + err.message);
+      }
+    }
+
+    doUrlEncode();
+  </script>
+</body>
+</html>

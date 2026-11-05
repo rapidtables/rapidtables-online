@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Calculator (Weighted Average) - RapidTables.online</title>
+  <meta name="description" content="Free online grade calculator. Calculate weighted course grade, assignments percentage, and what score you need on the final exam.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .grade-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#grade-calculators">Grade</a>
+    <span class="sep">&gt;</span>
+    <span>Grade Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Weighted Grade Calculator</h1>
+        <p class="subtitle">Calculate your overall course grade based on weighted homework, quizzes, tests, and final exam scores.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--text-muted);">
+          <span>Assignment / Exam</span>
+          <span>Score (%)</span>
+          <span>Weight (%)</span>
+          <span></span>
+        </div>
+
+        <div id="grades_container">
+          <!-- rows injected -->
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="addGradeRow()">+ Add Item</button>
+          <button class="btn btn-primary" onclick="calcGrade()">Calculate Grade</button>
+          <button class="btn btn-secondary" onclick="resetGrade()">Reset</button>
+        </div>
+
+        <div id="res_grade" class="result-card hidden">
+          <h3>Weighted Grade Result</h3>
+          <div class="result-value" id="final_grade_pct">88.5% (B+)</div>
+          <div class="result-details" id="final_grade_details" style="margin-top: 8px;">
+            Total Weight: 100%
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Weighted Grade Formula</h2>
+        <p>The weighted grade is computed as the sum of each item's score multiplied by its respective weight, divided by the total sum of weights:</p>
+        <div class="formula-box">Weighted Grade = Σ (Score × Weight) / Σ Weight</div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Grade Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="gpa-calculator.html">GPA Calculator</a></li>
+          <li><a href="../math/percentage-calculator.html">Percentage Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function addGradeRow(name = '', score = '90', weight = '25') {
+      const container = document.getElementById('grades_container');
+      const div = document.createElement('div');
+      div.className = 'grade-row';
+      div.innerHTML = `
+        <input type="text" class="input-control item-name" placeholder="Item name" value="${name}">
+        <input type="number" class="input-control item-score" placeholder="Score %" value="${score}" step="any">
+        <input type="number" class="input-control item-weight" placeholder="Weight %" value="${weight}" step="any">
+        <button class="btn btn-secondary btn-sm" onclick="this.parentElement.remove(); calcGrade();" title="Remove">✕</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function calcGrade() {
+      const rows = document.querySelectorAll('.grade-row');
+      let totalWeighted = 0;
+      let totalWeight = 0;
+
+      rows.forEach(r => {
+        const score = parseFloat(r.querySelector('.item-score').value);
+        const weight = parseFloat(r.querySelector('.item-weight').value);
+        if (!isNaN(score) && !isNaN(weight)) {
+          totalWeighted += (score * weight);
+          totalWeight += weight;
+        }
+      });
+
+      if (totalWeight === 0) return;
+      const finalPct = totalWeighted / totalWeight;
+
+      let letter = "F";
+      if (finalPct >= 93) letter = "A";
+      else if (finalPct >= 90) letter = "A-";
+      else if (finalPct >= 87) letter = "B+";
+      else if (finalPct >= 83) letter = "B";
+      else if (finalPct >= 80) letter = "B-";
+      else if (finalPct >= 77) letter = "C+";
+      else if (finalPct >= 73) letter = "C";
+      else if (finalPct >= 70) letter = "C-";
+      else if (finalPct >= 60) letter = "D";
+
+      document.getElementById('final_grade_pct').textContent = `${finalPct.toFixed(2)}% (${letter})`;
+      document.getElementById('final_grade_details').textContent = `Total Accounted Weight: ${totalWeight.toFixed(1)}%`;
+      document.getElementById('res_grade').classList.remove('hidden');
+    }
+
+    function resetGrade() {
+      const container = document.getElementById('grades_container');
+      container.innerHTML = '';
+      addGradeRow('Assignments & Homework', '95', '20');
+      addGradeRow('Midterm Exam', '84', '30');
+      addGradeRow('Project / Paper', '90', '20');
+      addGradeRow('Final Exam', '88', '30');
+      calcGrade();
+    }
+
+    resetGrade();
+  </script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text to Speech (TTS) Online Reader - RapidTables.online</title>
+  <meta name="description" content="Free online text to speech (TTS) audio reader. Convert typed or pasted text into natural spoken voices. Adjust speed, pitch, and voice accents directly in your browser.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .tts-controls-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 768px) {
+      .tts-controls-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+    .spoken-word-display {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px;
+      font-size: 15px;
+      line-height: 1.8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      margin-top: 14px;
+    }
+    .current-word {
+      background: #bfdbfe;
+      color: #1e3a8a;
+      border-radius: 3px;
+      padding: 2px 4px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Text to Speech</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Text to Speech (TTS) Online Reader</h1>
+        <p class="subtitle">Listen to any written text read aloud with natural human voices. Practice English pronunciation, proofread essays, and listen to articles.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="calc-input-group">
+          <label for="tts_voice_select">Select Voice &amp; Accent</label>
+          <select id="tts_voice_select"></select>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label for="tts_text_input" style="font-size: 13px; font-weight: 600;">Text to Read Aloud</label>
+            <button class="btn btn-secondary btn-sm" onclick="loadSampleText()">📋 Load Sample Text</button>
+          </div>
+          <textarea id="tts_text_input" class="code-box" style="height: 140px; font-family: inherit; font-size: 14px;" placeholder="Type or paste your text here..." oninput="updateWordCount()">Welcome to RapidTables.online. This is an instant client-side text-to-speech reader running directly in your browser. You can customize the voice, pitch, and reading speed to suit your preference.</textarea>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            <span id="word_stats_lbl">Words: 33 | Characters: 216</span>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <div class="tts-controls-panel">
+          <div class="calc-input-group">
+            <label for="speech_rate">Speed (Rate): <span id="rate_val_lbl">1.0x</span></label>
+            <input type="range" id="speech_rate" min="0.5" max="2.0" step="0.1" value="1.0" oninput="document.getElementById('rate_val_lbl').textContent = this.value + 'x'">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="speech_pitch">Pitch: <span id="pitch_val_lbl">1.0</span></label>
+            <input type="range" id="speech_pitch" min="0.5" max="1.5" step="0.1" value="1.0" oninput="document.getElementById('pitch_val_lbl').textContent = this.value">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="speech_volume">Volume: <span id="volume_val_lbl">100%</span></label>
+            <input type="range" id="speech_volume" min="0" max="1" step="0.05" value="1" oninput="document.getElementById('volume_val_lbl').textContent = Math.round(this.value * 100) + '%'">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="speakText()">🔊 Listen / Speak</button>
+          <button class="btn btn-secondary" onclick="pauseSpeech()">⏸️ Pause</button>
+          <button class="btn btn-secondary" onclick="resumeSpeech()">▶️ Resume</button>
+          <button class="btn btn-secondary" onclick="stopSpeech()">⏹️ Stop</button>
+          <button class="btn btn-secondary" onclick="clearText()">Clear</button>
+        </div>
+
+        <!-- Live Highlighter Tracker -->
+        <div id="word_tracker_container" style="margin-top: 20px; display: none;">
+          <label style="font-size: 13px; font-weight: 600;">Reading Progress:</label>
+          <div id="spoken_word_display" class="spoken-word-display"></div>
+        </div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>Benefits of Online Text-to-Speech</h2>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li>🎧 <strong>Hands-Free Learning:</strong> Listen to long articles, research papers, and eBooks while multitasking or commuting.</li>
+          <li>✍️ <strong>Proofreading &amp; Editing:</strong> Hearing your text spoken aloud makes typos, repeated words, and awkward grammar immediately obvious.</li>
+          <li>🗣️ <strong>Language &amp; Accent Practice:</strong> Master English pronunciation and cadence by following along with native browser voices.</li>
+          <li>🔒 <strong>100% Private:</strong> Spoken audio is generated using the browser's built-in Web Speech API synthesizer. None of your text is uploaded or stored.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Everyday Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="voice-recorder.html">🎙️ Voice Recorder</a></li>
+          <li><a href="notepad.html">📝 Online Notepad</a></li>
+          <li><a href="word-counter.html">📊 Word Counter</a></li>
+          <li><a href="case-converter.html">🔠 Case Converter</a></li>
+          <li><a href="../pdf/pdf-to-text.html">📄 PDF to Text</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Native Synthesizer</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          Utilizes hardware-accelerated operating system voices installed on your computer or phone.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let synth = window.speechSynthesis;
+    let voices = [];
+    let currentUtterance = null;
+
+    function populateVoices() {
+      if (!synth) return;
+      voices = synth.getVoices();
+      const select = document.getElementById('tts_voice_select');
+      select.innerHTML = '';
+
+      if (voices.length === 0) {
+        const opt = document.createElement('option');
+        opt.textContent = 'Default System Voice';
+        select.appendChild(opt);
+        return;
+      }
+
+      voices.forEach((v, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${v.name} (${v.lang})${v.default ? ' — [Default]' : ''}`;
+        if (v.default || v.lang.startsWith('en')) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    }
+
+    if (synth) {
+      populateVoices();
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = populateVoices;
+      }
+    }
+
+    function updateWordCount() {
+      const text = document.getElementById('tts_text_input').value;
+      const words = (text.match(/\b\S+\b/g) || []).length;
+      const chars = text.length;
+      document.getElementById('word_stats_lbl').textContent = `Words: ${words.toLocaleString()} | Characters: ${chars.toLocaleString()}`;
+    }
+
+    function speakText() {
+      if (!synth) {
+        alert('Your browser does not support the Web Speech API.');
+        return;
+      }
+
+      synth.cancel(); // cancel any active speech
+
+      const text = document.getElementById('tts_text_input').value.trim();
+      if (!text) {
+        alert('Please enter some text to speak.');
+        return;
+      }
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+
+      const voiceIndex = document.getElementById('tts_voice_select').value;
+      if (voices[voiceIndex]) {
+        currentUtterance.voice = voices[voiceIndex];
+      }
+
+      currentUtterance.rate = parseFloat(document.getElementById('speech_rate').value) || 1.0;
+      currentUtterance.pitch = parseFloat(document.getElementById('speech_pitch').value) || 1.0;
+      currentUtterance.volume = parseFloat(document.getElementById('speech_volume').value) || 1.0;
+
+      // Word boundary event for visual tracking
+      const trackerContainer = document.getElementById('word_tracker_container');
+      const display = document.getElementById('spoken_word_display');
+      trackerContainer.style.display = 'block';
+
+      currentUtterance.onboundary = function(event) {
+        if (event.name === 'word') {
+          const charIndex = event.charIndex;
+          const before = text.substring(0, charIndex);
+          const match = text.substring(charIndex).match(/^\S+/);
+          const currentWord = match ? match[0] : '';
+          const after = text.substring(charIndex + currentWord.length);
+
+          display.innerHTML = `${before}<span class="current-word">${currentWord}</span>${after}`;
+        }
+      };
+
+      currentUtterance.onend = function() {
+        display.innerHTML = text;
+        showToast('Playback completed');
+      };
+
+      currentUtterance.onerror = function(e) {
+        console.error('Speech synthesis error:', e);
+      };
+
+      synth.speak(currentUtterance);
+      showToast('Speaking started...');
+    }
+
+    function pauseSpeech() {
+      if (synth && synth.speaking) {
+        synth.pause();
+        showToast('Speech paused');
+      }
+    }
+
+    function resumeSpeech() {
+      if (synth && synth.paused) {
+        synth.resume();
+        showToast('Speech resumed');
+      }
+    }
+
+    function stopSpeech() {
+      if (synth) {
+        synth.cancel();
+        document.getElementById('word_tracker_container').style.display = 'none';
+        showToast('Speech stopped');
+      }
+    }
+
+    function clearText() {
+      stopSpeech();
+      document.getElementById('tts_text_input').value = '';
+      updateWordCount();
+    }
+
+    function loadSampleText() {
+      const sample = "The art of computing is constantly advancing. By converting complex algorithms into simple, accessible browser utilities, we make knowledge free and convenient for everyone worldwide.";
+      document.getElementById('tts_text_input').value = sample;
+      updateWordCount();
+      showToast('Sample text loaded');
+    }
+
+    updateWordCount();
+  </script>
+</body>
+</html>

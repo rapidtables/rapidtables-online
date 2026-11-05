@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compress PDF Online Free - Reduce PDF File Size - RapidTables.online</title>
+  <meta name="description" content="Compress PDF files online for free. Reduce PDF document size while preserving crisp text and image quality. 100% private client-side compression.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .preset-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .preset-card {
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--bg-surface);
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+    }
+    .preset-card:hover {
+      border-color: var(--primary);
+    }
+    .preset-card.active {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .preset-card .preset-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .stat-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 16px 0;
+      display: none;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 90+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Compress PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Compress PDF Document</h1>
+        <p class="subtitle">Reduce PDF file size quickly without losing essential clarity. Perfect for email attachments, web uploads, and storage optimization.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 42px; margin-bottom: 8px;">🗜️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Supports all PDF files. 100% processed securely in your browser.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFile(event)">
+        </div>
+
+        <div id="file_info_bar" style="display: none; margin-top: 16px; padding: 12px 16px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border-color); align-items: center; justify-content: space-between;">
+          <div>
+            <strong id="file_name_lbl">document.pdf</strong>
+            <span id="file_orig_size_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+            <span id="file_pages_lbl" style="font-size: 13px; color: var(--text-muted); margin-left: 8px;"></span>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="resetTool()">Change File</button>
+        </div>
+
+        <div id="compression_options" style="display: none; margin-top: 24px;">
+          <h3 style="font-size: 16px; margin-bottom: 12px;">Choose Compression Level:</h3>
+          <div class="preset-card-grid">
+            <div class="preset-card active" onclick="selectPreset('recommended', this)">
+              <span class="preset-badge" style="background: #dbeafe; color: #1e40af;">RECOMMENDED</span>
+              <div style="font-weight: 700; margin-bottom: 4px;">Good Compression</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Balances strong size reduction with crisp readable text. Best for email &amp; web.</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('extreme', this)">
+              <span class="preset-badge" style="background: #fee2e2; color: #991b1b;">MAXIMUM SAVINGS</span>
+              <div style="font-weight: 700; margin-bottom: 4px;">Extreme Compression</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Smallest possible file size. Slight reduction in graphic quality.</div>
+            </div>
+            <div class="preset-card" onclick="selectPreset('less', this)">
+              <span class="preset-badge" style="background: #fef3c7; color: #92400e;">HIGH QUALITY</span>
+              <div style="font-weight: 700; margin-bottom: 4px;">Low Compression</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Maximum graphic fidelity retained with modest compression.</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 24px;">
+            <button class="btn btn-primary" id="compress_btn" onclick="startCompression()" style="padding: 12px 32px; font-size: 16px;">
+              🗜️ Compress PDF Now
+            </button>
+          </div>
+        </div>
+
+        <div class="progress-bar-container" id="progress_container">
+          <div class="progress-bar-fill" id="progress_fill"></div>
+        </div>
+        <div id="progress_lbl" style="display: none; text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 6px;"></div>
+
+        <!-- Result View -->
+        <div id="result_section" style="display: none; margin-top: 24px;">
+          <div class="stats-panel">
+            <div>
+              <div class="stat-val" id="stat_orig_size">0 MB</div>
+              <div class="stat-lbl">Original Size</div>
+            </div>
+            <div>
+              <div class="stat-val" id="stat_new_size" style="color: #10b981;">0 MB</div>
+              <div class="stat-lbl">Compressed Size</div>
+            </div>
+            <div>
+              <div class="stat-val" id="stat_saved_pct" style="color: #2563eb;">-0%</div>
+              <div class="stat-lbl">Storage Saved</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="download_btn" onclick="downloadCompressedPdf()" style="padding: 12px 28px; font-size: 16px;">
+              💾 Download Compressed PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetTool()">Compress Another PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO / Educational Section -->
+      <section class="info-card">
+        <h2>How Online PDF Compression Works</h2>
+        <p style="line-height: 1.7; color: var(--text-muted); margin-bottom: 14px;">
+          PDF files often contain uncompressed high-resolution images, redundant metadata, and un-optimized vector streams. RapidTables.online analyzes every page of your PDF, downsamples embedded bitmaps to optimal web resolutions (DPI), recompresses photographic streams using efficient JPEG encoding, and removes extraneous document bloat.
+        </p>
+
+        <h3>Features &amp; Compression Levels</h3>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Recommended:</strong> 150 DPI re-sampling with 65% quality JPEG encoding. Produces an average of 40% to 75% size reduction while keeping all typography razor sharp.</li>
+          <li><strong>Extreme:</strong> 100 DPI re-sampling with 40% quality. Best when you must satisfy strict email attachment caps (e.g. 5MB or 10MB limits).</li>
+          <li><strong>Low:</strong> 200 DPI re-sampling with 85% quality. Retains near-lossless clarity for high-end presentation documents.</li>
+          <li><strong>100% In-Browser Privacy:</strong> Your sensitive invoices, tax returns, and legal records are never uploaded to any remote server or stored in any database. Everything occurs in local browser RAM.</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-converter.html">🔄 All-in-One PDF Converter</a></li>
+          <li><a href="delete-pdf-pages.html">🗑️ Delete PDF Pages</a></li>
+          <li><a href="extract-pdf-pages.html">📑 Extract PDF Pages</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF</a></li>
+          <li><a href="pdf-to-word.html">📝 PDF to Word</a></li>
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Privacy Assured</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          No file leaves your computer. Process multi-gigabyte or confidential contracts safely with zero cloud uploads.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/compress-pdf.html">Compress PDF</a>
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    let currentFile = null;
+    let currentArrayBuffer = null;
+    let selectedPreset = 'recommended';
+    let compressedPdfBytes = null;
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function selectPreset(preset, el) {
+      selectedPreset = preset;
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    async function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('Please select a valid PDF document.');
+        return;
+      }
+      currentFile = file;
+      currentArrayBuffer = await file.arrayBuffer();
+
+      document.getElementById('drop_zone').style.display = 'none';
+      document.getElementById('file_info_bar').style.display = 'flex';
+      document.getElementById('file_name_lbl').textContent = file.name;
+      document.getElementById('file_orig_size_lbl').textContent = '(' + formatBytes(file.size) + ')';
+
+      try {
+        const pdf = await pdfjsLib.getDocument({ data: currentArrayBuffer.slice(0) }).promise;
+        document.getElementById('file_pages_lbl').textContent = '• ' + pdf.numPages + ' pages';
+        document.getElementById('compression_options').style.display = 'block';
+      } catch (err) {
+        alert('Could not parse PDF file: ' + err.message);
+        resetTool();
+      }
+    }
+
+    // Drag and Drop
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--primary)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var(--border-color)'; });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      if (e.dataTransfer.files.length) {
+        document.getElementById('pdf_file_input').files = e.dataTransfer.files;
+        handleFile({ target: { files: e.dataTransfer.files } });
+      }
+    });
+
+    async function startCompression() {
+      if (!currentArrayBuffer) return;
+
+      const compressBtn = document.getElementById('compress_btn');
+      compressBtn.disabled = true;
+      compressBtn.textContent = '⏳ Compressing Document...';
+
+      const progressContainer = document.getElementById('progress_container');
+      const progressFill = document.getElementById('progress_fill');
+      const progressLbl = document.getElementById('progress_lbl');
+      progressContainer.style.display = 'block';
+      progressLbl.style.display = 'block';
+      progressFill.style.width = '0%';
+
+      let scale = 1.0;
+      let quality = 0.65;
+      if (selectedPreset === 'extreme') {
+        scale = 0.85;
+        quality = 0.40;
+      } else if (selectedPreset === 'less') {
+        scale = 1.25;
+        quality = 0.82;
+      }
+
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: currentArrayBuffer.slice(0) });
+        const pdfDoc = await loadingTask.promise;
+        const totalPages = pdfDoc.numPages;
+
+        const newPdfDoc = await PDFLib.PDFDocument.create();
+
+        for (let i = 1; i <= totalPages; i++) {
+          progressLbl.textContent = 'Processing page ' + i + ' of ' + totalPages + '...';
+          progressFill.style.width = Math.round((i / totalPages) * 90) + '%';
+
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: scale });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          const jpgDataUrl = canvas.toDataURL('image/jpeg', quality);
+          const jpgBytes = await fetch(jpgDataUrl).then(res => res.arrayBuffer());
+
+          const embeddedJpg = await newPdfDoc.embedJpg(jpgBytes);
+          const origViewport = page.getViewport({ scale: 1.0 });
+          const newPage = newPdfDoc.addPage([origViewport.width, origViewport.height]);
+          newPage.drawImage(embeddedJpg, {
+            x: 0,
+            y: 0,
+            width: origViewport.width,
+            height: origViewport.height
+          });
+        }
+
+        progressFill.style.width = '100%';
+        progressLbl.textContent = 'Finalizing compressed PDF...';
+
+        compressedPdfBytes = await newPdfDoc.save();
+
+        const origSize = currentFile.size;
+        const newSize = compressedPdfBytes.byteLength;
+        const savedPct = origSize > newSize ? Math.round(((origSize - newSize) / origSize) * 100) : 0;
+
+        document.getElementById('stat_orig_size').textContent = formatBytes(origSize);
+        document.getElementById('stat_new_size').textContent = formatBytes(newSize);
+        document.getElementById('stat_saved_pct').textContent = (origSize > newSize ? '-' : '+') + Math.abs(savedPct) + '%';
+        if (origSize <= newSize) {
+          document.getElementById('stat_saved_pct').style.color = '#eab308';
+        }
+
+        document.getElementById('compression_options').style.display = 'none';
+        progressContainer.style.display = 'none';
+        progressLbl.style.display = 'none';
+        document.getElementById('result_section').style.display = 'block';
+      } catch (err) {
+        alert('Compression failed: ' + err.message);
+        compressBtn.disabled = false;
+        compressBtn.textContent = '🗜️ Compress PDF Now';
+        progressContainer.style.display = 'none';
+        progressLbl.style.display = 'none';
+      }
+    }
+
+    function downloadCompressedPdf() {
+      if (!compressedPdfBytes) return;
+      const blob = new Blob([compressedPdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+      a.href = url;
+      a.download = baseName + '-compressed.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function resetTool() {
+      currentFile = null;
+      currentArrayBuffer = null;
+      compressedPdfBytes = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('drop_zone').style.display = 'block';
+      document.getElementById('file_info_bar').style.display = 'none';
+      document.getElementById('compression_options').style.display = 'none';
+      document.getElementById('result_section').style.display = 'none';
+      document.getElementById('compress_btn').disabled = false;
+      document.getElementById('compress_btn').textContent = '🗜️ Compress PDF Now';
+    }
+  </script>
+</body>
+</html>

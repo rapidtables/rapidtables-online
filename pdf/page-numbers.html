@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Page Numbers to PDF Online - RapidTables.online</title>
+  <meta name="description" content="Add page numbers to your PDF documents easily online. Customize position, format (Page X of Y), font size, and margins. 100% private and free.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .position-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-width: 320px;
+      background: var(--bg-alt);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+    .pos-btn {
+      padding: 10px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .pos-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Add Page Numbers</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Add Page Numbers to PDF</h1>
+        <p class="subtitle">Insert header or footer page numbers into your PDF documents. Select your preferred style, position, and font size.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 40px; margin-bottom: 8px;">🔢</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Upload your document to insert page numbers.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="file_info_bar" style="display: none; margin-top: 14px; padding: 10px 14px; background: var(--bg-alt); border-radius: var(--radius-sm); font-size: 14px;">
+          📄 Selected file: <strong id="loaded_filename"></strong> (<span id="loaded_pages_count"></span> pages)
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 24px;">
+          <div class="calc-input-group">
+            <label>Position on Page</label>
+            <div class="position-selector">
+              <button type="button" class="pos-btn" data-pos="top-left" onclick="selectPos('top-left')">Top Left</button>
+              <button type="button" class="pos-btn" data-pos="top-center" onclick="selectPos('top-center')">Top Center</button>
+              <button type="button" class="pos-btn" data-pos="top-right" onclick="selectPos('top-right')">Top Right</button>
+              <button type="button" class="pos-btn" data-pos="bottom-left" onclick="selectPos('bottom-left')">Bottom Left</button>
+              <button type="button" class="pos-btn" data-pos="bottom-center" onclick="selectPos('bottom-center')">Bottom Center</button>
+              <button type="button" class="pos-btn active" data-pos="bottom-right" onclick="selectPos('bottom-right')">Bottom Right</button>
+            </div>
+            <input type="hidden" id="selected_position" value="bottom-right">
+          </div>
+
+          <div class="calc-input-group">
+            <label for="num_format">Numbering Format</label>
+            <select id="num_format">
+              <option value="Page {n} of {total}" selected>Page {n} of {total} (e.g. Page 1 of 10)</option>
+              <option value="{n} / {total}">{n} / {total} (e.g. 1 / 10)</option>
+              <option value="Page {n}">Page {n} (e.g. Page 1)</option>
+              <option value="- {n} -">- {n} - (e.g. - 1 -)</option>
+              <option value="{n}">{n} (Plain number: 1)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="start_number">Starting Number</label>
+            <input type="number" id="start_number" value="1" min="1">
+          </div>
+          <div class="calc-input-group">
+            <label for="font_size">Font Size</label>
+            <select id="font_size">
+              <option value="9">9 pt (Small)</option>
+              <option value="11" selected>11 pt (Standard)</option>
+              <option value="13">13 pt (Medium)</option>
+              <option value="16">16 pt (Large)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="margin_val">Margin from Edge</label>
+            <select id="margin_val">
+              <option value="20">Tight Margin (20 pt)</option>
+              <option value="30" selected>Standard Margin (30 pt)</option>
+              <option value="45">Wide Margin (45 pt)</option>
+            </select>
+          </div>
+          <div class="calc-input-group" style="justify-content: center;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 24px;">
+              <input type="checkbox" id="skip_first_page" style="width: 18px; height: 18px;">
+              <span>Skip First Page (Do not number cover page)</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="apply_btn" onclick="addPageNumbersToPdf()">🔢 Add Page Numbers &amp; Download</button>
+          <button class="btn btn-secondary" onclick="resetTool()">Reset</button>
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Add Page Numbers to PDF Files</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Select your document from your computer or phone.</li>
+          <li><strong>Select Position:</strong> Click one of the 6 position buttons (e.g. <em>Bottom Right</em> or <em>Bottom Center</em>).</li>
+          <li><strong>Customize Style:</strong> Choose whether you want "Page X of Y", "X / Y", or simple numerals, and toggle whether to skip the first cover page.</li>
+          <li><strong>Download:</strong> Click "Add Page Numbers &amp; Download" to receive your numbered PDF document immediately.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">Ideal for Legal, Academic, and Business Reports</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Whether formatting a thesis, dissertation, court filing, corporate proposal, or multi-chapter eBook, clear page numbering is essential. Our tool stamps uniform, high-contrast numbers across your document while preserving original layout, margins, and vector text quality.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="watermark-pdf.html">🏷️ Add Watermark to PDF</a></li>
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF Pages</a></li>
+          <li><a href="organize-pdf.html">📂 Organize &amp; Delete Pages</a></li>
+          <li><a href="rotate-pdf.html">🔄 Rotate PDF Pages</a></li>
+          <li><a href="pdf-to-text.html">📝 Extract Text from PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>No File Uploads</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          All page calculation and stamping happens inside your browser. No files are uploaded to any server.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let selectedFile = null;
+    let loadedPdfBytes = null;
+    let loadedPdfDoc = null;
+
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--primary)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'var(--border-color)';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPdfFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(event) {
+      if (event.target.files && event.target.files[0]) {
+        loadPdfFile(event.target.files[0]);
+      }
+    }
+
+    async function loadPdfFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      selectedFile = file;
+      document.getElementById('status_msg').textContent = 'Loading document...';
+
+      try {
+        loadedPdfBytes = await file.arrayBuffer();
+        loadedPdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+
+        document.getElementById('file_info_bar').style.display = 'block';
+        document.getElementById('loaded_filename').textContent = file.name;
+        document.getElementById('loaded_pages_count').textContent = loadedPdfDoc.getPageCount();
+        document.getElementById('status_msg').textContent = `✅ Ready to add page numbers to "${file.name}".`;
+        showToast('PDF loaded successfully!');
+      } catch (err) {
+        alert("Failed to load PDF: " + err.message);
+        document.getElementById('status_msg').textContent = 'Error parsing PDF document.';
+      }
+    }
+
+    function selectPos(pos) {
+      document.querySelectorAll('.pos-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.pos === pos);
+      });
+      document.getElementById('selected_position').value = pos;
+    }
+
+    async function addPageNumbersToPdf() {
+      if (!loadedPdfBytes) {
+        alert('Please select a PDF file first.');
+        return;
+      }
+
+      const statusMsg = document.getElementById('status_msg');
+      const applyBtn = document.getElementById('apply_btn');
+      statusMsg.textContent = 'Stamping page numbers...';
+      applyBtn.disabled = true;
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+        const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+
+        const position = document.getElementById('selected_position').value;
+        const formatTpl = document.getElementById('num_format').value;
+        const startNum = parseInt(document.getElementById('start_number').value, 10) || 1;
+        const fontSize = parseFloat(document.getElementById('font_size').value) || 11;
+        const margin = parseFloat(document.getElementById('margin_val').value) || 30;
+        const skipFirst = document.getElementById('skip_first_page').checked;
+
+        const pages = pdfDoc.getPages();
+        const totalPages = pages.length;
+        const color = PDFLib.rgb(0.3, 0.3, 0.35); // Soft charcoal
+
+        let currentNum = startNum;
+
+        for (let i = 0; i < totalPages; i++) {
+          if (skipFirst && i === 0) continue;
+
+          const page = pages[i];
+          const { width, height } = page.getSize();
+
+          const text = formatTpl
+            .replace('{n}', currentNum)
+            .replace('{total}', totalPages);
+
+          const textWidth = font.widthOfTextAtSize(text, fontSize);
+          const textHeight = font.heightAtSize(fontSize);
+
+          let x = 0;
+          let y = 0;
+
+          // Horizontal alignment
+          if (position.includes('left')) {
+            x = margin;
+          } else if (position.includes('center')) {
+            x = (width - textWidth) / 2;
+          } else { // right
+            x = width - margin - textWidth;
+          }
+
+          // Vertical alignment
+          if (position.includes('top')) {
+            y = height - margin - textHeight;
+          } else { // bottom
+            y = margin;
+          }
+
+          page.drawText(text, {
+            x: Math.max(5, x),
+            y: Math.max(5, y),
+            size: fontSize,
+            font: font,
+            color: color
+          });
+
+          currentNum++;
+        }
+
+        const modifiedBytes = await pdfDoc.save();
+        const blob = new Blob([modifiedBytes], { type: 'application/pdf' });
+        const a = document.createElement('a');
+        const originalName = selectedFile ? selectedFile.name.replace(/\.pdf$/i, '') : 'document';
+        a.href = URL.createObjectURL(blob);
+        a.download = `${originalName}_numbered.pdf`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        statusMsg.textContent = '✅ Page numbers added successfully!';
+        showToast('Numbered PDF downloaded!');
+      } catch (err) {
+        alert("Numbering error: " + err.message);
+        statusMsg.textContent = 'Failed to add page numbers.';
+      } finally {
+        applyBtn.disabled = false;
+      }
+    }
+
+    function resetTool() {
+      selectedFile = null;
+      loadedPdfBytes = null;
+      loadedPdfDoc = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('file_info_bar').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      selectPos('bottom-right');
+      document.getElementById('num_format').value = 'Page {n} of {total}';
+      document.getElementById('start_number').value = '1';
+      document.getElementById('font_size').value = '11';
+      document.getElementById('margin_val').value = '30';
+      document.getElementById('skip_first_page').checked = false;
+    }
+  </script>
+</body>
+</html>

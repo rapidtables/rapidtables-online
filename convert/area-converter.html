@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Converter (Acres, Sq Ft, Sq Meters, Hectares) - RapidTables.online</title>
+  <meta name="description" content="Free online area converter. Convert between square meters, square feet, acres, hectares, square kilometers, and square miles in real time.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../convert/">Converters</a>
+    <span class="sep">&gt;</span>
+    <span>Area Converter</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Area Converter</h1>
+        <p class="subtitle">Convert between land measurement units: square feet, acres, hectares, square meters, and square miles.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="a_sqm">Square Meters (m²)</label>
+            <input type="number" id="a_sqm" class="input-control" value="1000" step="any" oninput="fromSqm(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="a_sqft">Square Feet (ft²)</label>
+            <input type="number" id="a_sqft" class="input-control" step="any" oninput="fromSqft(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="a_acres">Acres (ac)</label>
+            <input type="number" id="a_acres" class="input-control" step="any" oninput="fromAcres(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="a_hectares">Hectares (ha)</label>
+            <input type="number" id="a_hectares" class="input-control" step="any" oninput="fromHa(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="a_sqkm">Square Kilometers (km²)</label>
+            <input type="number" id="a_sqkm" class="input-control" step="any" oninput="fromSqkm(this.value)">
+          </div>
+          <div class="form-group">
+            <label for="a_sqmi">Square Miles (mi²)</label>
+            <input type="number" id="a_sqmi" class="input-control" step="any" oninput="fromSqmi(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Area Conversion Factors</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>Unit</th><th>Equivalent in Square Meters (m²)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1 Square Foot (ft²)</td><td>0.092903 m²</td></tr>
+              <tr><td>1 Acre</td><td>4,046.856 m² (43,560 ft²)</td></tr>
+              <tr><td>1 Hectare (ha)</td><td>10,000 m² (2.471 acres)</td></tr>
+              <tr><td>1 Square Kilometer (km²)</td><td>1,000,000 m² (100 ha)</td></tr>
+              <tr><td>1 Square Mile (mi²)</td><td>2,589,988 m² (640 acres)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Unit Converters</div>
+        <ul class="sidebar-list">
+          <li><a href="length-converter.html">Length Converter</a></li>
+          <li><a href="volume-converter.html">Volume Converter</a></li>
+          <li><a href="weight-converter.html">Weight Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    function updateAllArea(sqm, source) {
+      if (sqm === '' || isNaN(sqm)) return;
+      const m = parseFloat(sqm);
+      const fmt = (n) => Number(n.toPrecision(7)).toString();
+
+      if (source !== 'sqm') document.getElementById('a_sqm').value = fmt(m);
+      if (source !== 'sqft') document.getElementById('a_sqft').value = fmt(m / 0.09290304);
+      if (source !== 'acres') document.getElementById('a_acres').value = fmt(m / 4046.8564224);
+      if (source !== 'ha') document.getElementById('a_hectares').value = fmt(m / 10000);
+      if (source !== 'sqkm') document.getElementById('a_sqkm').value = fmt(m / 1000000);
+      if (source !== 'sqmi') document.getElementById('a_sqmi').value = fmt(m / 2589988.110336);
+    }
+
+    function fromSqm(v) { updateAllArea(v, 'sqm'); }
+    function fromSqft(v) { updateAllArea(v * 0.09290304, 'sqft'); }
+    function fromAcres(v) { updateAllArea(v * 4046.8564224, 'acres'); }
+    function fromHa(v) { updateAllArea(v * 10000, 'ha'); }
+    function fromSqkm(v) { updateAllArea(v * 1000000, 'sqkm'); }
+    function fromSqmi(v) { updateAllArea(v * 2589988.110336, 'sqmi'); }
+
+    fromSqm(1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Editor &amp; Live HTML Preview - RapidTables.online</title>
+  <meta name="description" content="Free online Markdown editor and live previewer. Write markdown syntax and view rendered HTML instantly with clean export options.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .md-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    @media (max-width: 768px) {
+      .md-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .md-input-area {
+      width: 100%;
+      height: 440px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      resize: vertical;
+      outline: none;
+    }
+    .md-preview-area {
+      width: 100%;
+      height: 440px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      overflow-y: auto;
+      line-height: 1.6;
+    }
+    .md-preview-area h1, .md-preview-area h2, .md-preview-area h3 {
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+    .md-preview-area p {
+      margin-bottom: 10px;
+    }
+    .md-preview-area ul, .md-preview-area ol {
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+    .md-preview-area code {
+      background: var(--bg-alt);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .md-preview-area pre {
+      background: var(--bg-alt);
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    .md-preview-area blockquote {
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      color: var(--text-muted);
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../tools/">Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Markdown Editor</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Markdown Editor &amp; Previewer</h1>
+        <p class="subtitle">Write GitHub Flavored Markdown and see rendered HTML live on the right.</p>
+      </div>
+
+      <div class="tool-box">
+        <div class="btn-row" style="margin-top: 0; margin-bottom: 12px;">
+          <button class="btn btn-secondary btn-sm" onclick="copyText('md_source')">📋 Copy Markdown</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyHtmlOutput()">Copy Rendered HTML</button>
+          <button class="btn btn-secondary btn-sm" onclick="loadSampleMd()">Sample Text</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('md_source').value=''; renderMarkdown();">Clear</button>
+        </div>
+
+        <div class="md-container">
+          <div>
+            <label style="font-weight: 600; font-size: 13px; margin-bottom: 6px; display: block;">Markdown Input:</label>
+            <textarea id="md_source" class="md-input-area" oninput="renderMarkdown()" placeholder="Type markdown here..."></textarea>
+          </div>
+          <div>
+            <label style="font-weight: 600; font-size: 13px; margin-bottom: 6px; display: block;">Rendered Preview:</label>
+            <div id="md_preview" class="md-preview-area"></div>
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Markdown Syntax Guide</h2>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>Element</th><th>Markdown Syntax</th></tr></thead>
+            <tbody>
+              <tr><td>Heading 1 &amp; 2</td><td><code># Heading 1</code> or <code>## Heading 2</code></td></tr>
+              <tr><td>Bold &amp; Italic</td><td><code>**bold text**</code> and <code>*italic text*</code></td></tr>
+              <tr><td>Blockquote</td><td><code>&gt; Quote here</code></td></tr>
+              <tr><td>Unordered List</td><td><code>- Item 1</code></td></tr>
+              <tr><td>Code Block</td><td><code>```python \n code \n ```</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Text &amp; Web Tools</div>
+        <ul class="sidebar-list">
+          <li><a href="html-editor.html">HTML Editor</a></li>
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="word-counter.html">Word Counter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    // Lightweight Markdown parser
+    function parseMarkdown(md) {
+      let html = md
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") // escape
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // code blocks
+        .replace(/`([^`]+)`/g, '<code>$1</code>') // inline code
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/^\- (.*$)/gim, '<ul><li>$1</li></ul>')
+        .replace(/<\/ul>\s?<ul>/gim, '')
+        .replace(/\n\n/gim, '</p><p>')
+        .replace(/\n/gim, '<br>');
+      return `<p>${html}</p>`;
+    }
+
+    function renderMarkdown() {
+      const src = document.getElementById('md_source').value;
+      document.getElementById('md_preview').innerHTML = parseMarkdown(src);
+    }
+
+    function copyHtmlOutput() {
+      const html = document.getElementById('md_preview').innerHTML;
+      copyText(html, true);
+    }
+
+    function loadSampleMd() {
+      document.getElementById('md_source').value = `# Welcome to RapidTables.online ⚡
+
+Markdown is a lightweight and easy-to-use syntax for styling all forms of writing.
+
+## Key Features:
+- **Fast:** Instant rendering as you type.
+- **Easy:** Clean readable syntax.
+- **Portable:** Converts instantly to HTML.
+
+> "Simplicity is the soul of efficiency."
+
+### Code Example:
+\`\`\`javascript
+function calculateSum(a, b) {
+  return a + b;
+}
+\`\`\`
+`;
+      renderMarkdown();
+    }
+
+    loadSampleMd();
+  </script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Watermark to PDF Online - RapidTables.online</title>
+  <meta name="description" content="Add text watermarks to your PDF pages online for free. Customize text, angle, opacity, font size, and color. 100% private, client-side processing.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .upload-box {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--bg-alt);
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+    }
+    .watermark-preview-box {
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .sample-sheet {
+      width: 260px;
+      height: 340px;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    .sample-dummy-lines {
+      position: absolute;
+      top: 24px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0.15;
+    }
+    .sample-line {
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+    }
+    .sample-watermark-overlay {
+      position: absolute;
+      font-weight: 800;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: all 0.15s ease;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="./">PDF Tools</a>
+    <span class="sep">&gt;</span>
+    <span>Add Watermark to PDF</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Add Watermark to PDF</h1>
+        <p class="subtitle">Stamp custom text watermarks across your PDF documents. Set opacity, angle, size, and position with live preview.</p>
+      </div>
+
+      <div class="tool-box">
+        <div id="drop_zone" class="upload-box" onclick="document.getElementById('pdf_file_input').click()">
+          <div style="font-size: 40px; margin-bottom: 8px;">🏷️</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-main);">Click to Select or Drop a PDF File</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Choose the PDF document you want to stamp.</div>
+          <input type="file" id="pdf_file_input" accept="application/pdf" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="file_info_bar" style="display: none; margin-top: 14px; padding: 10px 14px; background: var(--bg-alt); border-radius: var(--radius-sm); font-size: 14px;">
+          📄 Selected file: <strong id="loaded_filename"></strong> (<span id="loaded_pages_count"></span> pages)
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 24px;">
+          <div class="calc-input-group">
+            <label for="wm_text">Watermark Text</label>
+            <input type="text" id="wm_text" value="CONFIDENTIAL" oninput="updateLivePreview()">
+          </div>
+          <div class="calc-input-group">
+            <label for="wm_preset">Quick Presets</label>
+            <select id="wm_preset" onchange="applyPreset(this.value)">
+              <option value="CONFIDENTIAL" selected>CONFIDENTIAL</option>
+              <option value="DRAFT">DRAFT</option>
+              <option value="SAMPLE">SAMPLE</option>
+              <option value="DO NOT COPY">DO NOT COPY</option>
+              <option value="FOR REVIEW ONLY">FOR REVIEW ONLY</option>
+              <option value="ORIGINAL">ORIGINAL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="wm_rotation">Rotation Angle</label>
+            <select id="wm_rotation" onchange="updateLivePreview()">
+              <option value="45" selected>45° (Diagonal Upwards)</option>
+              <option value="-45">-45° (Diagonal Downwards)</option>
+              <option value="0">0° (Horizontal)</option>
+              <option value="90">90° (Vertical)</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="wm_color">Watermark Color</label>
+            <select id="wm_color" onchange="updateLivePreview()">
+              <option value="red" selected>Red (#dc2626)</option>
+              <option value="gray">Slate Gray (#64748b)</option>
+              <option value="black">Deep Black (#0f172a)</option>
+              <option value="blue">Royal Blue (#2563eb)</option>
+              <option value="green">Emerald Green (#16a34a)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="wm_size">Font Size: <span id="size_val_lbl">48 pt</span></label>
+            <input type="range" id="wm_size" min="20" max="80" value="48" step="2" oninput="updateLivePreview()">
+          </div>
+          <div class="calc-input-group">
+            <label for="wm_opacity">Opacity: <span id="opacity_val_lbl">25%</span></label>
+            <input type="range" id="wm_opacity" min="0.05" max="0.80" value="0.25" step="0.05" oninput="updateLivePreview()">
+          </div>
+        </div>
+
+        <div class="calc-grid-2" style="margin-top: 14px;">
+          <div class="calc-input-group">
+            <label for="wm_target_pages">Apply To Pages</label>
+            <select id="wm_target_pages">
+              <option value="all" selected>All Pages</option>
+              <option value="except_first">All Pages except First Page (Skip Cover)</option>
+              <option value="first_only">First Page Only</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Live Preview Box -->
+        <div class="watermark-preview-box">
+          <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 12px;">Visual Layout Preview</div>
+          <div class="sample-sheet">
+            <div class="sample-dummy-lines">
+              <div class="sample-line" style="width: 80%;"></div>
+              <div class="sample-line" style="width: 100%;"></div>
+              <div class="sample-line" style="width: 90%;"></div>
+              <div class="sample-line" style="width: 95%;"></div>
+              <div class="sample-line" style="width: 85%;"></div>
+              <div class="sample-line" style="width: 100%;"></div>
+              <div class="sample-line" style="width: 70%;"></div>
+            </div>
+            <div id="preview_text_overlay" class="sample-watermark-overlay">CONFIDENTIAL</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="apply_btn" onclick="applyWatermarkToPdf()">🏷️ Apply Watermark &amp; Download PDF</button>
+          <button class="btn btn-secondary" onclick="resetTool()">Reset</button>
+        </div>
+
+        <div id="status_msg" style="margin-top: 12px; font-size: 14px; font-weight: 600;"></div>
+      </div>
+
+      <!-- Information & SEO Content -->
+      <section class="info-card">
+        <h2>How to Add a Watermark to a PDF File</h2>
+        <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Upload PDF:</strong> Choose your document from your computer or mobile device.</li>
+          <li><strong>Customize Watermark:</strong> Type your custom watermark text or choose standard presets such as <em>CONFIDENTIAL</em>, <em>DRAFT</em>, or <em>SAMPLE</em>.</li>
+          <li><strong>Adjust Appearance:</strong> Fine-tune rotation angle (e.g. 45° diagonal), opacity slider (so underlying text remains readable), and color.</li>
+          <li><strong>Download:</strong> Click "Apply Watermark &amp; Download PDF". The document is stamped instantly on your machine.</li>
+        </ol>
+
+        <h3 style="margin-top: 20px;">Why Watermark Your Documents?</h3>
+        <p style="line-height: 1.7; color: var(--text-muted);">
+          Watermarking protects confidential contracts, intellectual property, unreleased manuscripts, academic research, and draft proposals from unauthorized distribution or plagiarism. By imprinting transparent security markings across each page, recipients are immediately reminded of the document's legal status.
+        </p>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related PDF Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pdf-to-image.html">🖼️ PDF to JPG / PNG</a></li>
+          <li><a href="merge-pdf.html">🔗 Merge PDF Files</a></li>
+          <li><a href="split-pdf.html">✂️ Split PDF Pages</a></li>
+          <li><a href="page-numbers.html">🔢 Add Page Numbers</a></li>
+          <li><a href="organize-pdf.html">📂 Organize &amp; Delete Pages</a></li>
+          <li><a href="rotate-pdf.html">🔄 Rotate PDF Pages</a></li>
+          <li><a href="pdf-to-text.html">📝 Extract Text from PDF</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Client-Side Security</h3>
+        <p style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+          All PDF manipulation is processed using WebAssembly and Web Crypto in your browser. Your files never leave your computer.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+    <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../tools/notepad.html">Online Notepad</a>
+          <a href="../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../tools/image-compressor.html">Image Compressor</a>
+          <a href="../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../about.html">About RapidTables</a>
+          <a href="../privacy.html">Privacy Policy</a>
+          <a href="../terms.html">Terms of Service</a>
+          <a href="../contact.html">Contact Us</a>
+          <a href="../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let selectedFile = null;
+    let loadedPdfBytes = null;
+    let loadedPdfDoc = null;
+
+    const dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--primary)';
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.borderColor = 'var(--border-color)';
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.borderColor = 'var(--border-color)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadPdfFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(event) {
+      if (event.target.files && event.target.files[0]) {
+        loadPdfFile(event.target.files[0]);
+      }
+    }
+
+    async function loadPdfFile(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        alert('Please choose a valid PDF file.');
+        return;
+      }
+      selectedFile = file;
+      document.getElementById('status_msg').textContent = 'Loading document...';
+
+      try {
+        loadedPdfBytes = await file.arrayBuffer();
+        loadedPdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+
+        document.getElementById('file_info_bar').style.display = 'block';
+        document.getElementById('loaded_filename').textContent = file.name;
+        document.getElementById('loaded_pages_count').textContent = loadedPdfDoc.getPageCount();
+        document.getElementById('status_msg').textContent = `✅ Ready to apply watermark to "${file.name}".`;
+        showToast('PDF loaded successfully!');
+      } catch (err) {
+        alert("Failed to load PDF: " + err.message);
+        document.getElementById('status_msg').textContent = 'Error parsing PDF document.';
+      }
+    }
+
+    function applyPreset(val) {
+      document.getElementById('wm_text').value = val;
+      updateLivePreview();
+    }
+
+    function updateLivePreview() {
+      const text = document.getElementById('wm_text').value || 'WATERMARK';
+      const rot = document.getElementById('wm_rotation').value;
+      const colorVal = document.getElementById('wm_color').value;
+      const size = document.getElementById('wm_size').value;
+      const opacity = document.getElementById('wm_opacity').value;
+
+      document.getElementById('size_val_lbl').textContent = `${size} pt`;
+      document.getElementById('opacity_val_lbl').textContent = `${Math.round(opacity * 100)}%`;
+
+      const overlay = document.getElementById('preview_text_overlay');
+      overlay.textContent = text;
+      overlay.style.transform = `rotate(${rot}deg)`;
+      overlay.style.fontSize = `${Math.round(size * 0.42)}px`; // scaled for miniature sheet
+      overlay.style.opacity = opacity;
+
+      const colors = {
+        red: '#dc2626',
+        gray: '#64748b',
+        black: '#0f172a',
+        blue: '#2563eb',
+        green: '#16a34a'
+      };
+      overlay.style.color = colors[colorVal] || '#dc2626';
+    }
+
+    async function applyWatermarkToPdf() {
+      if (!loadedPdfBytes) {
+        alert('Please select a PDF file first.');
+        return;
+      }
+
+      const statusMsg = document.getElementById('status_msg');
+      const applyBtn = document.getElementById('apply_btn');
+      statusMsg.textContent = 'Processing and stamping pages...';
+      applyBtn.disabled = true;
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.load(loadedPdfBytes);
+        const helveticaBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+
+        const text = document.getElementById('wm_text').value.trim() || 'CONFIDENTIAL';
+        const rotationDegrees = parseFloat(document.getElementById('wm_rotation').value) || 45;
+        const fontSize = parseFloat(document.getElementById('wm_size').value) || 48;
+        const opacity = parseFloat(document.getElementById('wm_opacity').value) || 0.25;
+        const colorKey = document.getElementById('wm_color').value;
+        const targetPages = document.getElementById('wm_target_pages').value;
+
+        // Color definitions in RGB 0..1
+        const rgbColors = {
+          red: PDFLib.rgb(0.86, 0.15, 0.15),
+          gray: PDFLib.rgb(0.40, 0.45, 0.55),
+          black: PDFLib.rgb(0.08, 0.08, 0.08),
+          blue: PDFLib.rgb(0.15, 0.39, 0.92),
+          green: PDFLib.rgb(0.09, 0.64, 0.29)
+        };
+        const color = rgbColors[colorKey] || rgbColors.red;
+
+        const pages = pdfDoc.getPages();
+        const totalPages = pages.length;
+
+        for (let i = 0; i < totalPages; i++) {
+          if (targetPages === 'except_first' && i === 0) continue;
+          if (targetPages === 'first_only' && i > 0) break;
+
+          const page = pages[i];
+          const { width, height } = page.getSize();
+          const textWidth = helveticaBold.widthOfTextAtSize(text, fontSize);
+          const textHeight = helveticaBold.heightAtSize(fontSize);
+
+          // Calculate center coordinates
+          const rad = (rotationDegrees * Math.PI) / 180;
+          const x = (width - (textWidth * Math.cos(rad) - textHeight * Math.sin(rad))) / 2;
+          const y = (height - (textWidth * Math.sin(rad) + textHeight * Math.cos(rad))) / 2;
+
+          page.drawText(text, {
+            x: Math.max(10, x),
+            y: Math.max(10, y),
+            size: fontSize,
+            font: helveticaBold,
+            color: color,
+            opacity: opacity,
+            rotate: PDFLib.degrees(rotationDegrees)
+          });
+        }
+
+        const modifiedBytes = await pdfDoc.save();
+        const blob = new Blob([modifiedBytes], { type: 'application/pdf' });
+        const a = document.createElement('a');
+        const originalName = selectedFile ? selectedFile.name.replace(/\.pdf$/i, '') : 'document';
+        a.href = URL.createObjectURL(blob);
+        a.download = `${originalName}_watermarked.pdf`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        statusMsg.textContent = '✅ Stamped PDF generated and download started!';
+        showToast('Watermarked PDF downloaded!');
+      } catch (err) {
+        alert("Watermarking error: " + err.message);
+        statusMsg.textContent = 'Failed to watermark PDF.';
+      } finally {
+        applyBtn.disabled = false;
+      }
+    }
+
+    function resetTool() {
+      selectedFile = null;
+      loadedPdfBytes = null;
+      loadedPdfDoc = null;
+      document.getElementById('pdf_file_input').value = '';
+      document.getElementById('file_info_bar').style.display = 'none';
+      document.getElementById('status_msg').textContent = '';
+      document.getElementById('wm_text').value = 'CONFIDENTIAL';
+      document.getElementById('wm_preset').value = 'CONFIDENTIAL';
+      document.getElementById('wm_rotation').value = '45';
+      document.getElementById('wm_color').value = 'red';
+      document.getElementById('wm_size').value = '48';
+      document.getElementById('wm_opacity').value = '0.25';
+      updateLivePreview();
+    }
+
+    // Initialize preview
+    updateLivePreview();
+  </script>
+</body>
+</html>

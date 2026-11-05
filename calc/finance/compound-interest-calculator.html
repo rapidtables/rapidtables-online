@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compound Interest Calculator - RapidTables.online</title>
+  <meta name="description" content="Free online compound interest calculator. Calculate future investment value, total interest earned, and growth with regular deposits.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+            <!-- Desktop Top Nav -->
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+        <a href="../../tools/notepad.html" class="header-nav-link">Notepad</a>
+        <a href="../../tools/qr-code-generator.html" class="header-nav-link">QR Studio</a>
+      </nav>
+      <!-- Instant Search Bar -->
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">&#128269;</span>
+          <input type="text" id="site-search-input" placeholder="Search 80+ calculators, converters, or tools..." autocomplete="off">
+          <span class="search-kbd">Ctrl K</span>
+        </div>
+        <div id="search-dropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light/Dark Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a>
+    <span class="sep">&gt;</span>
+    <a href="../../calc/#finance-calculators">Finance</a>
+    <span class="sep">&gt;</span>
+    <span>Compound Interest Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Compound Interest Calculator</h1>
+        <p class="subtitle">Calculate the future value of your savings or investments with compound interest and recurring contributions.</p>
+      </div>
+
+      <div class="tool-box">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div class="form-group">
+            <label for="initial_dep">Initial Deposit ($)</label>
+            <input type="number" id="initial_dep" class="input-control" value="10000" step="500">
+          </div>
+
+          <div class="form-group">
+            <label for="monthly_contrib">Monthly Contribution ($)</label>
+            <input type="number" id="monthly_contrib" class="input-control" value="500" step="50">
+          </div>
+
+          <div class="form-group">
+            <label for="ci_rate">Annual Interest Rate (%)</label>
+            <input type="number" id="ci_rate" class="input-control" value="8.0" step="0.1">
+          </div>
+
+          <div class="form-group">
+            <label for="ci_years">Investment Period (Years)</label>
+            <input type="number" id="ci_years" class="input-control" value="10" step="1">
+          </div>
+
+          <div class="form-group">
+            <label for="ci_freq">Compounding Frequency</label>
+            <select id="ci_freq" class="select-control">
+              <option value="12" selected>Monthly (12/year)</option>
+              <option value="1">Annually (1/year)</option>
+              <option value="4">Quarterly (4/year)</option>
+              <option value="365">Daily (365/year)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="calcCompoundInterest()">Calculate</button>
+          <button class="btn btn-secondary" onclick="resetCI()">Reset</button>
+        </div>
+
+        <div id="res_ci" class="result-card hidden">
+          <h3>Future Investment Balance</h3>
+          <div class="result-value" id="future_val">$113,842.23</div>
+          <div class="result-details" id="ci_breakdown" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 14px;">
+            <!-- details -->
+          </div>
+        </div>
+      </div>
+
+      <article class="seo-section">
+        <h2>Compound Interest Formula</h2>
+        <p>The standard compound interest formula for principal with recurring deposits:</p>
+        <div class="formula-box">A = P(1 + r/n)^(nt) + PMT × [ ((1 + r/n)^(nt) - 1) / (r/n) ]</div>
+        <ul>
+          <li><strong>A:</strong> Future total balance</li>
+          <li><strong>P:</strong> Initial principal balance</li>
+          <li><strong>r:</strong> Annual interest rate (decimal)</li>
+          <li><strong>n:</strong> Number of times interest is compounded per unit time</li>
+          <li><strong>t:</strong> Time the money is invested (years)</li>
+          <li><strong>PMT:</strong> Monthly contribution amount</li>
+        </ul>
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-header">Financial Calculators</div>
+        <ul class="sidebar-list">
+          <li><a href="mortgage-calculator.html">Mortgage Calculator</a></li>
+          <li><a href="loan-calculator.html">Loan Payment Calculator</a></li>
+          <li><a href="../math/percentage-calculator.html">Percentage Calculator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+      <!-- Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">
+          <div class="footer-logo-badge">&#9889;</div>
+          <div class="footer-logo-text">Rapid<span>Tables</span>.online</div>
+        </a>
+        <p class="footer-desc">
+          Professional high-precision calculators, unit converters, and online tools. Powered by high-speed cloud infrastructure for 24/7 reliability, speed, and accuracy.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>PDF Tools Suite</h4>
+        <div class="footer-links">
+          <a href="../../pdf/pdf-to-image.html">PDF to JPG / PNG</a>
+          <a href="../../pdf/merge-pdf.html">Merge PDF Files</a>
+          <a href="../../pdf/split-pdf.html">Split PDF Pages</a>
+          <a href="../../pdf/sign-pdf.html">Sign PDF Document</a>
+          <a href="../../pdf/watermark-pdf.html">Watermark PDF</a>
+          <a href="../../pdf/organize-pdf.html">Organize PDF Pages</a>
+          <a href="../../pdf/">All PDF Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Calculators</h4>
+        <div class="footer-links">
+          <a href="../../calc/math/scientific-calculator.html">Scientific Calculator</a>
+          <a href="../../calc/math/percentage-calculator.html">Percentage Calculator</a>
+          <a href="../../calc/finance/mortgage-calculator.html">Mortgage Calculator</a>
+          <a href="../../calc/finance/loan-calculator.html">Loan EMI Calculator</a>
+          <a href="../../calc/finance/tip-calculator.html">Tip &amp; Bill Splitter</a>
+          <a href="../../tools/subnet-calculator.html">Subnet CIDR Calculator</a>
+          <a href="../../calc/">All Calculators &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Web &amp; Dev Tools</h4>
+        <div class="footer-links">
+          <a href="../../tools/qr-code-generator.html">Custom QR Designer</a>
+          <a href="../../tools/notepad.html">Online Notepad</a>
+          <a href="../../tools/csv-json-converter.html">CSV &harr; JSON Converter</a>
+          <a href="../../tools/image-compressor.html">Image Compressor</a>
+          <a href="../../tools/regex-tester.html">Regex Live Tester</a>
+          <a href="../../tools/diff-checker.html">Text Diff Checker</a>
+          <a href="../../tools/">All Web Tools &rarr;</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Company &amp; Legal</h4>
+        <div class="footer-links">
+          <a href="../../about.html">About RapidTables</a>
+          <a href="../../privacy.html">Privacy Policy</a>
+          <a href="../../terms.html">Terms of Service</a>
+          <a href="../../contact.html">Contact Us</a>
+          <a href="../../sitemap.xml">XML Sitemap</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Fast, private calculation &amp; document tools.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/search-index.js"></script>
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    function calcCompoundInterest() {
+      const P = parseFloat(document.getElementById('initial_dep').value) || 0;
+      const PMT = parseFloat(document.getElementById('monthly_contrib').value) || 0;
+      const r = (parseFloat(document.getElementById('ci_rate').value) || 0) / 100;
+      const t = parseFloat(document.getElementById('ci_years').value) || 0;
+      const n = parseInt(document.getElementById('ci_freq').value, 10) || 12;
+
+      let balance = P;
+      const totalMonths = t * 12;
+      let totalContributions = P;
+
+      // Month-by-month calculation for precision with monthly contributions
+      const monthlyRate = r / 12;
+      for (let m = 1; m <= totalMonths; m++) {
+        balance += PMT;
+        totalContributions += PMT;
+        balance *= (1 + monthlyRate);
+      }
+
+      const totalInterest = Math.max(0, balance - totalContributions);
+      const fmt = (v) => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      document.getElementById('future_val').textContent = fmt(balance);
+      document.getElementById('ci_breakdown').innerHTML = `
+        <div><strong>Total Principal &amp; Deposits:</strong> ${fmt(totalContributions)}</div>
+        <div><strong>Total Interest Earned:</strong> ${fmt(totalInterest)}</div>
+        <div><strong>Initial Investment:</strong> ${fmt(P)}</div>
+        <div><strong>Total Monthly Deposits:</strong> ${fmt(PMT * totalMonths)}</div>
+      `;
+      document.getElementById('res_ci').classList.remove('hidden');
+    }
+
+    function resetCI() {
+      document.getElementById('initial_dep').value = '10000';
+      document.getElementById('monthly_contrib').value = '500';
+      document.getElementById('ci_rate').value = '8.0';
+      document.getElementById('ci_years').value = '10';
+      calcCompoundInterest();
+    }
+
+    calcCompoundInterest();
+  </script>
+</body>
+</html>
