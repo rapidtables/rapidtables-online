@@ -1,13 +1,13 @@
 /**
- * RapidTables.online - CPX Super Admin Core Runtime Engine
+ * RapidTables.online - CPX Core Runtime Engine (Modeled after SaveClip)
  * Automatically applies all Super Admin configurations dynamically across all site pages:
  * - Page SEO & Meta Overrides (Title, Description, Keywords, Canonical, Open Graph)
- * - Multi-Language Floating Switcher & Google Translate
+ * - Site-Wide or Per-Page Robots Index/Noindex Directives
+ * - Multi-Language Floating Switcher & Google Translate Engine
  * - Live Top Announcement Alert Bar
  * - AdSense & Native Ad Placements
  * - Header, Footer & Menu Overrides
  * - Custom Head Scripts (GA4, GTM, Meta Pixel) & Body Scripts
- * - Schema.org JSON-LD Rich Snippets
  */
 (function() {
   'use strict';
@@ -15,15 +15,11 @@
   try {
     const raw = localStorage.getItem('cpx_site_settings');
     const seoRaw = localStorage.getItem('rt_cpx_page_seo');
-    const langRaw = localStorage.getItem('rt_cpx_lang_config');
     const headerFooterRaw = localStorage.getItem('rt_cpx_header_footer');
-    const schemaRaw = localStorage.getItem('rt_cpx_schema_config');
 
     const cfg = raw ? JSON.parse(raw) : {};
     const pageSeo = seoRaw ? JSON.parse(seoRaw) : {};
-    const langCfg = langRaw ? JSON.parse(langRaw) : { enabled: true, defaultLang: 'en', autoDetect: true, googleTranslate: true };
     const hfCfg = headerFooterRaw ? JSON.parse(headerFooterRaw) : {};
-    const schemaCfg = schemaRaw ? JSON.parse(schemaRaw) : {};
 
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
     const filename = window.location.pathname.split('/').pop() || 'index.html';
@@ -71,11 +67,11 @@
         robots.content = matchedSeo.robots;
       }
       // Open Graph
-      if (matchedSeo.ogTitle || matchedSeo.title) {
-        setMetaProperty('og:title', matchedSeo.ogTitle || matchedSeo.title);
+      if (matchedSeo.title) {
+        setMetaProperty('og:title', matchedSeo.title);
       }
-      if (matchedSeo.ogDesc || matchedSeo.description) {
-        setMetaProperty('og:description', matchedSeo.ogDesc || matchedSeo.description);
+      if (matchedSeo.description) {
+        setMetaProperty('og:description', matchedSeo.description);
       }
       if (matchedSeo.ogImage) {
         setMetaProperty('og:image', matchedSeo.ogImage);
@@ -97,12 +93,12 @@
       const isDismissed = sessionStorage.getItem('cpx_announcement_dismissed');
       if (!isDismissed) {
         const themes = {
-          blue: { bg: 'linear-gradient(90deg, #1E40AF, #2563EB)', text: '#FFFFFF', border: '#3B82F6' },
-          green: { bg: 'linear-gradient(90deg, #065F46, #059669)', text: '#FFFFFF', border: '#10B981' },
-          amber: { bg: 'linear-gradient(90deg, #92400E, #D97706)', text: '#FFFFFF', border: '#F59E0B' },
-          red: { bg: 'linear-gradient(90deg, #991B1B, #DC2626)', text: '#FFFFFF', border: '#EF4444' },
-          purple: { bg: 'linear-gradient(90deg, #5B21B6, #7C3AED)', text: '#FFFFFF', border: '#8B5CF6' },
-          dark: { bg: 'linear-gradient(90deg, #0F172A, #1E293B)', text: '#38BDF8', border: '#38BDF8' }
+          blue: { bg: 'linear-gradient(90deg, #1E40AF, #2563EB)', text: '#FFFFFF' },
+          green: { bg: 'linear-gradient(90deg, #065F46, #059669)', text: '#FFFFFF' },
+          amber: { bg: 'linear-gradient(90deg, #92400E, #D97706)', text: '#FFFFFF' },
+          red: { bg: 'linear-gradient(90deg, #991B1B, #DC2626)', text: '#FFFFFF' },
+          purple: { bg: 'linear-gradient(90deg, #5B21B6, #7C3AED)', text: '#FFFFFF' },
+          dark: { bg: 'linear-gradient(90deg, #0F172A, #1E293B)', text: '#38BDF8' }
         };
         const theme = themes[cfg.announcement.theme] || themes.blue;
 
@@ -126,11 +122,9 @@
 
         let inner = `<span>${cfg.announcement.text}</span>`;
         if (cfg.announcement.link && cfg.announcement.btnText) {
-          inner += `<a href="${cfg.announcement.link}" style="background:rgba(255,255,255,0.2); color:#FFF; text-decoration:none; font-weight:700; padding:3px 10px; border-radius:4px; font-size:12px; margin-left:6px; display:inline-block;">${cfg.announcement.btnText} &rarr;</a>`;
+          inner += `<a href="${cfg.announcement.link}" style="background:rgba(255,255,255,0.22); color:#FFF; text-decoration:none; font-weight:700; padding:3px 10px; border-radius:4px; font-size:12px; margin-left:6px; display:inline-block;">${cfg.announcement.btnText} &rarr;</a>`;
         }
-        if (cfg.announcement.dismissible !== false) {
-          inner += `<button type="button" id="cpx_dismiss_btn" style="background:none; border:none; color:rgba(255,255,255,0.8); cursor:pointer; font-size:18px; margin-left:12px; line-height:1;" title="Dismiss">&times;</button>`;
-        }
+        inner += `<button type="button" id="cpx_dismiss_btn" style="background:none; border:none; color:rgba(255,255,255,0.8); cursor:pointer; font-size:18px; margin-left:12px; line-height:1;" title="Dismiss">&times;</button>`;
         bar.innerHTML = inner;
 
         const injectBar = () => {
@@ -154,99 +148,93 @@
       }
     }
 
-    // 3. MULTI-LANGUAGE HUB FLOATING SWITCHER & GOOGLE TRANSLATE
-    if (langCfg.enabled) {
-      const injectLangWidget = () => {
-        if (document.getElementById('cpx_lang_widget')) return;
+    // 3. MULTI-LANGUAGE HUB (12 LANGUAGES)
+    const injectLangWidget = () => {
+      if (document.getElementById('cpx_lang_widget')) return;
 
-        const widget = document.createElement('div');
-        widget.id = 'cpx_lang_widget';
-        widget.style.cssText = `
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          z-index: 9990;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background: var(--bg-card, #ffffff);
-          border: 1px solid var(--border-color, #e2e8f0);
-          box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-          border-radius: 30px;
-          padding: 6px 12px;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--text-main, #0f172a);
-          cursor: pointer;
-        `;
-        widget.innerHTML = `
-          <span style="font-size:16px;">🌐</span>
-          <select id="cpx_lang_select" style="background:transparent; border:none; outline:none; font-size:13px; font-weight:600; color:inherit; cursor:pointer;">
-            <option value="en">English (US)</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="pt">Português</option>
-            <option value="ar">العربية (Arabic)</option>
-            <option value="hi">हिन्दी (Hindi)</option>
-            <option value="ur">اردو (Urdu)</option>
-            <option value="zh-CN">中文 (Chinese)</option>
-            <option value="ja">日本語 (Japanese)</option>
-            <option value="ru">Русский</option>
-            <option value="it">Italiano</option>
-          </select>
-        `;
+      const widget = document.createElement('div');
+      widget.id = 'cpx_lang_widget';
+      widget.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9990;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-card, #ffffff);
+        border: 1px solid var(--border-color, #e2e8f0);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        border-radius: 30px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-main, #0f172a);
+      `;
+      widget.innerHTML = `
+        <span style="font-size:16px;">🌐</span>
+        <select id="cpx_lang_select" style="background:transparent; border:none; outline:none; font-size:13px; font-weight:600; color:inherit; cursor:pointer;">
+          <option value="en">English (US)</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ar">العربية (Arabic)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="ur">اردو (Urdu)</option>
+          <option value="zh-CN">中文 (Chinese)</option>
+          <option value="ja">日本語 (Japanese)</option>
+          <option value="ru">Русский</option>
+          <option value="it">Italiano</option>
+        </select>
+      `;
 
-        document.body.appendChild(widget);
+      document.body.appendChild(widget);
 
-        // Google Translate Engine integration
-        if (langCfg.googleTranslate && !window._gt_injected) {
-          window._gt_injected = true;
-          window.googleTranslateElementInit = function() {
-            new google.translate.TranslateElement({
-              pageLanguage: 'en',
-              includedLanguages: 'en,es,fr,de,pt,ar,hi,ur,zh-CN,ja,ru,it',
-              autoDisplay: false
-            }, 'google_translate_element');
-          };
-          const gtDiv = document.createElement('div');
-          gtDiv.id = 'google_translate_element';
-          gtDiv.style.display = 'none';
-          document.body.appendChild(gtDiv);
+      // Google Translate
+      if (!window._gt_injected) {
+        window._gt_injected = true;
+        window.googleTranslateElementInit = function() {
+          new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,de,pt,ar,hi,ur,zh-CN,ja,ru,it',
+            autoDisplay: false
+          }, 'google_translate_element');
+        };
+        const gtDiv = document.createElement('div');
+        gtDiv.id = 'google_translate_element';
+        gtDiv.style.display = 'none';
+        document.body.appendChild(gtDiv);
 
-          const gtScript = document.createElement('script');
-          gtScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-          gtScript.async = true;
-          document.head.appendChild(gtScript);
-        }
-
-        const select = document.getElementById('cpx_lang_select');
-        select.addEventListener('change', (e) => {
-          const lang = e.target.value;
-          // Set cookie and trigger translate
-          document.cookie = `googtrans=/en/${lang}; path=/`;
-          document.cookie = `googtrans=/en/${lang}; domain=.${window.location.hostname}; path=/`;
-          window.location.reload();
-        });
-      };
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectLangWidget);
-      } else {
-        injectLangWidget();
+        const gtScript = document.createElement('script');
+        gtScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        gtScript.async = true;
+        document.head.appendChild(gtScript);
       }
+
+      const select = document.getElementById('cpx_lang_select');
+      select.addEventListener('change', (e) => {
+        const lang = e.target.value;
+        document.cookie = `googtrans=/en/${lang}; path=/`;
+        document.cookie = `googtrans=/en/${lang}; domain=.${window.location.hostname}; path=/`;
+        window.location.reload();
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectLangWidget);
+    } else {
+      injectLangWidget();
     }
 
     // 4. GOOGLE ADSENSE & SCRIPT INJECTIONS
-    if (cfg.ads && cfg.ads.enabled) {
-      if (cfg.ads.pubId && !window._adsense_injected) {
-        window._adsense_injected = true;
-        const adScript = document.createElement('script');
-        adScript.async = true;
-        adScript.crossOrigin = 'anonymous';
-        adScript.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(cfg.ads.pubId)}`;
-        document.head.appendChild(adScript);
-      }
+    if (cfg.ads && cfg.ads.enabled && cfg.ads.pubId && !window._adsense_injected) {
+      window._adsense_injected = true;
+      const adScript = document.createElement('script');
+      adScript.async = true;
+      adScript.crossOrigin = 'anonymous';
+      adScript.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(cfg.ads.pubId)}`;
+      document.head.appendChild(adScript);
     }
 
     // Google Analytics GA4
@@ -302,24 +290,11 @@
       }
     }
 
-    // 5. BULK SCHEMA GENERATOR (Schema.org / JSON-LD)
-    if (schemaCfg.enabled !== false && !document.getElementById('cpx_injected_schema')) {
-      const pageSchema = schemaCfg[currentPath] || schemaCfg[filename] || schemaCfg.global;
-      if (pageSchema) {
-        const script = document.createElement('script');
-        script.id = 'cpx_injected_schema';
-        script.type = 'application/ld+json';
-        script.textContent = typeof pageSchema === 'string' ? pageSchema : JSON.stringify(pageSchema);
-        document.head.appendChild(script);
-      }
-    }
-
-    // 6. HEADER, FOOTER & MENUS DYNAMIC OVERRIDES
+    // 5. HEADER, FOOTER & MENUS OVERRIDES
     if (hfCfg && (hfCfg.logoText || hfCfg.copyrightText || hfCfg.supportEmail)) {
       const applyHeaderFooter = () => {
         if (hfCfg.logoText) {
-          const logoTexts = document.querySelectorAll('.logo-text');
-          logoTexts.forEach(el => {
+          document.querySelectorAll('.logo-text').forEach(el => {
             el.innerHTML = hfCfg.logoText;
           });
         }
@@ -338,6 +313,6 @@
     }
 
   } catch (err) {
-    console.debug('CPX Runtime non-blocking notice:', err);
+    console.debug('CPX Runtime notice:', err);
   }
 })();
