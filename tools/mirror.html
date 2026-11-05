@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Mirror &amp; Webcam - Free Full-Screen Camera - RapidTables.online</title>
+  <meta name="description" content="Free online mirror using your webcam or front camera. Fullscreen mirror with zoom controls, flip/reverse view, brightness adjustments, and snapshot capture.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .mirror-stage {
+      background: #000000;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #mirror_video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Default mirrored */
+      transition: transform 0.2s, filter 0.2s;
+    }
+    .mirror-overlay-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(15, 23, 42, 0.7);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+    .mirror-overlay-btn:hover {
+      background: rgba(37, 99, 235, 0.9);
+    }
+    .mirror-placeholder {
+      color: #94A3B8;
+      text-align: center;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Mirror</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Mirror (Webcam Full-Screen Mirror)</h1>
+        <p class="subtitle">Check your appearance, hair, or makeup using your webcam or phone front camera. 100% private — video never leaves your browser.</p>
+      </div>
+
+      <div class="mirror-stage" id="mirror_box">
+        <video id="mirror_video" autoplay playsinline></video>
+        <div class="mirror-placeholder" id="mirror_placeholder">
+          <div style="font-size: 48px; margin-bottom: 12px;">🪞</div>
+          <h3>Camera is Currently Off</h3>
+          <p>Click the button below to turn on your online mirror.</p>
+          <button class="btn btn-primary" onclick="startMirror()" style="margin-top: 10px;">Turn On Mirror Camera</button>
+        </div>
+        <button type="button" class="mirror-overlay-btn" id="fs_btn" onclick="toggleMirrorFullscreen()" style="display:none;">⛶ Fullscreen</button>
+      </div>
+
+      <div class="tool-box" id="mirror_controls" style="display: none;">
+        <h3>Mirror Controls</h3>
+        <div class="calc-grid-3">
+          <div class="calc-input-group">
+            <label for="zoom_slider">Zoom Level (<span id="zoom_val">1.0</span>x)</label>
+            <input type="range" id="zoom_slider" min="1" max="2.5" step="0.1" value="1" oninput="applyFilters()">
+          </div>
+          <div class="calc-input-group">
+            <label for="bright_slider">Brightness (<span id="bright_val">100</span>%)</label>
+            <input type="range" id="bright_slider" min="50" max="200" step="5" value="100" oninput="applyFilters()">
+          </div>
+          <div class="calc-input-group">
+            <label>Flip Mode</label>
+            <button type="button" class="btn btn-secondary" onclick="toggleFlip()" id="flip_btn" style="width:100%;">🔀 Mirrored: YES</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="takeSnapshot()">📸 Take Snapshot Photo</button>
+          <button class="btn btn-danger" onclick="stopMirror()">🛑 Stop Camera</button>
+        </div>
+      </div>
+
+      <div id="snapshot_container" style="display:none; margin-top:20px;" class="tool-box">
+        <h3>Captured Photo</h3>
+        <img id="snapshot_img" style="max-width:100%; border-radius:8px; border:1px solid var(--border-color); display:block; margin-bottom:12px;">
+        <a id="download_photo_btn" class="btn btn-primary" download="mirror-snapshot.png">⬇️ Download Photo</a>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Privacy Guarantee</h3>
+        <p style="font-size:13px; line-height:1.6; color:var(--text-muted);">
+          Your webcam stream is rendered strictly inside your browser's local memory via WebRTC. No video frames are ever recorded or uploaded to any server.
+        </p>
+      </div>
+      <div class="sidebar-card">
+        <h3>Related Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="mic-test.html">Microphone Test</a></li>
+          <li><a href="flashlight.html">Screen Flashlight</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let stream = null;
+    let isFlipped = true;
+    const video = document.getElementById('mirror_video');
+    const placeholder = document.getElementById('mirror_placeholder');
+    const controls = document.getElementById('mirror_controls');
+    const fsBtn = document.getElementById('fs_btn');
+
+    async function startMirror() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = stream;
+        placeholder.style.display = 'none';
+        controls.style.display = 'block';
+        fsBtn.style.display = 'block';
+        applyFilters();
+      } catch (err) {
+        alert('Could not access your camera. Please allow camera permissions in your browser: ' + err.message);
+      }
+    }
+
+    function stopMirror() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+      video.srcObject = null;
+      placeholder.style.display = 'block';
+      controls.style.display = 'none';
+      fsBtn.style.display = 'none';
+    }
+
+    function applyFilters() {
+      const zoom = document.getElementById('zoom_slider').value;
+      const bright = document.getElementById('bright_slider').value;
+      document.getElementById('zoom_val').textContent = zoom;
+      document.getElementById('bright_val').textContent = bright;
+
+      const scaleX = isFlipped ? -zoom : zoom;
+      video.style.transform = `scale(${scaleX}, ${zoom})`;
+      video.style.filter = `brightness(${bright}%)`;
+    }
+
+    function toggleFlip() {
+      isFlipped = !isFlipped;
+      document.getElementById('flip_btn').textContent = isFlipped ? '🔀 Mirrored: YES' : '🔀 Mirrored: NO';
+      applyFilters();
+    }
+
+    function toggleMirrorFullscreen() {
+      const box = document.getElementById('mirror_box');
+      if (!document.fullscreenElement) {
+        box.requestFullscreen ? box.requestFullscreen() : null;
+      } else {
+        document.exitFullscreen ? document.exitFullscreen() : null;
+      }
+    }
+
+    function takeSnapshot() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+
+      const zoom = parseFloat(document.getElementById('zoom_slider').value);
+      const bright = parseFloat(document.getElementById('bright_slider').value);
+
+      ctx.filter = `brightness(${bright}%)`;
+      if (isFlipped) {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('snapshot_img').src = dataUrl;
+      document.getElementById('download_photo_btn').href = dataUrl;
+      document.getElementById('snapshot_container').style.display = 'block';
+      document.getElementById('snapshot_container').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

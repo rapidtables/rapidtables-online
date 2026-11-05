@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Ruler - Calibrated Actual Size cm &amp; inch Screen Ruler - RapidTables.online</title>
+  <meta name="description" content="Accurate on-screen virtual ruler in centimeters (cm/mm) and inches. Calibrate with a standard credit card or screen PPI to measure real-world objects on phone, tablet, or monitor.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .ruler-container-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px 20px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .ruler-display {
+      position: relative;
+      height: 160px;
+      background: #fefce8;
+      border: 2px solid #ca8a04;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08);
+      user-select: none;
+      cursor: crosshair;
+      margin: 20px 0;
+    }
+    [data-theme="dark"] .ruler-display {
+      background: #1e293b;
+      border-color: #475569;
+    }
+    .ruler-cm-scale {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      border-bottom: 1px dashed rgba(0,0,0,0.15);
+    }
+    [data-theme="dark"] .ruler-cm-scale {
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+    }
+    .ruler-inch-scale {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+    }
+    .ruler-marker-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ef4444;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .ruler-marker-handle {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #ef4444;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .calibration-box {
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .credit-card-sim {
+      height: 54px;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      border-radius: 6px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      margin: 16px auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: width 0.05s linear;
+    }
+    .readout-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .readout-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: var(--font-mono);
+    }
+    .readout-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Ruler</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Screen Ruler (Actual Size)</h1>
+        <p class="subtitle">Measure physical objects directly on your smartphone, tablet, or laptop screen in exact Centimeters (cm/mm) and Inches.</p>
+      </div>
+
+      <div class="readout-banner">
+        <div>
+          <div class="readout-label">Measured Distance (cm)</div>
+          <div class="readout-val" id="readout_cm">10.0 cm</div>
+        </div>
+        <div>
+          <div class="readout-label">Millimeters (mm)</div>
+          <div class="readout-val" id="readout_mm">100 mm</div>
+        </div>
+        <div>
+          <div class="readout-label">Inches (in)</div>
+          <div class="readout-val" id="readout_inch">3.94 in</div>
+        </div>
+        <div>
+          <div class="readout-label">Screen DPI</div>
+          <div class="readout-val" id="readout_dpi" style="font-size: 18px; color: var(--text-main);">96 DPI</div>
+        </div>
+      </div>
+
+      <div class="ruler-container-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">TOP: CENTIMETERS (CM) &bull; BOTTOM: INCHES (IN)</span>
+          <span style="font-size: 12px; color: var(--text-muted);">Click or drag anywhere on ruler</span>
+        </div>
+
+        <div class="ruler-display" id="ruler_elem" onmousedown="startDrag(event)" ontouchstart="startDrag(event)">
+          <canvas id="ruler_canvas" style="position:absolute; inset:0; width:100%; height:100%;"></canvas>
+          <div class="ruler-marker-line" id="ruler_marker" style="left: 300px;">
+            <div class="ruler-marker-handle" id="marker_text">10.0 cm</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calibration-box">
+        <h3 style="margin-top: 0; margin-bottom: 8px;">📏 Calibrate Your Screen For 100% Exact Accuracy</h3>
+        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
+          Every screen has a different pixel density (PPI/DPI). Place a standard plastic credit card or ID card against your screen, then adjust the slider until the blue rectangle matches the exact width of your card (85.6 mm / 3.37 inches).
+        </p>
+
+        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+          <div id="credit_card_box" class="credit-card-sim" style="width: 324px;">
+            💳 Standard Card Width (85.6 mm)
+          </div>
+
+          <div style="display:flex; align-items:center; gap: 12px; margin-top: 12px;">
+            <button class="btn btn-secondary" onclick="adjustDpi(-1)">➖ Smaller</button>
+            <input type="range" id="dpi_slider" class="input-control" min="70" max="250" value="96" oninput="onDpiSlider(this.value)" style="flex:1;">
+            <button class="btn btn-secondary" onclick="adjustDpi(1)">➕ Bigger</button>
+          </div>
+          <div style="margin-top: 10px; font-size: 13px; color: var(--text-muted);">
+            Current Calibration: <strong id="dpi_num_display">96</strong> Pixels Per Inch (PPI)
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Measurement &amp; Converters</h3>
+        <ul class="sidebar-links">
+          <li><a href="../convert/length/index.html">Length Converter</a></li>
+          <li><a href="click-counter.html">Click Counter</a></li>
+          <li><a href="stopwatch.html">Stopwatch &amp; Timer</a></li>
+          <li><a href="grocery-list.html">Grocery Checklist</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>How It Works</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          • An international credit card is ISO/IEC 7810 ID-1 standard: exactly <strong>85.60 mm &times; 53.98 mm</strong> (3.370 &times; 2.125 inches).<br>
+          • Matching this on-screen card provides true physical millimeter precision across any monitor or mobile device.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const DPI_KEY = 'rt_ruler_dpi';
+    let currentDPI = 96; // Standard CSS baseline
+    let markerX = 300;
+    let isDragging = false;
+
+    function initRuler() {
+      const savedDPI = localStorage.getItem(DPI_KEY);
+      if (savedDPI) {
+        currentDPI = parseFloat(savedDPI) || 96;
+      } else {
+        // Detect mobile high DPI estimate
+        if (window.innerWidth <= 600) {
+          currentDPI = 130;
+        }
+      }
+      document.getElementById('dpi_slider').value = currentDPI;
+      updateCalibrationBox();
+      drawRuler();
+      setMarkerPos(markerX);
+
+      window.addEventListener('resize', () => {
+        drawRuler();
+        setMarkerPos(markerX);
+      });
+
+      window.addEventListener('mousemove', handleDrag);
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      window.addEventListener('touchmove', handleDrag, { passive: false });
+      window.addEventListener('touchend', () => { isDragging = false; });
+    }
+
+    function onDpiSlider(val) {
+      currentDPI = parseFloat(val);
+      localStorage.setItem(DPI_KEY, currentDPI);
+      updateCalibrationBox();
+      drawRuler();
+      setMarkerPos(markerX);
+    }
+
+    function adjustDpi(delta) {
+      currentDPI = Math.min(250, Math.max(70, currentDPI + delta));
+      document.getElementById('dpi_slider').value = currentDPI;
+      localStorage.setItem(DPI_KEY, currentDPI);
+      updateCalibrationBox();
+      drawRuler();
+      setMarkerPos(markerX);
+    }
+
+    function updateCalibrationBox() {
+      // 85.6 mm in inches = 85.6 / 25.4 = 3.370078 inches
+      const cardWidthPx = 3.370078 * currentDPI;
+      document.getElementById('credit_card_box').style.width = `${Math.round(cardWidthPx)}px`;
+      document.getElementById('dpi_num_display').textContent = Math.round(currentDPI);
+      document.getElementById('readout_dpi').textContent = `${Math.round(currentDPI)} DPI`;
+    }
+
+    function drawRuler() {
+      const ruler = document.getElementById('ruler_elem');
+      const canvas = document.getElementById('ruler_canvas');
+      const rect = ruler.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#cbd5e1' : '#1e293b';
+      const tickColor = isDark ? '#94a3b8' : '#475569';
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const pxPerInch = currentDPI;
+      const pxPerCm = currentDPI / 2.54;
+      const pxPerMm = pxPerCm / 10;
+
+      // 1. Draw CM Scale (Top)
+      const totalMm = Math.floor(rect.width / pxPerMm);
+      ctx.fillStyle = textColor;
+      ctx.strokeStyle = tickColor;
+      ctx.lineWidth = 1;
+      ctx.font = '11px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+
+      for (let mm = 0; mm <= totalMm; mm++) {
+        const x = Math.round(mm * pxPerMm);
+        let tickHeight = 10;
+        if (mm % 10 === 0) {
+          tickHeight = 28;
+          const cm = mm / 10;
+          if (x > 5 && x < rect.width - 5) {
+            ctx.fillText(cm, x, 40);
+          }
+        } else if (mm % 5 === 0) {
+          tickHeight = 18;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, 0);
+        ctx.lineTo(x + 0.5, tickHeight);
+        ctx.stroke();
+      }
+
+      // 2. Draw Inch Scale (Bottom)
+      const total16th = Math.floor(rect.width / (pxPerInch / 16));
+      const bottomY = rect.height;
+
+      for (let i = 0; i <= total16th; i++) {
+        const x = Math.round(i * (pxPerInch / 16));
+        let tickHeight = 8;
+        if (i % 16 === 0) {
+          tickHeight = 28;
+          const inch = i / 16;
+          if (x > 5 && x < rect.width - 5) {
+            ctx.fillText(inch, x, bottomY - 34);
+          }
+        } else if (i % 8 === 0) {
+          tickHeight = 20;
+        } else if (i % 4 === 0) {
+          tickHeight = 14;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(x + 0.5, bottomY);
+        ctx.lineTo(x + 0.5, bottomY - tickHeight);
+        ctx.stroke();
+      }
+
+      // Unit Labels
+      ctx.font = 'bold 12px system-ui, sans-serif';
+      ctx.fillStyle = '#2563eb';
+      ctx.fillText('CM', 18, 56);
+      ctx.fillText('INCH', 22, bottomY - 14);
+    }
+
+    function startDrag(e) {
+      isDragging = true;
+      handleDrag(e);
+    }
+
+    function handleDrag(e) {
+      if (!isDragging) return;
+      const ruler = document.getElementById('ruler_elem');
+      const rect = ruler.getBoundingClientRect();
+      let clientX = e.clientX;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+      }
+      if (clientX === undefined) return;
+
+      let x = clientX - rect.left;
+      x = Math.max(0, Math.min(rect.width, x));
+      setMarkerPos(x);
+    }
+
+    function setMarkerPos(x) {
+      markerX = x;
+      const marker = document.getElementById('ruler_marker');
+      marker.style.left = `${x}px`;
+
+      const pxPerInch = currentDPI;
+      const pxPerCm = currentDPI / 2.54;
+
+      const inches = x / pxPerInch;
+      const cm = x / pxPerCm;
+      const mm = cm * 10;
+
+      document.getElementById('readout_cm').textContent = `${cm.toFixed(2)} cm`;
+      document.getElementById('readout_mm').textContent = `${Math.round(mm)} mm`;
+      document.getElementById('readout_inch').textContent = `${inches.toFixed(2)} in`;
+      document.getElementById('marker_text').textContent = `${cm.toFixed(1)} cm / ${inches.toFixed(1)} in`;
+    }
+
+    window.addEventListener('DOMContentLoaded', initRuler);
+  </script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Grocery List - Shopping Checklist Maker - RapidTables.online</title>
+  <meta name="description" content="Free online grocery shopping list maker with smart categories, checkboxes, item counts, instant print layout, and autosave. Keep your grocery shopping organized on mobile and desktop.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .grocery-header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+    .grocery-stats {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .grocery-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--primary);
+      font-size: 13px;
+    }
+    .grocery-add-form {
+      display: grid;
+      grid-template-columns: 1fr 140px 180px auto;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 768px) {
+      .grocery-add-form {
+        grid-template-columns: 1fr;
+      }
+    }
+    .quick-chips-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .quick-chip {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+    }
+    .quick-chip:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .grocery-category-block {
+      margin-bottom: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .category-title {
+      background: rgba(0, 0, 0, 0.03);
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    [data-theme="dark"] .category-title {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .grocery-items-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .grocery-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.15s ease;
+    }
+    .grocery-item:last-child {
+      border-bottom: none;
+    }
+    .grocery-item:hover {
+      background: rgba(0, 0, 0, 0.015);
+    }
+    .grocery-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .grocery-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    .grocery-item-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+    .grocery-item.completed .grocery-item-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+    .grocery-qty-badge {
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(0, 0, 0, 0.06);
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+    [data-theme="dark"] .grocery-qty-badge {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .grocery-item-del-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .grocery-item-del-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    @media print {
+      .site-header, .breadcrumb-nav, .sidebar, .site-footer, .grocery-add-form, .quick-chips-wrapper, .grocery-actions-bar, .grocery-item-del-btn {
+        display: none !important;
+      }
+      .layout-container {
+        display: block !important;
+      }
+      .main-content {
+        width: 100% !important;
+      }
+      .grocery-item.completed {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Grocery List</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Grocery List Maker</h1>
+        <p class="subtitle">Organize your shopping with categorized checklists, quantity tracking, instant mobile checklist view, and printable format.</p>
+      </div>
+
+      <div class="grocery-header-bar">
+        <div class="grocery-stats">
+          <span id="items_stat">0 items</span>
+          <span class="grocery-badge" id="pending_stat">0 pending</span>
+        </div>
+        <div style="display:flex; gap:8px;" class="grocery-actions-bar">
+          <button class="btn btn-secondary" onclick="printList()" title="Print List">🖨️ Print</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard()" title="Copy text for WhatsApp/SMS">📋 Copy Text</button>
+          <button class="btn btn-secondary" onclick="clearCompleted()" title="Clear checked items">🧹 Clear Done</button>
+          <button class="btn btn-danger" onclick="clearAll()" title="Clear all items">🗑️ Clear All</button>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <form id="add_item_form" class="grocery-add-form" onsubmit="handleAddItem(event)">
+          <input type="text" id="item_name" class="input-control" placeholder="Item name (e.g., Organic Milk, Bananas)" required autofocus>
+          <input type="text" id="item_qty" class="input-control" placeholder="Qty (e.g. 2L, 1 dozen)">
+          <select id="item_category" class="input-control">
+            <option value="Produce 🥦">Produce 🥦</option>
+            <option value="Dairy &amp; Eggs 🥛">Dairy &amp; Eggs 🥛</option>
+            <option value="Bakery 🍞">Bakery 🍞</option>
+            <option value="Meat &amp; Seafood 🥩">Meat &amp; Seafood 🥩</option>
+            <option value="Pantry &amp; Grains 🍚">Pantry &amp; Grains 🍚</option>
+            <option value="Beverages 🧃">Beverages 🧃</option>
+            <option value="Snacks &amp; Sweets 🍫">Snacks &amp; Sweets 🍫</option>
+            <option value="Household 🧼">Household 🧼</option>
+            <option value="Other 🛒" selected>Other 🛒</option>
+          </select>
+          <button type="submit" class="btn btn-primary" style="white-space: nowrap;">➕ Add Item</button>
+        </form>
+
+        <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Quick Suggestions (Tap to add):</div>
+        <div class="quick-chips-wrapper">
+          <button type="button" class="quick-chip" onclick="quickAdd('Milk', '1 Gallon', 'Dairy & Eggs 🥛')">+ Milk</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Eggs', '1 Dozen', 'Dairy & Eggs 🥛')">+ Eggs</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Bread', '1 Loaf', 'Bakery 🍞')">+ Bread</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Bananas', '1 Bunch', 'Produce 🥦')">+ Bananas</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Apples', '1 Bag', 'Produce 🥦')">+ Apples</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Chicken Breast', '1 kg', 'Meat & Seafood 🥩')">+ Chicken</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Coffee', '1 Box', 'Beverages 🧃')">+ Coffee</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Olive Oil', '500ml', 'Pantry & Grains 🍚')">+ Olive Oil</button>
+          <button type="button" class="quick-chip" onclick="quickAdd('Rice', '2 kg', 'Pantry & Grains 🍚')">+ Rice</button>
+        </div>
+
+        <div id="grocery_container"></div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Everyday Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="notes.html">Sticky Notes</a></li>
+          <li><a href="click-counter.html">Click Counter</a></li>
+          <li><a href="calendar.html">Online Calendar</a></li>
+          <li><a href="alarm-clock.html">Alarm Clock</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Grocery Shopping Tips</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          • Categorizing your list saves up to 30% of time in the grocery store aisles.<br>
+          • Check off items as you place them into your shopping cart to avoid missing anything.<br>
+          • Your checklist is automatically saved in your browser's local memory.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const STORAGE_KEY = 'rt_grocery_items';
+    let groceryItems = [];
+
+    function loadItems() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          groceryItems = JSON.parse(saved);
+        } else {
+          // Defaults
+          groceryItems = [
+            { id: 1, name: 'Fresh Milk', qty: '1 Gallon', category: 'Dairy & Eggs 🥛', completed: false },
+            { id: 2, name: 'Whole Wheat Bread', qty: '1 Loaf', category: 'Bakery 🍞', completed: false },
+            { id: 3, name: 'Bananas', qty: '1 Bunch', category: 'Produce 🥦', completed: true },
+            { id: 4, name: 'Eggs', qty: '1 Dozen', category: 'Dairy & Eggs 🥛', completed: false }
+          ];
+          saveItems();
+        }
+      } catch (e) {
+        groceryItems = [];
+      }
+      renderList();
+    }
+
+    function saveItems() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(groceryItems));
+      } catch (e) {}
+    }
+
+    function handleAddItem(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('item_name');
+      const qtyInput = document.getElementById('item_qty');
+      const catInput = document.getElementById('item_category');
+
+      const name = nameInput.value.trim();
+      if (!name) return;
+
+      const newItem = {
+        id: Date.now(),
+        name: name,
+        qty: qtyInput.value.trim() || '1',
+        category: catInput.value,
+        completed: false
+      };
+
+      groceryItems.unshift(newItem);
+      saveItems();
+      renderList();
+
+      nameInput.value = '';
+      qtyInput.value = '';
+      nameInput.focus();
+    }
+
+    function quickAdd(name, qty, category) {
+      const exists = groceryItems.find(i => i.name.toLowerCase() === name.toLowerCase());
+      if (exists) {
+        exists.completed = false;
+      } else {
+        groceryItems.unshift({
+          id: Date.now(),
+          name: name,
+          qty: qty,
+          category: category,
+          completed: false
+        });
+      }
+      saveItems();
+      renderList();
+    }
+
+    function toggleItem(id) {
+      const item = groceryItems.find(i => i.id === id);
+      if (item) {
+        item.completed = !item.completed;
+        saveItems();
+        renderList();
+      }
+    }
+
+    function deleteItem(id) {
+      groceryItems = groceryItems.filter(i => i.id !== id);
+      saveItems();
+      renderList();
+    }
+
+    function clearCompleted() {
+      groceryItems = groceryItems.filter(i => !i.completed);
+      saveItems();
+      renderList();
+    }
+
+    function clearAll() {
+      if (groceryItems.length === 0) return;
+      if (confirm('Are you sure you want to clear your whole grocery list?')) {
+        groceryItems = [];
+        saveItems();
+        renderList();
+      }
+    }
+
+    function printList() {
+      window.print();
+    }
+
+    function copyToClipboard() {
+      if (groceryItems.length === 0) {
+        alert('Your grocery list is empty!');
+        return;
+      }
+      let text = '🛒 Grocery Shopping List (RapidTables.online)\n\n';
+      const categories = [...new Set(groceryItems.map(i => i.category))];
+      categories.forEach(cat => {
+        const items = groceryItems.filter(i => i.category === cat && !i.completed);
+        if (items.length > 0) {
+          text += `[${cat}]\n`;
+          items.forEach(i => {
+            text += `  • ${i.name} (${i.qty})\n`;
+          });
+          text += '\n';
+        }
+      });
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        alert('Grocery list copied to clipboard!');
+      });
+    }
+
+    function renderList() {
+      const container = document.getElementById('grocery_container');
+      const total = groceryItems.length;
+      const pending = groceryItems.filter(i => !i.completed).length;
+
+      document.getElementById('items_stat').textContent = `${total} items total`;
+      document.getElementById('pending_stat').textContent = `${pending} pending`;
+
+      if (total === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size: 48px; margin-bottom: 12px;">🛒</div>
+            <h3>Your grocery list is empty</h3>
+            <p>Type an item above or click one of the quick suggestions to start your shopping list.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by category
+      const categories = [...new Set(groceryItems.map(i => i.category))];
+      let html = '';
+
+      categories.forEach(cat => {
+        const items = groceryItems.filter(i => i.category === cat);
+        if (items.length === 0) return;
+
+        html += `
+          <div class="grocery-category-block">
+            <div class="category-title">
+              <span>${cat}</span>
+              <span style="font-size: 13px; color: var(--text-muted); font-weight: normal;">${items.filter(i => !i.completed).length} left</span>
+            </div>
+            <ul class="grocery-items-list">
+        `;
+
+        items.forEach(item => {
+          html += `
+            <li class="grocery-item ${item.completed ? 'completed' : ''}">
+              <div class="grocery-item-left">
+                <input type="checkbox" class="grocery-checkbox" ${item.completed ? 'checked' : ''} onchange="toggleItem(${item.id})">
+                <span class="grocery-item-name">${escapeHtml(item.name)}</span>
+                ${item.qty ? `<span class="grocery-qty-badge">${escapeHtml(item.qty)}</span>` : ''}
+              </div>
+              <button class="grocery-item-del-btn" onclick="deleteItem(${item.id})" title="Delete item">✕</button>
+            </li>
+          `;
+        });
+
+        html += `
+            </ul>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    loadItems();
+  </script>
+</body>
+</html>

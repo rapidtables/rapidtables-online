@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen Flashlight Online - Bright White Screen &amp; Color Light - RapidTables.online</title>
+  <meta name="description" content="Free online screen flashlight and bright white screen light. Turn your monitor, phone, or laptop display into a bright lamp, soft reading light, or SOS strobe light.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .flashlight-preview-box {
+      width: 100%;
+      height: 240px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: background 0.2s;
+    }
+    .color-chip {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform 0.15s;
+    }
+    .color-chip:hover {
+      transform: scale(1.15);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Screen Flashlight</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Screen Flashlight Online (Bright Screen Lamp)</h1>
+        <p class="subtitle">Turn your monitor, phone, or laptop screen into a bright white flashlight lamp. Ideal for reading in the dark, video calls, or checking dead pixels.</p>
+      </div>
+
+      <div class="flashlight-preview-box" id="flash_preview" style="background: #ffffff;" onclick="enterFullscreenFlash()">
+        <div style="background: rgba(0,0,0,0.6); color:#fff; padding:10px 18px; border-radius:30px; font-weight:700; font-size:14px; pointer-events:none;">
+          🔦 Click to Open Fullscreen Flashlight
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Flashlight Color Presets</h3>
+        <div style="display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+          <div class="color-chip" style="background:#ffffff;" onclick="setColor('#ffffff')" title="Pure White (100% Bright)"></div>
+          <div class="color-chip" style="background:#FFFBEB;" onclick="setColor('#FFFBEB')" title="Warm Reading Light"></div>
+          <div class="color-chip" style="background:#EF4444;" onclick="setColor('#EF4444')" title="Red Night-Vision"></div>
+          <div class="color-chip" style="background:#3B82F6;" onclick="setColor('#3B82F6')" title="Cool Blue"></div>
+          <div class="color-chip" style="background:#10B981;" onclick="setColor('#10B981')" title="Soft Green"></div>
+          <div class="color-chip" style="background:#F59E0B;" onclick="setColor('#F59E0B')" title="Amber Lamp"></div>
+          <input type="color" id="custom_color" value="#ffffff" onchange="setColor(this.value)" style="width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;">
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="enterFullscreenFlash()">⛶ Launch Fullscreen Light</button>
+          <button class="btn btn-secondary" id="sos_btn" onclick="toggleStrobe()">🚨 SOS Strobe Mode</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="mirror.html">Online Mirror</a></li>
+          <li><a href="clock.html">Online Clock</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let currentColor = '#ffffff';
+    let strobeInterval = null;
+    let isStrobing = false;
+
+    const preview = document.getElementById('flash_preview');
+
+    function setColor(hex) {
+      if (isStrobing) toggleStrobe();
+      currentColor = hex;
+      preview.style.background = hex;
+    }
+
+    function enterFullscreenFlash() {
+      const el = document.createElement('div');
+      el.id = 'full_screen_flash_overlay';
+      el.style.cssText = `
+        position: fixed; inset: 0; z-index: 999999;
+        background: ${currentColor};
+        display: flex; align-items: flex-end; justify-content: center; padding: 30px;
+        cursor: pointer;
+      `;
+      el.innerHTML = '<div style="background:rgba(0,0,0,0.5); color:#fff; padding:8px 16px; border-radius:20px; font-size:12px; font-weight:600;">Tap anywhere or press ESC to exit</div>';
+      
+      el.onclick = () => {
+        if (document.fullscreenElement) document.exitFullscreen ? document.exitFullscreen() : null;
+        el.remove();
+      };
+
+      document.body.appendChild(el);
+      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+    }
+
+    function toggleStrobe() {
+      if (isStrobing) {
+        clearInterval(strobeInterval);
+        isStrobing = false;
+        document.getElementById('sos_btn').textContent = '🚨 SOS Strobe Mode';
+        preview.style.background = currentColor;
+      } else {
+        isStrobing = true;
+        document.getElementById('sos_btn').textContent = '🛑 Stop Strobe';
+        let state = false;
+        strobeInterval = setInterval(() => {
+          preview.style.background = state ? '#ffffff' : '#000000';
+          state = !state;
+        }, 150);
+      }
+    }
+  </script>
+</body>
+</html>

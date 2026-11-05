@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CPS Test - Clicks Per Second Speed Test - RapidTables.online</title>
+  <meta name="description" content="Free online CPS Test (Clicks Per Second). Test your mouse clicking speed over 1, 5, 10, 30, or 60 seconds with live CPS meter, click rank, and restart.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .cps-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 30px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .cps-stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .cps-stat-chip {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 18px;
+      min-width: 110px;
+    }
+    .cps-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .cps-stat-val {
+      font-size: 26px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+    }
+    .cps-click-area {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(56,189,248,0.12));
+      border: 3px dashed var(--primary);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.1s ease;
+      position: relative;
+    }
+    .cps-click-area:active {
+      transform: scale(0.98);
+      background: rgba(37,99,235,0.18);
+    }
+    .cps-prompt-text {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .cps-prompt-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .timer-selector {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .timer-chip {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .timer-chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>CPS Test</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>CPS Test - Clicks Per Second Speed Test</h1>
+        <p class="subtitle">Test your clicking speed, jitter click score, and butterfly clicking speed. Click as fast as you can in the box below!</p>
+      </div>
+
+      <div class="cps-box">
+        <div class="timer-selector">
+          <button type="button" class="timer-chip" data-time="1" onclick="selectDuration(1)">1 Sec</button>
+          <button type="button" class="timer-chip active" data-time="5" onclick="selectDuration(5)">5 Sec</button>
+          <button type="button" class="timer-chip" data-time="10" onclick="selectDuration(10)">10 Sec</button>
+          <button type="button" class="timer-chip" data-time="30" onclick="selectDuration(30)">30 Sec</button>
+          <button type="button" class="timer-chip" data-time="60" onclick="selectDuration(60)">60 Sec</button>
+        </div>
+
+        <div class="cps-stats-bar">
+          <div class="cps-stat-chip">
+            <div class="cps-stat-label">Time Remaining</div>
+            <div class="cps-stat-val" id="time_disp">5.0s</div>
+          </div>
+          <div class="cps-stat-chip">
+            <div class="cps-stat-label">Total Clicks</div>
+            <div class="cps-stat-val" id="clicks_disp">0</div>
+          </div>
+          <div class="cps-stat-chip">
+            <div class="cps-stat-label">Your CPS</div>
+            <div class="cps-stat-val" id="cps_disp">0.0</div>
+          </div>
+        </div>
+
+        <div class="cps-click-area" id="click_area" onmousedown="handleClick(event)">
+          <div class="cps-prompt-text" id="prompt_main">⚡ CLICK HERE TO START</div>
+          <div class="cps-prompt-sub" id="prompt_sub">Keep clicking as fast as you can!</div>
+        </div>
+
+        <div style="margin-top: 18px;">
+          <button class="btn btn-secondary" onclick="resetTest()">🔄 Restart Test</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>CPS Speed Ranks</h3>
+        <ul style="font-size: 13px; line-height: 1.8; color: var(--text-muted); padding-left: 16px;">
+          <li>🐢 <strong>0 - 4 CPS:</strong> Turtle (Casual)</li>
+          <li>🐇 <strong>5 - 7 CPS:</strong> Rabbit (Average)</li>
+          <li>🐆 <strong>8 - 10 CPS:</strong> Cheetah (Gamer)</li>
+          <li>⚡ <strong>10+ CPS:</strong> Godlike (Pro Jitter)</li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Related Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="click-counter.html">Click Counter Online</a></li>
+          <li><a href="stopwatch.html">Stopwatch &amp; Timer</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let duration = 5;
+    let timer = null;
+    let timeRemaining = 5;
+    let clicks = 0;
+    let isRunning = false;
+    let isFinished = false;
+
+    const timeDisp = document.getElementById('time_disp');
+    const clicksDisp = document.getElementById('clicks_disp');
+    const cpsDisp = document.getElementById('cps_disp');
+    const clickArea = document.getElementById('click_area');
+    const promptMain = document.getElementById('prompt_main');
+    const promptSub = document.getElementById('prompt_sub');
+
+    function selectDuration(sec) {
+      if (isRunning) return;
+      duration = sec;
+      document.querySelectorAll('.timer-chip').forEach(c => {
+        c.classList.toggle('active', parseInt(c.dataset.time, 10) === sec);
+      });
+      resetTest();
+    }
+
+    function resetTest() {
+      clearInterval(timer);
+      isRunning = false;
+      isFinished = false;
+      clicks = 0;
+      timeRemaining = duration;
+      timeDisp.textContent = duration.toFixed(1) + 's';
+      clicksDisp.textContent = '0';
+      cpsDisp.textContent = '0.0';
+      promptMain.textContent = '⚡ CLICK HERE TO START';
+      promptSub.textContent = 'Keep clicking as fast as you can!';
+    }
+
+    function handleClick(e) {
+      if (e.button !== 0 || isFinished) return;
+
+      if (!isRunning) {
+        isRunning = true;
+        clicks = 1;
+        promptMain.textContent = '🔥 CLICK! CLICK! CLICK!';
+        promptSub.textContent = 'Keep going until time is up!';
+        const startTime = performance.now();
+
+        timer = setInterval(() => {
+          const elapsed = (performance.now() - startTime) / 1000;
+          timeRemaining = Math.max(0, duration - elapsed);
+          timeDisp.textContent = timeRemaining.toFixed(1) + 's';
+
+          const currentCps = clicks / Math.max(0.1, elapsed);
+          cpsDisp.textContent = currentCps.toFixed(1);
+
+          if (timeRemaining <= 0) {
+            finishTest(elapsed);
+          }
+        }, 50);
+      } else {
+        clicks++;
+      }
+      clicksDisp.textContent = clicks;
+    }
+
+    function finishTest(totalTime) {
+      clearInterval(timer);
+      isRunning = false;
+      isFinished = true;
+      timeDisp.textContent = '0.0s';
+      const finalCps = (clicks / duration).toFixed(2);
+      cpsDisp.textContent = finalCps;
+
+      let rank = '🐢 Turtle';
+      if (finalCps >= 10) rank = '⚡ Godlike';
+      else if (finalCps >= 8) rank = '🐆 Cheetah';
+      else if (finalCps >= 5) rank = '🐇 Rabbit';
+
+      promptMain.textContent = `Result: ${finalCps} CPS! (${rank})`;
+      promptSub.textContent = `Total Clicks: ${clicks} in ${duration} seconds. Click 'Restart' to try again!`;
+    }
+  </script>
+</body>
+</html>

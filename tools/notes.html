@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Notes - Sticky Notes &amp; Quick Memo Board - RapidTables.online</title>
+  <meta name="description" content="Free online sticky notes and quick notepad. Create color-coded sticky notes, search, pin important reminders, and autosave to local browser storage.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .notes-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .note-card {
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.08);
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      min-height: 220px;
+    }
+    .note-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+    .note-card.color-yellow { background: #fef08a; color: #713f12; }
+    .note-card.color-green { background: #bbf7d0; color: #14532d; }
+    .note-card.color-blue { background: #bae6fd; color: #0c4a6e; }
+    .note-card.color-pink { background: #fbcfe8; color: #831843; }
+    .note-card.color-purple { background: #e9d5ff; color: #581c87; }
+    .note-card.color-slate { background: #334155; color: #f8fafc; }
+
+    .note-title-inp {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 18px;
+      font-weight: 700;
+      color: inherit;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 0;
+    }
+    .note-body-inp {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      line-height: 1.5;
+      color: inherit;
+      width: 100%;
+      flex: 1;
+      resize: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .note-footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      font-size: 11px;
+      opacity: 0.85;
+    }
+    .note-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .note-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+    .note-icon-btn:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Notes</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Notes &amp; Sticky Memo Board</h1>
+        <p class="subtitle">Quick color-coded sticky notes organizer. Jot down thoughts, paste links, organize tasks, and autosave instantly in your browser.</p>
+      </div>
+
+      <div class="notes-toolbar">
+        <div style="display:flex; gap:10px; flex:1; max-width: 400px;">
+          <input type="text" id="notes_search" class="input-control" placeholder="🔍 Search notes..." oninput="filterNotes(this.value)">
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="createNote()">➕ New Note</button>
+          <button class="btn btn-secondary" onclick="exportNotesJSON()">💾 Export Backup</button>
+          <button class="btn btn-danger" onclick="clearAllNotes()">🗑️ Clear All</button>
+        </div>
+      </div>
+
+      <div class="notes-grid" id="notes_grid"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Text Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="word-counter.html">Word Counter</a></li>
+          <li><a href="markdown-editor.html">Markdown Editor</a></li>
+          <li><a href="grocery-list.html">Grocery List</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Autosave &amp; Privacy</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          • All notes are stored privately inside your browser's local storage.<br>
+          • Edits are saved on keystroke with zero delay.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const NOTES_STORAGE = 'rt_sticky_notes';
+    const COLOR_CLASSES = ['color-yellow', 'color-green', 'color-blue', 'color-pink', 'color-purple', 'color-slate'];
+    let notesData = [];
+
+    function loadNotes() {
+      try {
+        const saved = localStorage.getItem(NOTES_STORAGE);
+        if (saved) {
+          notesData = JSON.parse(saved);
+        } else {
+          // Default starter notes
+          notesData = [
+            { id: 1, title: 'Welcome to Online Notes! 📌', body: 'Type anything you want here. Changes autosave instantly into your local browser.', color: 'color-yellow', pinned: true, date: 'Today' },
+            { id: 2, title: 'Project Ideas 💡', body: '1. Launch new calculator suite\n2. High-speed unit converters\n3. Mobile responsive optimizations', color: 'color-green', pinned: false, date: 'Today' },
+            { id: 3, title: 'Meeting Reminders ⏰', body: 'Review team analytics and roadmap updates every Monday morning.', color: 'color-blue', pinned: false, date: 'Today' }
+          ];
+          saveNotes();
+        }
+      } catch (e) {
+        notesData = [];
+      }
+      renderNotes();
+    }
+
+    function saveNotes() {
+      try {
+        localStorage.setItem(NOTES_STORAGE, JSON.stringify(notesData));
+      } catch (e) {}
+    }
+
+    function createNote() {
+      const newNote = {
+        id: Date.now(),
+        title: 'New Note',
+        body: '',
+        color: COLOR_CLASSES[Math.floor(Math.random() * (COLOR_CLASSES.length - 1))],
+        pinned: false,
+        date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+      };
+      notesData.unshift(newNote);
+      saveNotes();
+      renderNotes();
+    }
+
+    function updateNoteTitle(id, val) {
+      const note = notesData.find(n => n.id === id);
+      if (note) {
+        note.title = val;
+        saveNotes();
+      }
+    }
+
+    function updateNoteBody(id, val) {
+      const note = notesData.find(n => n.id === id);
+      if (note) {
+        note.body = val;
+        saveNotes();
+      }
+    }
+
+    function cycleNoteColor(id) {
+      const note = notesData.find(n => n.id === id);
+      if (note) {
+        const curIdx = COLOR_CLASSES.indexOf(note.color);
+        note.color = COLOR_CLASSES[(curIdx + 1) % COLOR_CLASSES.length];
+        saveNotes();
+        renderNotes();
+      }
+    }
+
+    function togglePin(id) {
+      const note = notesData.find(n => n.id === id);
+      if (note) {
+        note.pinned = !note.pinned;
+        // Sort pinned to front
+        notesData.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+        saveNotes();
+        renderNotes();
+      }
+    }
+
+    function deleteNote(id) {
+      notesData = notesData.filter(n => n.id !== id);
+      saveNotes();
+      renderNotes();
+    }
+
+    function copyNote(id) {
+      const note = notesData.find(n => n.id === id);
+      if (note) {
+        navigator.clipboard.writeText(`${note.title}\n\n${note.body}`).then(() => {
+          alert('Note copied to clipboard!');
+        });
+      }
+    }
+
+    function clearAllNotes() {
+      if (notesData.length === 0) return;
+      if (confirm('Delete all sticky notes? This cannot be undone.')) {
+        notesData = [];
+        saveNotes();
+        renderNotes();
+      }
+    }
+
+    function exportNotesJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(notesData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `rapidtables-notes-${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function filterNotes(query) {
+      const q = query.toLowerCase().trim();
+      const filtered = notesData.filter(n => n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q));
+      renderNotes(filtered);
+    }
+
+    function renderNotes(items = notesData) {
+      const grid = document.getElementById('notes_grid');
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">No notes found. Click "+ New Note" to create one.</div>';
+        return;
+      }
+
+      grid.innerHTML = items.map(note => `
+        <div class="note-card ${note.color}">
+          <input type="text" class="note-title-inp" value="${escapeHtml(note.title)}" oninput="updateNoteTitle(${note.id}, this.value)" placeholder="Note Title...">
+          <textarea class="note-body-inp" oninput="updateNoteBody(${note.id}, this.value)" placeholder="Write your memo here...">${escapeHtml(note.body)}</textarea>
+          <div class="note-footer-bar">
+            <span>${note.date} ${note.pinned ? '📌' : ''}</span>
+            <div class="note-actions-group">
+              <button class="note-icon-btn" onclick="togglePin(${note.id})" title="${note.pinned ? 'Unpin' : 'Pin to top'}">${note.pinned ? '📌' : '📍'}</button>
+              <button class="note-icon-btn" onclick="cycleNoteColor(${note.id})" title="Change Color">🎨</button>
+              <button class="note-icon-btn" onclick="copyNote(${note.id})" title="Copy note">📋</button>
+              <button class="note-icon-btn" onclick="deleteNote(${note.id})" title="Delete note">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>

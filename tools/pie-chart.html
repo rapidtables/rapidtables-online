@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pie Chart Maker - Free Online Circle Chart Creator - RapidTables.online</title>
+  <meta name="description" content="Free online pie chart and donut chart maker. Input data items, customize slice colors, calculate automatic percentages, and export high-resolution PNG charts.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .chart-workspace {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .chart-workspace {
+        grid-template-columns: 1fr;
+      }
+      .chart-preview-card {
+        order: -1;
+      }
+    }
+    .chart-preview-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+    }
+    .chart-canvas-box {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+    #pie_canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .data-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Pie Chart Maker</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Pie Chart Maker (Donut &amp; Circle Graph)</h1>
+        <p class="subtitle">Generate clean, proportional pie and donut charts with automatic percentage breakdowns, custom slice colors, and high-res image export.</p>
+      </div>
+
+      <div class="chart-workspace">
+        <div class="tool-box" style="margin-top: 0;">
+          <h3>1. Chart Title &amp; Style</h3>
+          <div class="calc-grid-2">
+            <div class="calc-input-group">
+              <label for="pie_title">Chart Title</label>
+              <input type="text" id="pie_title" value="Market Share Distribution" oninput="drawPieChart()">
+            </div>
+            <div class="calc-input-group">
+              <label for="pie_type">Chart Style</label>
+              <select id="pie_type" onchange="drawPieChart()">
+                <option value="pie" selected>Standard Pie Chart</option>
+                <option value="donut">Donut Chart (Hollow Center)</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 20px;">2. Slices Data</h3>
+          <div id="pie_rows_container"></div>
+
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addPieSlice()" style="margin-top: 6px;">➕ Add Slice</button>
+
+          <div style="margin-top: 24px;">
+            <button class="btn btn-primary" onclick="downloadPiePNG()" style="width:100%;">⬇️ Download Chart (PNG)</button>
+          </div>
+        </div>
+
+        <div class="chart-preview-card">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px;">Live Pie Chart Preview</div>
+          <div class="chart-canvas-box">
+            <canvas id="pie_canvas" width="600" height="500"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Chart Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="bar-graph.html">Bar Graph Maker</a></li>
+          <li><a href="line-graph.html">Line Graph Maker</a></li>
+          <li><a href="csv-json-converter.html">CSV ⇄ JSON Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let slices = [
+      { label: 'Chrome', val: 65, color: '#2563EB' },
+      { label: 'Safari', val: 19, color: '#38BDF8' },
+      { label: 'Edge', val: 9, color: '#10B981' },
+      { label: 'Firefox', val: 7, color: '#F59E0B' }
+    ];
+
+    const container = document.getElementById('pie_rows_container');
+    const canvas = document.getElementById('pie_canvas');
+    const ctx = canvas.getContext('2d');
+
+    function renderRows() {
+      container.innerHTML = slices.map((s, idx) => `
+        <div class="data-row">
+          <input type="text" value="${s.label}" placeholder="Label" style="flex:2;" class="input-control" oninput="slices[${idx}].label=this.value; drawPieChart();">
+          <input type="number" value="${s.val}" placeholder="Value" style="flex:2;" class="input-control" oninput="slices[${idx}].val=parseFloat(this.value)||0; drawPieChart();">
+          <input type="color" value="${s.color}" style="width:42px; height:38px; cursor:pointer; padding:2px;" onchange="slices[${idx}].color=this.value; drawPieChart();">
+          <button type="button" onclick="removeSlice(${idx})" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function addPieSlice() {
+      const colors = ['#2563EB', '#38BDF8', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6'];
+      slices.push({ label: 'Item ' + (slices.length + 1), val: 20, color: colors[slices.length % colors.length] });
+      renderRows();
+      drawPieChart();
+    }
+
+    function removeSlice(idx) {
+      if (slices.length <= 1) return;
+      slices.splice(idx, 1);
+      renderRows();
+      drawPieChart();
+    }
+
+    function drawPieChart() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Background
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, w, h);
+
+      // Title
+      const title = document.getElementById('pie_title').value;
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, w / 2, 35);
+
+      const total = slices.reduce((acc, s) => acc + s.val, 0) || 1;
+      const centerX = w / 2;
+      const centerY = 240;
+      const radius = 150;
+      const isDonut = document.getElementById('pie_type').value === 'donut';
+
+      let startAngle = -Math.PI / 2;
+
+      slices.forEach(s => {
+        const sliceAngle = (s.val / total) * (2 * Math.PI);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = s.color;
+        ctx.fill();
+
+        // Label inside slice
+        const midAngle = startAngle + sliceAngle / 2;
+        const textDist = isDonut ? radius * 0.72 : radius * 0.65;
+        const tx = centerX + Math.cos(midAngle) * textDist;
+        const ty = centerY + Math.sin(midAngle) * textDist;
+
+        const percent = ((s.val / total) * 100).toFixed(1) + '%';
+        if (sliceAngle > 0.25) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(percent, tx, ty + 4);
+        }
+
+        startAngle += sliceAngle;
+      });
+
+      // Donut inner cutout
+      if (isDonut) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+
+        ctx.fillStyle = '#64748B';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('TOTAL', centerX, centerY - 6);
+        ctx.fillStyle = '#0F172A';
+        ctx.font = 'bold 18px sans-serif';
+        ctx.fillText(total.toString(), centerX, centerY + 18);
+      }
+
+      // Legend at bottom
+      const legendY = 420;
+      let legendX = 40;
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'left';
+
+      slices.forEach(s => {
+        ctx.fillStyle = s.color;
+        ctx.fillRect(legendX, legendY, 14, 14);
+        ctx.fillStyle = '#334155';
+        ctx.fillText(`${s.label} (${s.val})`, legendX + 20, legendY + 11);
+        legendX += ctx.measureText(`${s.label} (${s.val})`).width + 40;
+      });
+    }
+
+    function downloadPiePNG() {
+      const a = document.createElement('a');
+      a.download = 'pie-chart.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    }
+
+    renderRows();
+    drawPieChart();
+  </script>
+</body>
+</html>

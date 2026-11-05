@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Time - Exact Local Time &amp; World Clock - RapidTables.online</title>
+  <meta name="description" content="Exact current time with milliseconds, date, day of week, UTC reference, Unix timestamp converter, and live world clocks for London, New York, Tokyo, Dubai, and Sydney.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .time-hero-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .time-digits-large {
+      font-size: 64px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      letter-spacing: 2px;
+      margin: 10px 0;
+    }
+    @media (max-width: 600px) {
+      .time-digits-large {
+        font-size: 40px;
+      }
+    }
+    .time-date-large {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .time-tz-badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+    }
+    .time-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .time-metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+    }
+    .time-metric-val {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--text-main);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+    .world-clock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .world-clock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+    }
+    .world-clock-city {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .world-clock-time {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Current Time</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Current Exact Time &amp; World Clock</h1>
+        <p class="subtitle">High-precision local time with milliseconds, UTC reference, Unix epoch timestamps, and live world timezones.</p>
+      </div>
+
+      <div class="time-hero-box" id="time_hero">
+        <div class="time-date-large" id="live_date_str">Thursday, November 5, 2026</div>
+        <div class="time-digits-large" id="live_time_str">12:00:00.000 PM</div>
+        <div>
+          <span class="time-tz-badge" id="live_tz_str">UTC Offset: +05:00 &bull; Asia/Karachi</span>
+        </div>
+        <div style="margin-top: 18px; display:flex; justify-content:center; gap: 10px;">
+          <button class="btn btn-secondary" onclick="toggleHourFormat()" id="fmt_btn">Format: 12-Hour</button>
+          <button class="btn btn-secondary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        </div>
+      </div>
+
+      <div class="time-metrics-grid">
+        <div class="time-metric-card">
+          <div style="font-size: 13px; color: var(--text-muted); font-weight:600;">UNIX TIMESTAMP (SECONDS)</div>
+          <div class="time-metric-val" id="metric_unix_sec">1793888888</div>
+          <button class="btn btn-secondary" onclick="copyUnix()" style="padding: 2px 8px; font-size: 11px; margin-top: 8px;">📋 Copy</button>
+        </div>
+
+        <div class="time-metric-card">
+          <div style="font-size: 13px; color: var(--text-muted); font-weight:600;">UNIX TIMESTAMP (MILLISECONDS)</div>
+          <div class="time-metric-val" id="metric_unix_ms">1793888888123</div>
+        </div>
+
+        <div class="time-metric-card">
+          <div style="font-size: 13px; color: var(--text-muted); font-weight:600;">COORDINATED UNIVERSAL TIME (UTC)</div>
+          <div class="time-metric-val" id="metric_utc_str">07:00:00 UTC</div>
+        </div>
+
+        <div class="time-metric-card">
+          <div style="font-size: 13px; color: var(--text-muted); font-weight:600;">ISO 8601 STRING</div>
+          <div class="time-metric-val" id="metric_iso_str" style="font-size: 14px;">2026-11-05T07:00:00Z</div>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>🌍 Major World Clocks</h3>
+        <p style="font-size: 14px; color: var(--text-muted);">Real-time current time across major international business and financial hubs:</p>
+        <div class="world-clock-grid" id="world_clock_grid"></div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Time Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="clock.html">Online Clock</a></li>
+          <li><a href="alarm-clock.html">Alarm Clock</a></li>
+          <li><a href="stopwatch.html">Stopwatch &amp; Timer</a></li>
+          <li><a href="calendar.html">Online Calendar</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Precision Atomic Time</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          • Coordinated Universal Time (UTC) is the primary time standard by which the world regulates clocks and time.<br>
+          • Computer clocks synchronize with Network Time Protocol (NTP) servers tied directly to atomic caesium clocks.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let is24Hour = false;
+
+    const CITIES = [
+      { name: 'London (GMT/BST)', zone: 'Europe/London' },
+      { name: 'New York (EST/EDT)', zone: 'America/New_York' },
+      { name: 'Tokyo (JST)', zone: 'Asia/Tokyo' },
+      { name: 'Sydney (AEST)', zone: 'Australia/Sydney' },
+      { name: 'Dubai (GST)', zone: 'Asia/Dubai' },
+      { name: 'Karachi (PKT)', zone: 'Asia/Karachi' },
+      { name: 'Paris (CET)', zone: 'Europe/Paris' },
+      { name: 'Singapore (SGT)', zone: 'Asia/Singapore' },
+      { name: 'Los Angeles (PST)', zone: 'America/Los_Angeles' }
+    ];
+
+    function updateClocks() {
+      const now = new Date();
+
+      // Milliseconds formatting
+      const ms = String(now.getMilliseconds()).padStart(3, '0');
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      let ampm = '';
+
+      if (!is24Hour) {
+        ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12 || 12;
+      }
+      const formattedHours = String(hours).padStart(2, '0');
+
+      document.getElementById('live_time_str').textContent = `${formattedHours}:${minutes}:${seconds}.${ms}${ampm}`;
+
+      // Date string
+      const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('live_date_str').textContent = now.toLocaleDateString(undefined, dateOpts);
+
+      // Timezone string
+      const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const offsetMin = -now.getTimezoneOffset();
+      const offsetSign = offsetMin >= 0 ? '+' : '-';
+      const offsetH = String(Math.floor(Math.abs(offsetMin) / 60)).padStart(2, '0');
+      const offsetM = String(Math.abs(offsetMin) % 60).padStart(2, '0');
+      document.getElementById('live_tz_str').textContent = `Timezone: ${tzName} (UTC ${offsetSign}${offsetH}:${offsetM})`;
+
+      // Timestamps
+      document.getElementById('metric_unix_sec').textContent = Math.floor(now.getTime() / 1000);
+      document.getElementById('metric_unix_ms').textContent = now.getTime();
+      document.getElementById('metric_utc_str').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+      document.getElementById('metric_iso_str').textContent = now.toISOString();
+
+      // World Clocks
+      const grid = document.getElementById('world_clock_grid');
+      grid.innerHTML = CITIES.map(c => {
+        try {
+          const cTime = now.toLocaleTimeString('en-US', { timeZone: c.zone, hour12: !is24Hour });
+          const cDate = now.toLocaleDateString('en-US', { timeZone: c.zone, month: 'short', day: 'numeric' });
+          return `
+            <div class="world-clock-card">
+              <div class="world-clock-city">${c.name}</div>
+              <div class="world-clock-time">${cTime}</div>
+              <div style="font-size: 12px; color: var(--text-muted);">${cDate}</div>
+            </div>
+          `;
+        } catch (e) {
+          return '';
+        }
+      }).join('');
+    }
+
+    function toggleHourFormat() {
+      is24Hour = !is24Hour;
+      document.getElementById('fmt_btn').textContent = is24Hour ? 'Format: 24-Hour' : 'Format: 12-Hour';
+      updateClocks();
+    }
+
+    function copyUnix() {
+      const val = document.getElementById('metric_unix_sec').textContent;
+      navigator.clipboard.writeText(val).then(() => {
+        alert('Unix timestamp copied to clipboard!');
+      });
+    }
+
+    function toggleFullscreen() {
+      const elem = document.getElementById('time_hero');
+      if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    setInterval(updateClocks, 50);
+    updateClocks();
+  </script>
+</body>
+</html>

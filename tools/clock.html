@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Clock - Full Screen Digital Clock &amp; Current Time - RapidTables.online</title>
+  <meta name="description" content="Free online full-screen digital clock with accurate current time, seconds, date, 12-hour/24-hour mode, full screen presentation mode, and world timezones.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .clock-display-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .clock-time-big {
+      font-size: 96px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      line-height: 1;
+      letter-spacing: -2px;
+      margin: 10px 0;
+    }
+    .clock-ampm {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-left: 10px;
+    }
+    .clock-date-big {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+    @media (max-width: 640px) {
+      .clock-time-big {
+        font-size: 52px;
+      }
+      .clock-ampm {
+        font-size: 20px;
+      }
+      .clock-date-big {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Clock</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Clock (Full-Screen Current Time &amp; Date)</h1>
+        <p class="subtitle">Accurate real-time digital clock synchronized with atomic time. Supports 12h/24h formats, full-screen display, and live UTC/GMT.</p>
+      </div>
+
+      <div class="clock-display-card" id="clock_card">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" id="tz_label">Local Time</div>
+        <div class="clock-time-big">
+          <span id="clock_time">12:00:00</span><span class="clock-ampm" id="clock_ampm">PM</span>
+        </div>
+        <div class="clock-date-big" id="clock_date">Wednesday, November 5, 2026</div>
+
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:24px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" id="format_toggle_btn" onclick="toggleFormat()">Switch to 24-Hour</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="toggleFullscreen()">⛶ Fullscreen Mode</button>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Major World Timezones</h3>
+        <div class="calc-grid-3" id="world_clock_grid">
+          <div class="calc-input-group" style="background:var(--bg-alt); padding:14px; border-radius:8px;">
+            <strong style="color:var(--text-main);">UTC / GMT (London)</strong>
+            <div id="time_london" style="font-size:18px; font-family:var(--font-mono); font-weight:700; color:var(--primary); margin-top:4px;">--:--:--</div>
+          </div>
+          <div class="calc-input-group" style="background:var(--bg-alt); padding:14px; border-radius:8px;">
+            <strong style="color:var(--text-main);">New York (EST/EDT)</strong>
+            <div id="time_ny" style="font-size:18px; font-family:var(--font-mono); font-weight:700; color:var(--primary); margin-top:4px;">--:--:--</div>
+          </div>
+          <div class="calc-input-group" style="background:var(--bg-alt); padding:14px; border-radius:8px;">
+            <strong style="color:var(--text-main);">Tokyo (JST)</strong>
+            <div id="time_tokyo" style="font-size:18px; font-family:var(--font-mono); font-weight:700; color:var(--primary); margin-top:4px;">--:--:--</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Time Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="alarm-clock.html">Alarm Clock Online</a></li>
+          <li><a href="stopwatch.html">Stopwatch &amp; Timer</a></li>
+          <li><a href="calendar.html">Online Calendar</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let is24Hour = false;
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      let ampm = '';
+
+      if (!is24Hour) {
+        ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+      }
+      const hourStr = String(hours).padStart(2, '0');
+
+      document.getElementById('clock_time').textContent = `${hourStr}:${mins}:${secs}`;
+      document.getElementById('clock_ampm').textContent = ampm;
+
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('clock_date').textContent = now.toLocaleDateString(undefined, options);
+
+      // World Clocks
+      document.getElementById('time_london').textContent = now.toLocaleTimeString('en-US', { timeZone: 'UTC', hour12: !is24Hour });
+      document.getElementById('time_ny').textContent = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: !is24Hour });
+      document.getElementById('time_tokyo').textContent = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Tokyo', hour12: !is24Hour });
+    }
+
+    function toggleFormat() {
+      is24Hour = !is24Hour;
+      document.getElementById('format_toggle_btn').textContent = is24Hour ? 'Switch to 12-Hour' : 'Switch to 24-Hour';
+      document.getElementById('clock_ampm').style.display = is24Hour ? 'none' : 'inline';
+      updateClock();
+    }
+
+    function toggleFullscreen() {
+      const card = document.getElementById('clock_card');
+      if (!document.fullscreenElement) {
+        card.requestFullscreen ? card.requestFullscreen() : null;
+      } else {
+        document.exitFullscreen ? document.exitFullscreen() : null;
+      }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>

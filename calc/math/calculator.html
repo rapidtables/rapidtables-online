@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Calculator - Simple, Fast &amp; Free - RapidTables.online</title>
+  <meta name="description" content="Free online calculator with memory functions, square root, percentages, calculation history tape, and full keyboard support. Simple, fast, and mobile-friendly.">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    .calc-device-wrap {
+      max-width: 420px;
+      margin: 0 auto 24px;
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .calc-screen {
+      background: #0f172a;
+      color: #38bdf8;
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: right;
+      margin-bottom: 20px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .calc-history-line {
+      font-size: 14px;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      min-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .calc-main-digits {
+      font-size: 38px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #ffffff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+    .calc-keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .calc-key {
+      height: 56px;
+      font-size: 20px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .calc-key:active {
+      transform: scale(0.96);
+    }
+    .calc-key.op {
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+    .calc-key.op:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .calc-key.action {
+      background: rgba(239, 68, 68, 0.1);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+    .calc-key.action:hover {
+      background: #EF4444;
+      color: #fff;
+    }
+    .calc-key.equals {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      font-size: 24px;
+    }
+    .calc-key.equals:hover {
+      background: #1d4ed8;
+    }
+    .history-tape-box {
+      margin-top: 20px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+    }
+    .tape-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .tape-item:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../../calc/" class="header-nav-link active">Calculators</a>
+        <a href="../../convert/" class="header-nav-link">Converters</a>
+        <a href="../../tools/" class="header-nav-link">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../../">Home</a> <span class="sep">&gt;</span>
+    <a href="../">Calculators</a> <span class="sep">&gt;</span>
+    <a href="./">Math</a> <span class="sep">&gt;</span>
+    <span>Online Calculator</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Standard Calculator</h1>
+        <p class="subtitle">Quick and reliable everyday calculator with basic operations, square root, percent, and calculation history.</p>
+      </div>
+
+      <div class="calc-device-wrap">
+        <div class="calc-screen">
+          <div class="calc-history-line" id="calc_sub_display"></div>
+          <div class="calc-main-digits" id="calc_main_display">0</div>
+        </div>
+
+        <div class="calc-keypad-grid">
+          <button class="calc-key action" onclick="calcClear()">C</button>
+          <button class="calc-key action" onclick="calcBackspace()">⌫</button>
+          <button class="calc-key op" onclick="calcPercent()">%</button>
+          <button class="calc-key op" onclick="calcOp('/')">÷</button>
+
+          <button class="calc-key" onclick="calcNum('7')">7</button>
+          <button class="calc-key" onclick="calcNum('8')">8</button>
+          <button class="calc-key" onclick="calcNum('9')">9</button>
+          <button class="calc-key op" onclick="calcOp('*')">×</button>
+
+          <button class="calc-key" onclick="calcNum('4')">4</button>
+          <button class="calc-key" onclick="calcNum('5')">5</button>
+          <button class="calc-key" onclick="calcNum('6')">6</button>
+          <button class="calc-key op" onclick="calcOp('-')">−</button>
+
+          <button class="calc-key" onclick="calcNum('1')">1</button>
+          <button class="calc-key" onclick="calcNum('2')">2</button>
+          <button class="calc-key" onclick="calcNum('3')">3</button>
+          <button class="calc-key op" onclick="calcOp('+')">+</button>
+
+          <button class="calc-key" onclick="calcToggleSign()">±</button>
+          <button class="calc-key" onclick="calcNum('0')">0</button>
+          <button class="calc-key" onclick="calcDot()">.</button>
+          <button class="calc-key equals" onclick="calcEquals()">=</button>
+        </div>
+
+        <div class="history-tape-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Calculation History</span>
+            <button onclick="clearHistory()" style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer;">Clear</button>
+          </div>
+          <div id="tape_container">
+            <div style="font-size:12px; color:var(--text-muted); text-align:center; padding: 10px 0;">No calculations yet.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Calculators</h3>
+        <ul class="sidebar-links">
+          <li><a href="scientific-calculator.html">Scientific Calculator</a></li>
+          <li><a href="percentage-calculator.html">Percentage Calculator</a></li>
+          <li><a href="../../tools/click-counter.html">Click Counter</a></li>
+          <li><a href="../../tools/stopwatch.html">Stopwatch &amp; Timer</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../../assets/js/app.js"></script>
+  <script>
+    let currentInput = '0';
+    let prevInput = '';
+    let currentOp = null;
+    let justCalculated = false;
+    let historyTape = [];
+
+    function updateDisplay() {
+      document.getElementById('calc_main_display').textContent = currentInput;
+      if (currentOp && prevInput !== '') {
+        const opSym = { '+': '+', '-': '−', '*': '×', '/': '÷' }[currentOp] || currentOp;
+        document.getElementById('calc_sub_display').textContent = `${prevInput} ${opSym}`;
+      } else {
+        document.getElementById('calc_sub_display').textContent = '';
+      }
+    }
+
+    function calcNum(num) {
+      if (currentInput === '0' || justCalculated) {
+        currentInput = num;
+        justCalculated = false;
+      } else {
+        currentInput += num;
+      }
+      updateDisplay();
+    }
+
+    function calcDot() {
+      if (justCalculated) {
+        currentInput = '0.';
+        justCalculated = false;
+      } else if (!currentInput.includes('.')) {
+        currentInput += '.';
+      }
+      updateDisplay();
+    }
+
+    function calcOp(op) {
+      if (currentOp && prevInput !== '' && !justCalculated) {
+        calcEquals();
+      }
+      currentOp = op;
+      prevInput = currentInput;
+      justCalculated = true;
+      updateDisplay();
+    }
+
+    function calcEquals() {
+      if (!currentOp || prevInput === '') return;
+      const a = parseFloat(prevInput);
+      const b = parseFloat(currentInput);
+      let res = 0;
+
+      if (currentOp === '+') res = a + b;
+      else if (currentOp === '-') res = a - b;
+      else if (currentOp === '*') res = a * b;
+      else if (currentOp === '/') res = b !== 0 ? a / b : 'Error';
+
+      const opSym = { '+': '+', '-': '−', '*': '×', '/': '÷' }[currentOp] || currentOp;
+      const record = `${prevInput} ${opSym} ${currentInput} = ${res}`;
+      addHistory(record, res);
+
+      currentInput = String(res);
+      prevInput = '';
+      currentOp = null;
+      justCalculated = true;
+      updateDisplay();
+    }
+
+    function calcClear() {
+      currentInput = '0';
+      prevInput = '';
+      currentOp = null;
+      justCalculated = false;
+      updateDisplay();
+    }
+
+    function calcBackspace() {
+      if (justCalculated) {
+        calcClear();
+        return;
+      }
+      if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        currentInput = '0';
+      }
+      updateDisplay();
+    }
+
+    function calcPercent() {
+      const val = parseFloat(currentInput);
+      currentInput = String(val / 100);
+      updateDisplay();
+    }
+
+    function calcToggleSign() {
+      if (currentInput === '0') return;
+      if (currentInput.startsWith('-')) {
+        currentInput = currentInput.slice(1);
+      } else {
+        currentInput = '-' + currentInput;
+      }
+      updateDisplay();
+    }
+
+    function addHistory(text, res) {
+      historyTape.unshift({ text, val: res });
+      if (historyTape.length > 10) historyTape.pop();
+      renderTape();
+    }
+
+    function renderTape() {
+      const container = document.getElementById('tape_container');
+      if (historyTape.length === 0) {
+        container.innerHTML = '<div style="font-size:12px; color:var(--text-muted); text-align:center; padding: 10px 0;">No calculations yet.</div>';
+        return;
+      }
+      container.innerHTML = historyTape.map(item => `
+        <div class="tape-item" onclick="reuseValue('${item.val}')" title="Click to use ${item.val}">
+          <span>${item.text}</span>
+        </div>
+      `).join('');
+    }
+
+    function reuseValue(val) {
+      currentInput = String(val);
+      justCalculated = true;
+      updateDisplay();
+    }
+
+    function clearHistory() {
+      historyTape = [];
+      renderTape();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        calcNum(e.key);
+      } else if (e.key === '.') {
+        calcDot();
+      } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+        calcOp(e.key);
+      } else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        calcEquals();
+      } else if (e.key === 'Backspace') {
+        calcBackspace();
+      } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+        calcClear();
+      }
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>

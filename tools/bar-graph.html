@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bar Graph Maker - Free Online Chart Generator - RapidTables.online</title>
+  <meta name="description" content="Free online bar graph maker. Create custom vertical or horizontal bar charts with custom labels, colors, values, and export to high-resolution PNG image or SVG.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .chart-workspace {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .chart-workspace {
+        grid-template-columns: 1fr;
+      }
+      .chart-preview-card {
+        order: -1;
+      }
+    }
+    .chart-preview-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+    }
+    .chart-canvas-box {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+    #bar_canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .data-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Bar Graph Maker</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Bar Graph Maker (Online Bar Chart Creator)</h1>
+        <p class="subtitle">Quickly design custom vertical or horizontal bar charts with labels, colors, and export sharp PNG graphics for reports, school, or presentations.</p>
+      </div>
+
+      <div class="chart-workspace">
+        <div class="tool-box" style="margin-top: 0;">
+          <h3>1. Chart Title &amp; Axes</h3>
+          <div class="calc-grid-2">
+            <div class="calc-input-group">
+              <label for="chart_title">Graph Title</label>
+              <input type="text" id="chart_title" value="Monthly Sales Performance" oninput="drawBarChart()">
+            </div>
+            <div class="calc-input-group">
+              <label for="chart_type">Orientation</label>
+              <select id="chart_type" onchange="drawBarChart()">
+                <option value="vertical" selected>Vertical Columns</option>
+                <option value="horizontal">Horizontal Bars</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 20px;">2. Data Items</h3>
+          <div id="data_rows_container">
+            <!-- Dynamically populated rows -->
+          </div>
+
+          <button type="button" class="btn btn-secondary btn-sm" onclick="addDataRow()" style="margin-top: 6px;">➕ Add Data Bar</button>
+
+          <div style="margin-top: 24px; display:flex; gap:10px;">
+            <button class="btn btn-primary" onclick="downloadChartPNG()" style="flex:1;">⬇️ Download PNG Image</button>
+          </div>
+        </div>
+
+        <div class="chart-preview-card">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px;">Live Chart Preview</div>
+          <div class="chart-canvas-box">
+            <canvas id="bar_canvas" width="800" height="500"></canvas>
+          </div>
+          <div style="display:flex; justify-content:center; gap:8px;">
+            <button class="btn btn-secondary btn-sm" onclick="applyColorPalette('blue')">🔵 Blue Palette</button>
+            <button class="btn btn-secondary btn-sm" onclick="applyColorPalette('rainbow')">🌈 Multi Color</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Chart Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="pie-chart.html">Pie Chart Maker</a></li>
+          <li><a href="line-graph.html">Line Graph Maker</a></li>
+          <li><a href="csv-json-converter.html">CSV ⇄ JSON Converter</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let items = [
+      { label: 'Jan', val: 45, color: '#2563EB' },
+      { label: 'Feb', val: 68, color: '#38BDF8' },
+      { label: 'Mar', val: 92, color: '#10B981' },
+      { label: 'Apr', val: 78, color: '#F59E0B' },
+      { label: 'May', val: 110, color: '#8B5CF6' }
+    ];
+
+    const container = document.getElementById('data_rows_container');
+    const canvas = document.getElementById('bar_canvas');
+    const ctx = canvas.getContext('2d');
+
+    function renderRows() {
+      container.innerHTML = items.map((it, idx) => `
+        <div class="data-row">
+          <input type="text" value="${it.label}" placeholder="Label" style="flex:2;" class="input-control" oninput="items[${idx}].label=this.value; drawBarChart();">
+          <input type="number" value="${it.val}" placeholder="Value" style="flex:2;" class="input-control" oninput="items[${idx}].val=parseFloat(this.value)||0; drawBarChart();">
+          <input type="color" value="${it.color}" style="width:42px; height:38px; cursor:pointer; padding:2px;" onchange="items[${idx}].color=this.value; drawBarChart();">
+          <button type="button" onclick="removeRow(${idx})" style="background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function addDataRow() {
+      const colors = ['#2563EB', '#38BDF8', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+      items.push({ label: 'Item ' + (items.length + 1), val: Math.floor(Math.random() * 80) + 20, color: colors[items.length % colors.length] });
+      renderRows();
+      drawBarChart();
+    }
+
+    function removeRow(idx) {
+      if (items.length <= 1) return;
+      items.splice(idx, 1);
+      renderRows();
+      drawBarChart();
+    }
+
+    function applyColorPalette(type) {
+      if (type === 'blue') {
+        const blues = ['#1E3A8A', '#1D4ED8', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD'];
+        items.forEach((it, i) => it.color = blues[i % blues.length]);
+      } else {
+        const rainbow = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#06B6D4', '#3B82F6', '#8B5CF6'];
+        items.forEach((it, i) => it.color = rainbow[i % rainbow.length]);
+      }
+      renderRows();
+      drawBarChart();
+    }
+
+    function drawBarChart() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Background
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, w, h);
+
+      // Title
+      const title = document.getElementById('chart_title').value;
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, w / 2, 40);
+
+      const isVertical = document.getElementById('chart_type').value === 'vertical';
+      const maxVal = Math.max(...items.map(it => it.val), 10) * 1.15;
+
+      const padLeft = 80;
+      const padRight = 40;
+      const padTop = 80;
+      const padBottom = 60;
+      const chartW = w - padLeft - padRight;
+      const chartH = h - padTop - padBottom;
+
+      if (isVertical) {
+        // Grid lines
+        ctx.strokeStyle = '#E2E8F0';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = padTop + (chartH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(padLeft, y);
+          ctx.lineTo(w - padRight, y);
+          ctx.stroke();
+
+          const v = Math.round(maxVal - (maxVal / 4) * i);
+          ctx.fillStyle = '#64748B';
+          ctx.font = '12px sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(v.toString(), padLeft - 10, y + 4);
+        }
+
+        const barW = (chartW / items.length) * 0.65;
+        const gap = (chartW / items.length);
+
+        items.forEach((it, i) => {
+          const barH = (it.val / maxVal) * chartH;
+          const x = padLeft + gap * i + (gap - barW) / 2;
+          const y = padTop + chartH - barH;
+
+          // Bar
+          ctx.fillStyle = it.color;
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]) : ctx.fillRect(x, y, barW, barH);
+          ctx.fill();
+
+          // Value above bar
+          ctx.fillStyle = '#0F172A';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(it.val.toString(), x + barW / 2, y - 6);
+
+          // Label
+          ctx.fillStyle = '#475569';
+          ctx.font = '12px sans-serif';
+          ctx.fillText(it.label, x + barW / 2, padTop + chartH + 20);
+        });
+      } else {
+        // Horizontal Bars
+        const barH = (chartH / items.length) * 0.6;
+        const gap = chartH / items.length;
+
+        items.forEach((it, i) => {
+          const barW = (it.val / maxVal) * chartW;
+          const y = padTop + gap * i + (gap - barH) / 2;
+          const x = padLeft;
+
+          ctx.fillStyle = it.color;
+          ctx.fillRect(x, y, barW, barH);
+
+          // Value
+          ctx.fillStyle = '#0F172A';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(it.val.toString(), x + barW + 8, y + barH / 2 + 4);
+
+          // Label
+          ctx.fillStyle = '#475569';
+          ctx.font = '12px sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(it.label, padLeft - 10, y + barH / 2 + 4);
+        });
+      }
+    }
+
+    function downloadChartPNG() {
+      const a = document.createElement('a');
+      a.download = 'bar-chart.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    }
+
+    renderRows();
+    drawBarChart();
+  </script>
+</body>
+</html>

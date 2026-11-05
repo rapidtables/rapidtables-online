@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Countdown Timer - Set Timer with Loud Alarm - RapidTables.online</title>
+  <meta name="description" content="Free online countdown timer with loud alarm sound. Quick presets for 5 min, 10 min, 15 min, 25 min Pomodoro, and custom hours/minutes. Clean fullscreen presentation mode.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .timer-hero-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .timer-digits-display {
+      font-size: 72px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      letter-spacing: 2px;
+      margin: 16px 0;
+    }
+    @media (max-width: 600px) {
+      .timer-digits-display {
+        font-size: 46px;
+      }
+    }
+    .timer-progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 16px 0 24px;
+    }
+    [data-theme="dark"] .timer-progress-bar-bg {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .timer-progress-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--primary);
+      border-radius: 999px;
+      transition: width 0.3s linear;
+    }
+    .timer-presets-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .timer-preset-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .timer-preset-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .timer-custom-inputs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .timer-custom-inputs input {
+      width: 74px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Countdown Timer</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Countdown Timer</h1>
+        <p class="subtitle">Set an accurate countdown timer with audio alert chimes, Pomodoro study presets, and fullscreen classroom or workout display.</p>
+      </div>
+
+      <div class="timer-hero-box" id="timer_hero">
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;" id="timer_state_label">Timer Ready</div>
+        <div class="timer-digits-display" id="timer_display">05:00</div>
+
+        <div class="timer-progress-bar-bg">
+          <div class="timer-progress-bar-fill" id="timer_progress_fill"></div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap: 12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btn_timer_toggle" onclick="toggleTimer()" style="font-size: 16px; padding: 10px 28px;">▶️ Start</button>
+          <button class="btn btn-secondary" onclick="resetTimer()">🔄 Reset</button>
+          <button class="btn btn-secondary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Quick Presets</h3>
+        <div class="timer-presets-wrap">
+          <button type="button" class="timer-preset-btn" onclick="setPreset(1)">1 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(3)">3 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(5)">5 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(10)">10 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(15)">15 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(20)">20 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(25)">🍅 25m Pomodoro</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(30)">30 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(45)">45 Min</button>
+          <button type="button" class="timer-preset-btn" onclick="setPreset(60)">1 Hour</button>
+        </div>
+
+        <h3 style="margin-top: 24px;">Custom Time</h3>
+        <div class="timer-custom-inputs">
+          <div>
+            <label style="font-size: 12px; font-weight:600; color:var(--text-muted);">HOURS</label>
+            <input type="number" id="inp_h" class="input-control" min="0" max="99" value="0">
+          </div>
+          <span style="font-size: 24px; font-weight:700; margin-top:14px;">:</span>
+          <div>
+            <label style="font-size: 12px; font-weight:600; color:var(--text-muted);">MINUTES</label>
+            <input type="number" id="inp_m" class="input-control" min="0" max="59" value="5">
+          </div>
+          <span style="font-size: 24px; font-weight:700; margin-top:14px;">:</span>
+          <div>
+            <label style="font-size: 12px; font-weight:600; color:var(--text-muted);">SECONDS</label>
+            <input type="number" id="inp_s" class="input-control" min="0" max="59" value="0">
+          </div>
+          <button class="btn btn-secondary" onclick="applyCustomTime()" style="margin-top:18px;">Set Time</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Time Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="stopwatch.html">Stopwatch</a></li>
+          <li><a href="alarm-clock.html">Alarm Clock</a></li>
+          <li><a href="clock.html">Online Clock</a></li>
+          <li><a href="current-time.html">Current Time</a></li>
+          <li><a href="cps-test.html">CPS Speed Test</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Pomodoro Productivity</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          The Pomodoro Technique breaks work into <strong>25-minute focus intervals</strong> separated by 5-minute short breaks. After 4 intervals, take a longer 15-30 minute break!
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let totalSeconds = 300; // 5 min
+    let remainingSeconds = 300;
+    let timerRunning = false;
+    let timerInterval = null;
+    let alarmInterval = null;
+
+    function formatTime(secs) {
+      const h = Math.floor(secs / 3600);
+      const m = Math.floor((secs % 3600) / 60);
+      const s = secs % 60;
+
+      if (h > 0) {
+        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      } else {
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+    }
+
+    function updateDisplay() {
+      document.getElementById('timer_display').textContent = formatTime(remainingSeconds);
+      const pct = totalSeconds > 0 ? (remainingSeconds / totalSeconds) * 100 : 0;
+      document.getElementById('timer_progress_fill').style.width = `${pct}%`;
+      document.title = timerRunning ? `(${formatTime(remainingSeconds)}) Online Countdown Timer` : 'Online Countdown Timer - RapidTables.online';
+    }
+
+    function toggleTimer() {
+      if (timerRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      if (remainingSeconds <= 0) return;
+      stopAlarm();
+      timerRunning = true;
+      document.getElementById('btn_timer_toggle').textContent = '⏸️ Pause';
+      document.getElementById('btn_timer_toggle').classList.remove('btn-primary');
+      document.getElementById('btn_timer_toggle').classList.add('btn-secondary');
+      document.getElementById('timer_state_label').textContent = 'Timer Running...';
+
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        updateDisplay();
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerRunning = false;
+          triggerFinished();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('btn_timer_toggle').textContent = '▶️ Resume';
+      document.getElementById('btn_timer_toggle').classList.remove('btn-secondary');
+      document.getElementById('btn_timer_toggle').classList.add('btn-primary');
+      document.getElementById('timer_state_label').textContent = 'Timer Paused';
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      stopAlarm();
+      timerRunning = false;
+      remainingSeconds = totalSeconds;
+      document.getElementById('btn_timer_toggle').textContent = '▶️ Start';
+      document.getElementById('btn_timer_toggle').classList.remove('btn-secondary');
+      document.getElementById('btn_timer_toggle').classList.add('btn-primary');
+      document.getElementById('timer_state_label').textContent = 'Timer Ready';
+      updateDisplay();
+    }
+
+    function setPreset(mins) {
+      stopAlarm();
+      totalSeconds = mins * 60;
+      remainingSeconds = totalSeconds;
+      resetTimer();
+    }
+
+    function applyCustomTime() {
+      stopAlarm();
+      const h = parseInt(document.getElementById('inp_h').value, 10) || 0;
+      const m = parseInt(document.getElementById('inp_m').value, 10) || 0;
+      const s = parseInt(document.getElementById('inp_s').value, 10) || 0;
+      totalSeconds = (h * 3600) + (m * 60) + s;
+      if (totalSeconds <= 0) totalSeconds = 60;
+      remainingSeconds = totalSeconds;
+      resetTimer();
+    }
+
+    function playBeep() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function triggerFinished() {
+      document.getElementById('timer_state_label').textContent = '⏰ TIME IS UP!';
+      document.getElementById('btn_timer_toggle').textContent = '🔕 Stop Sound';
+
+      playBeep();
+      alarmInterval = setInterval(playBeep, 600);
+    }
+
+    function stopAlarm() {
+      if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+      }
+    }
+
+    function toggleFullscreen() {
+      const hero = document.getElementById('timer_hero');
+      if (!document.fullscreenElement) {
+        hero.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>

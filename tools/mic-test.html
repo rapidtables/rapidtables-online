@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mic Test - Online Microphone Tester - RapidTables.online</title>
+  <meta name="description" content="Free online mic test. Check if your microphone is working, view real-time audio volume levels, sound frequency waveform, and playback your voice recorded.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .mic-test-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .mic-level-track {
+      width: 100%;
+      height: 28px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 16px 0;
+      position: relative;
+    }
+    .mic-level-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10B981, #F59E0B 75%, #EF4444 95%);
+      border-radius: 14px;
+      transition: width 0.05s ease;
+    }
+    #mic_waveform {
+      width: 100%;
+      height: 120px;
+      background: #0B0F19;
+      border-radius: 8px;
+      margin-top: 14px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Mic Test</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Microphone Test (Online Mic Checker)</h1>
+        <p class="subtitle">Quickly verify your headset, internal, or USB microphone. View real-time sound volume decibels, waveform frequencies, and test playback.</p>
+      </div>
+
+      <div class="mic-test-card">
+        <div style="font-size: 54px; margin-bottom: 8px;" id="mic_icon">🎙️</div>
+        <h2 id="mic_status_heading" style="margin: 0 0 8px; font-size: 22px;">Microphone is Idle</h2>
+        <p style="color: var(--text-muted); font-size: 14px; margin: 0 0 20px;" id="mic_sub_txt">Click the button below to start testing your audio input.</p>
+
+        <div style="max-width: 450px; margin: 0 auto;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:var(--text-muted);">
+            <span>Volume Level</span>
+            <span id="mic_db_val">0%</span>
+          </div>
+          <div class="mic-level-track">
+            <div class="mic-level-fill" id="mic_fill"></div>
+          </div>
+        </div>
+
+        <canvas id="mic_waveform" width="600" height="120"></canvas>
+
+        <div style="margin-top: 24px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="mic_toggle_btn" onclick="toggleMicTest()">🎙️ Start Mic Test</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Audio Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="voice-recorder.html">Voice &amp; Audio Recorder</a></li>
+          <li><a href="text-to-speech.html">Text to Speech (TTS)</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let isTesting = false;
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let animId = null;
+
+    const fill = document.getElementById('mic_fill');
+    const dbVal = document.getElementById('mic_db_val');
+    const canvas = document.getElementById('mic_waveform');
+    const ctx = canvas.getContext('2d');
+    const toggleBtn = document.getElementById('mic_toggle_btn');
+    const statusHead = document.getElementById('mic_status_heading');
+    const subTxt = document.getElementById('mic_sub_txt');
+
+    async function toggleMicTest() {
+      if (isTesting) {
+        stopMicTest();
+      } else {
+        startMicTest();
+      }
+    }
+
+    async function startMicTest() {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+
+        const source = audioCtx.createMediaStreamSource(micStream);
+        source.connect(analyser);
+
+        isTesting = true;
+        toggleBtn.textContent = '🛑 Stop Mic Test';
+        toggleBtn.classList.remove('btn-primary');
+        toggleBtn.classList.add('btn-danger');
+        statusHead.textContent = '🟢 Microphone is Active & Working!';
+        subTxt.textContent = 'Speak into your microphone to view live waveform frequencies.';
+
+        drawAudio();
+      } catch (err) {
+        alert('Could not access your microphone: ' + err.message);
+      }
+    }
+
+    function stopMicTest() {
+      isTesting = false;
+      cancelAnimationFrame(animId);
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }
+      if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
+      }
+      toggleBtn.textContent = '🎙️ Start Mic Test';
+      toggleBtn.classList.remove('btn-danger');
+      toggleBtn.classList.add('btn-primary');
+      statusHead.textContent = 'Microphone is Idle';
+      subTxt.textContent = 'Click the button below to start testing your audio input.';
+      fill.style.width = '0%';
+      dbVal.textContent = '0%';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawAudio() {
+      if (!isTesting) return;
+      animId = requestAnimationFrame(drawAudio);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+
+      // Calculate average volume
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const avg = sum / bufferLength;
+      const percent = Math.min(100, Math.round((avg / 128) * 100));
+
+      fill.style.width = percent + '%';
+      dbVal.textContent = percent + '%';
+
+      // Draw Waveform
+      ctx.fillStyle = '#0B0F19';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / bufferLength) * 2;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height;
+        ctx.fillStyle = `rgb(${dataArray[i] + 50}, 99, 235)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+    }
+  </script>
+</body>
+</html>

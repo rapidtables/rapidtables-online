@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Chart Maker - Create Bar, Line, Pie &amp; Donut Charts - RapidTables.online</title>
+  <meta name="description" content="Free online chart maker. Create professional bar charts, line graphs, pie charts, and doughnut charts with custom labels, colors, and high-resolution PNG export.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .chart-preview-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .chart-canvas {
+      width: 100%;
+      max-width: 720px;
+      height: 400px;
+      margin: 0 auto;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .chart-canvas {
+        height: 280px;
+      }
+    }
+    .data-table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .data-table th, .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .data-table th {
+      background: rgba(0, 0, 0, 0.03);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    [data-theme="dark"] .data-table th {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Online Chart Maker</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Chart &amp; Graph Maker</h1>
+        <p class="subtitle">Design beautiful, publication-ready Bar Charts, Line Graphs, Pie Charts, and Doughnut Charts. Free, client-side, with instant PNG export.</p>
+      </div>
+
+      <div class="chart-preview-box">
+        <canvas id="chart_canvas" class="chart-canvas"></canvas>
+        <div style="margin-top: 20px; display:flex; justify-content:center; gap: 12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="downloadChartPNG()">⬇️ Download High-Res PNG</button>
+          <button class="btn btn-secondary" onclick="renderChart()">🔄 Refresh Chart</button>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Chart Configuration</h3>
+        <div class="calc-grid-3">
+          <div class="calc-input-group">
+            <label for="chart_type">Chart Type</label>
+            <select id="chart_type" class="input-control" onchange="renderChart()">
+              <option value="bar" selected>Vertical Bar Chart</option>
+              <option value="horizontal-bar">Horizontal Bar Chart</option>
+              <option value="line">Line Graph</option>
+              <option value="pie">Pie Chart</option>
+              <option value="donut">Doughnut Chart</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="chart_title">Chart Title</label>
+            <input type="text" id="chart_title" class="input-control" value="Monthly Performance Overview" oninput="renderChart()">
+          </div>
+          <div class="calc-input-group">
+            <label for="chart_palette">Color Theme</label>
+            <select id="chart_palette" class="input-control" onchange="applyPalette(this.value)">
+              <option value="corporate" selected>Corporate Blue</option>
+              <option value="vibrant">Vibrant Rainbow</option>
+              <option value="emerald">Emerald Forest</option>
+              <option value="sunset">Sunset Orange</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 24px;">
+          <h3 style="margin:0;">Chart Data Table</h3>
+          <button class="btn btn-secondary" onclick="addRow()">➕ Add Data Row</button>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Data Label</th>
+                <th style="width: 30%;">Value (Number)</th>
+                <th style="width: 10%;">Color</th>
+                <th style="width: 10%;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="data_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Chart Suite</h3>
+        <ul class="sidebar-links">
+          <li><a href="bar-graph.html">Bar Graph Maker</a></li>
+          <li><a href="pie-chart.html">Pie Chart Maker</a></li>
+          <li><a href="line-graph.html">Line Graph Maker</a></li>
+          <li><a href="ruler.html">Screen Ruler</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h3>Vector Graphics</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          • All charts are rendered dynamically using high-DPI HTML5 Canvas for crisp lines on 4K retina displays.<br>
+          • Downloaded PNG files include transparent anti-aliased geometry.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    const PALETTES = {
+      corporate: ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#1D4ED8', '#1E40AF'],
+      vibrant: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899'],
+      emerald: ['#059669', '#10B981', '#34D399', '#6EE7B7', '#047857', '#065F46'],
+      sunset: ['#DC2626', '#EA580C', '#F59E0B', '#FBBF24', '#B91C1C', '#C2410C']
+    };
+
+    let chartData = [
+      { label: 'January', val: 65, color: '#2563EB' },
+      { label: 'February', val: 80, color: '#3B82F6' },
+      { label: 'March', val: 95, color: '#60A5FA' },
+      { label: 'April', val: 75, color: '#93C5FD' },
+      { label: 'May', val: 110, color: '#1D4ED8' }
+    ];
+
+    function applyPalette(palName) {
+      const colors = PALETTES[palName] || PALETTES.corporate;
+      chartData.forEach((item, idx) => {
+        item.color = colors[idx % colors.length];
+      });
+      renderTable();
+      renderChart();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('data_tbody');
+      tbody.innerHTML = chartData.map((item, idx) => `
+        <tr>
+          <td>
+            <input type="text" class="input-control" value="${escapeHtml(item.label)}" oninput="updateLabel(${idx}, this.value)">
+          </td>
+          <td>
+            <input type="number" class="input-control" value="${item.val}" oninput="updateVal(${idx}, this.value)">
+          </td>
+          <td>
+            <input type="color" value="${item.color}" onchange="updateColor(${idx}, this.value)" style="width:40px; height:34px; padding:2px; border:none; cursor:pointer;">
+          </td>
+          <td>
+            <button class="btn btn-danger" onclick="deleteRow(${idx})" style="padding: 4px 8px; font-size:12px;">✕</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function addRow() {
+      const colors = PALETTES[document.getElementById('chart_palette').value] || PALETTES.corporate;
+      chartData.push({
+        label: `Item ${chartData.length + 1}`,
+        val: Math.floor(Math.random() * 80) + 20,
+        color: colors[chartData.length % colors.length]
+      });
+      renderTable();
+      renderChart();
+    }
+
+    function deleteRow(idx) {
+      if (chartData.length <= 1) {
+        alert('You must have at least one data row.');
+        return;
+      }
+      chartData.splice(idx, 1);
+      renderTable();
+      renderChart();
+    }
+
+    function updateLabel(idx, val) {
+      chartData[idx].label = val;
+      renderChart();
+    }
+
+    function updateVal(idx, val) {
+      chartData[idx].val = parseFloat(val) || 0;
+      renderChart();
+    }
+
+    function updateColor(idx, val) {
+      chartData[idx].color = val;
+      renderChart();
+    }
+
+    function renderChart() {
+      const canvas = document.getElementById('chart_canvas');
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+      const type = document.getElementById('chart_type').value;
+      const title = document.getElementById('chart_title').value;
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#f1f5f9' : '#0f172a';
+      const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Title
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 18px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, width / 2, 28);
+
+      if (chartData.length === 0) return;
+
+      if (type === 'bar') {
+        drawBarChart(ctx, width, height, textColor, gridColor);
+      } else if (type === 'horizontal-bar') {
+        drawHorizontalBarChart(ctx, width, height, textColor, gridColor);
+      } else if (type === 'line') {
+        drawLineChart(ctx, width, height, textColor, gridColor);
+      } else if (type === 'pie' || type === 'donut') {
+        drawPieChart(ctx, width, height, textColor, type === 'donut');
+      }
+    }
+
+    function drawBarChart(ctx, width, height, textColor, gridColor) {
+      const padLeft = 60;
+      const padRight = 30;
+      const padTop = 60;
+      const padBottom = 50;
+
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      const maxVal = Math.max(...chartData.map(d => d.val), 10);
+      const niceMax = Math.ceil(maxVal * 1.15);
+
+      // Grid lines
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      ctx.fillStyle = textColor;
+      ctx.font = '11px system-ui, sans-serif';
+      ctx.textAlign = 'right';
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padTop + (plotH / 5) * i;
+        const v = Math.round(niceMax - (niceMax / 5) * i);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+        ctx.fillText(v, padLeft - 8, y + 4);
+      }
+
+      // Bars
+      const n = chartData.length;
+      const barSlot = plotW / n;
+      const barWidth = Math.min(barSlot * 0.65, 50);
+
+      chartData.forEach((d, i) => {
+        const x = padLeft + barSlot * i + (barSlot - barWidth) / 2;
+        const bH = (d.val / niceMax) * plotH;
+        const y = padTop + plotH - bH;
+
+        ctx.fillStyle = d.color;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(x, y, barWidth, bH, [4, 4, 0, 0]) : ctx.rect(x, y, barWidth, bH);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, x + barWidth / 2, height - padBottom + 18);
+        ctx.fillText(d.val, x + barWidth / 2, y - 6);
+      });
+    }
+
+    function drawHorizontalBarChart(ctx, width, height, textColor, gridColor) {
+      const padLeft = 90;
+      const padRight = 40;
+      const padTop = 60;
+      const padBottom = 40;
+
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+      const maxVal = Math.max(...chartData.map(d => d.val), 10);
+      const niceMax = Math.ceil(maxVal * 1.15);
+
+      const n = chartData.length;
+      const barSlot = plotH / n;
+      const barH = Math.min(barSlot * 0.65, 34);
+
+      chartData.forEach((d, i) => {
+        const y = padTop + barSlot * i + (barSlot - barH) / 2;
+        const bW = (d.val / niceMax) * plotW;
+
+        ctx.fillStyle = d.color;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(padLeft, y, bW, barH, [0, 4, 4, 0]) : ctx.rect(padLeft, y, bW, barH);
+        ctx.fill();
+
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'right';
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillText(d.label, padLeft - 10, y + barH / 2 + 4);
+
+        ctx.textAlign = 'left';
+        ctx.fillText(d.val, padLeft + bW + 6, y + barH / 2 + 4);
+      });
+    }
+
+    function drawLineChart(ctx, width, height, textColor, gridColor) {
+      const padLeft = 60;
+      const padRight = 40;
+      const padTop = 60;
+      const padBottom = 50;
+
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+      const maxVal = Math.max(...chartData.map(d => d.val), 10);
+      const niceMax = Math.ceil(maxVal * 1.15);
+
+      // Grid
+      ctx.strokeStyle = gridColor;
+      ctx.fillStyle = textColor;
+      ctx.font = '11px system-ui, sans-serif';
+      ctx.textAlign = 'right';
+
+      for (let i = 0; i <= 5; i++) {
+        const y = padTop + (plotH / 5) * i;
+        const v = Math.round(niceMax - (niceMax / 5) * i);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+        ctx.fillText(v, padLeft - 8, y + 4);
+      }
+
+      const n = chartData.length;
+      const stepX = plotW / (n - 1 || 1);
+      const points = chartData.map((d, i) => ({
+        x: padLeft + stepX * i,
+        y: padTop + plotH - (d.val / niceMax) * plotH,
+        val: d.val,
+        label: d.label
+      }));
+
+      // Line
+      ctx.strokeStyle = '#2563EB';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      points.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.stroke();
+
+      // Points & Labels
+      points.forEach(p => {
+        ctx.fillStyle = '#2563EB';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, p.x, height - padBottom + 18);
+        ctx.fillText(p.val, p.x, p.y - 10);
+      });
+    }
+
+    function drawPieChart(ctx, width, height, textColor, isDonut) {
+      const centerX = width * 0.42;
+      const centerY = height * 0.55;
+      const radius = Math.min(centerX, centerY) - 30;
+      const total = chartData.reduce((acc, d) => acc + d.val, 0);
+
+      let startAngle = -0.5 * Math.PI;
+
+      chartData.forEach(d => {
+        const sliceAngle = total > 0 ? (d.val / total) * 2 * Math.PI : 0;
+        ctx.fillStyle = d.color;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fill();
+        startAngle += sliceAngle;
+      });
+
+      if (isDonut) {
+        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#1e293b' : '#ffffff';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.55, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Legend on right
+      const legendX = width * 0.72;
+      let legendY = height * 0.35;
+      ctx.textAlign = 'left';
+      ctx.font = '12px system-ui, sans-serif';
+
+      chartData.forEach(d => {
+        const pct = total > 0 ? ((d.val / total) * 100).toFixed(1) : 0;
+        ctx.fillStyle = d.color;
+        ctx.fillRect(legendX, legendY - 10, 12, 12);
+        ctx.fillStyle = textColor;
+        ctx.fillText(`${d.label}: ${pct}%`, legendX + 20, legendY);
+        legendY += 24;
+      });
+    }
+
+    function downloadChartPNG() {
+      const canvas = document.getElementById('chart_canvas');
+      const link = document.createElement('a');
+      link.download = `${document.getElementById('chart_title').value.replace(/\s+/g, '-').toLowerCase() || 'chart'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTable();
+      renderChart();
+      window.addEventListener('resize', renderChart);
+    });
+  </script>
+</body>
+</html>

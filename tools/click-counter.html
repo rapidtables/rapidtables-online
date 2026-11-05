@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Counter Online - Free Tally Counter - RapidTables.online</title>
+  <meta name="description" content="Free online click counter and tally counter. Count clicks with big tap button, keyboard spacebar support, sound effects, step size, reset, and browser autosave.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .counter-display-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 32px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .counter-number {
+      font-size: 84px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      line-height: 1;
+      margin: 16px 0;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+    .counter-number.bump {
+      transform: scale(1.08);
+    }
+    .counter-main-btn {
+      width: 100%;
+      max-width: 380px;
+      height: 120px;
+      font-size: 32px;
+      font-weight: 800;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), #1d4ed8);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+      transition: all 0.1s ease;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      user-select: none;
+    }
+    .counter-main-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .counter-controls-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .counter-sec-btn {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .counter-sec-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Click Counter Online</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Click Counter Online (Tally Counter)</h1>
+        <p class="subtitle">Free online tally click counter. Tap the large button, press Spacebar, or use arrow keys to count items, people, inventory, or repetitions.</p>
+      </div>
+
+      <div class="counter-display-card">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Current Count</div>
+        <div class="counter-number" id="count_display">0</div>
+
+        <button type="button" class="counter-main-btn" id="click_btn" onclick="incrementCount()">
+          <span>+ CLICK</span>
+        </button>
+
+        <div class="counter-controls-row">
+          <button type="button" class="counter-sec-btn" onclick="decrementCount()">➖ Decrement (-1)</button>
+          <button type="button" class="counter-sec-btn" onclick="resetCount()">🔄 Reset (0)</button>
+          <button type="button" class="counter-sec-btn" id="sound_toggle_btn" onclick="toggleSound()">🔊 Sound: ON</button>
+        </div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Counter Settings</h3>
+        <div class="calc-grid-3">
+          <div class="calc-input-group">
+            <label for="step_size">Count Step Size</label>
+            <input type="number" id="step_size" value="1" min="1" step="1">
+          </div>
+          <div class="calc-input-group">
+            <label for="initial_val">Set Initial Value</label>
+            <input type="number" id="initial_val" value="0" step="1" onchange="setInitialVal(this.value)">
+          </div>
+          <div class="calc-input-group">
+            <label for="counter_title">Counter Label / Title</label>
+            <input type="text" id="counter_title" placeholder="e.g. Attendance, Laps" oninput="saveCounterState()">
+          </div>
+        </div>
+      </div>
+
+      <section class="info-card" style="margin-top: 24px;">
+        <h2>Keyboard Shortcuts</h2>
+        <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-muted);">
+          <li><strong>Spacebar / Arrow Up / Enter:</strong> Increment count (+1)</li>
+          <li><strong>Arrow Down / Minus (-):</strong> Decrement count (-1)</li>
+          <li><strong>Key 'R':</strong> Reset counter to zero</li>
+        </ul>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Everyday Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="stopwatch.html">Online Stopwatch &amp; Timer</a></li>
+          <li><a href="notepad.html">Online Notepad</a></li>
+          <li><a href="qr-code-generator.html">QR Code Generator</a></li>
+          <li><a href="barcode-generator.html">Barcode Generator</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let count = parseInt(localStorage.getItem('rapid_click_count') || '0', 10);
+    let soundEnabled = true;
+
+    const display = document.getElementById('count_display');
+    const stepInput = document.getElementById('step_size');
+
+    function updateDisplay() {
+      display.textContent = count.toLocaleString();
+      localStorage.setItem('rapid_click_count', count);
+      display.classList.remove('bump');
+      void display.offsetWidth;
+      display.classList.add('bump');
+    }
+
+    function playBeep(freq = 600) {
+      if (!soundEnabled) return;
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function incrementCount() {
+      const step = parseInt(stepInput.value, 10) || 1;
+      count += step;
+      playBeep(700);
+      updateDisplay();
+    }
+
+    function decrementCount() {
+      const step = parseInt(stepInput.value, 10) || 1;
+      count -= step;
+      playBeep(450);
+      updateDisplay();
+    }
+
+    function resetCount() {
+      count = 0;
+      updateDisplay();
+    }
+
+    function setInitialVal(v) {
+      count = parseInt(v, 10) || 0;
+      updateDisplay();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound_toggle_btn').textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'Enter') {
+        e.preventDefault();
+        incrementCount();
+      } else if (e.key === 'ArrowDown' || e.key === '-') {
+        e.preventDefault();
+        decrementCount();
+      } else if (e.key.toLowerCase() === 'r') {
+        resetCount();
+      }
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>

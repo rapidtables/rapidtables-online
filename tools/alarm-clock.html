@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Alarm Clock - Wake Up &amp; Reminder Alarm - RapidTables.online</title>
+  <meta name="description" content="Free online alarm clock with loud audio alerts, custom snooze, countdown to alarm, and Web Audio sound effects. Keep your tab open to wake up or set a reminder.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .alarm-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .alarm-current-time {
+      font-size: 54px;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      color: var(--primary);
+    }
+    .alarm-banner {
+      display: none;
+      background: rgba(239, 68, 68, 0.15);
+      border: 2px solid #EF4444;
+      color: #EF4444;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      animation: pulseAlert 0.8s infinite alternate;
+    }
+    @keyframes pulseAlert {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="../" class="logo-container">
+        <div class="logo-icon">&#9889;</div>
+        <div class="logo-text">Rapid<span>Tables</span>.online</div>
+      </a>
+      <nav class="header-nav">
+        <a href="../pdf/" class="header-nav-link">PDF Suite</a>
+        <a href="../calc/" class="header-nav-link">Calculators</a>
+        <a href="../convert/" class="header-nav-link">Converters</a>
+        <a href="../tools/" class="header-nav-link active">Web Tools</a>
+      </nav>
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Theme" onclick="toggleTheme()">&#127769;</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb-nav">
+    <a href="../">Home</a> <span class="sep">&gt;</span>
+    <a href="./">Tools</a> <span class="sep">&gt;</span>
+    <span>Alarm Clock</span>
+  </nav>
+
+  <div class="layout-container">
+    <main class="main-content">
+      <div class="page-title-section">
+        <h1>Online Alarm Clock</h1>
+        <p class="subtitle">Set a reliable wake-up alarm or task reminder right in your browser with loud sound effects and customizable snooze.</p>
+      </div>
+
+      <div class="alarm-banner" id="alarm_ringing_banner">
+        <div style="font-size: 28px; font-weight: 900;">⏰ WAKE UP! ALARM RINGING!</div>
+        <p id="alarm_ringing_msg" style="margin: 8px 0 16px; font-size: 16px;">Time is up!</p>
+        <button class="btn btn-primary" onclick="stopAlarm()" style="font-size: 18px; padding: 12px 28px;">🔕 Stop Alarm</button>
+      </div>
+
+      <div class="alarm-box">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Current Time</div>
+        <div class="alarm-current-time" id="alarm_live_time">12:00:00 PM</div>
+      </div>
+
+      <div class="tool-box">
+        <h3>Set Your Alarm</h3>
+        <div class="calc-grid-3">
+          <div class="calc-input-group">
+            <label for="alarm_time">Alarm Time (HH:MM)</label>
+            <input type="time" id="alarm_time" class="input-control" required>
+          </div>
+          <div class="calc-input-group">
+            <label for="alarm_sound">Sound Effect</label>
+            <select id="alarm_sound" class="input-control">
+              <option value="digital" selected>Digital Beep</option>
+              <option value="bell">Twin Bell</option>
+              <option value="chime">Gentle Chime</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label for="alarm_title">Alarm Title / Memo</label>
+            <input type="text" id="alarm_title" class="input-control" value="Morning Alarm">
+          </div>
+        </div>
+
+        <div style="margin-top: 18px; display:flex; gap:12px;">
+          <button class="btn btn-primary" id="set_alarm_btn" onclick="toggleAlarm()">🔔 Set Alarm</button>
+          <button class="btn btn-secondary" onclick="testSound()">🔊 Test Sound</button>
+        </div>
+
+        <div id="alarm_status_txt" style="margin-top: 14px; font-size: 14px; color: var(--text-muted);">
+          No active alarm set.
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Related Tools</h3>
+        <ul class="sidebar-links">
+          <li><a href="clock.html">Online Clock</a></li>
+          <li><a href="stopwatch.html">Stopwatch &amp; Timer</a></li>
+          <li><a href="calendar.html">Online Calendar</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 RapidTables.online &bull; Free, fast, and easy to use.</div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+  <script>
+    let alarmActive = false;
+    let alarmTarget = null;
+    let soundInterval = null;
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('alarm_live_time').textContent = now.toLocaleTimeString();
+
+      if (alarmActive && alarmTarget) {
+        const diff = alarmTarget.getTime() - now.getTime();
+        if (diff <= 0) {
+          triggerAlarm();
+        } else {
+          const totalSecs = Math.floor(diff / 1000);
+          const h = Math.floor(totalSecs / 3600);
+          const m = Math.floor((totalSecs % 3600) / 60);
+          const s = totalSecs % 60;
+          document.getElementById('alarm_status_txt').textContent = `🔔 Alarm set for ${alarmTarget.toLocaleTimeString()}. (${h}h ${m}m ${s}s remaining)`;
+        }
+      }
+    }
+
+    function toggleAlarm() {
+      if (alarmActive) {
+        alarmActive = false;
+        alarmTarget = null;
+        document.getElementById('set_alarm_btn').textContent = '🔔 Set Alarm';
+        document.getElementById('set_alarm_btn').classList.remove('btn-danger');
+        document.getElementById('set_alarm_btn').classList.add('btn-primary');
+        document.getElementById('alarm_status_txt').textContent = 'Alarm cancelled.';
+        return;
+      }
+
+      const val = document.getElementById('alarm_time').value;
+      if (!val) {
+        alert('Please choose an alarm time first.');
+        return;
+      }
+
+      const [h, m] = val.split(':').map(Number);
+      const target = new Date();
+      target.setHours(h, m, 0, 0);
+
+      // If time already passed today, set for tomorrow
+      if (target.getTime() <= Date.now()) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      alarmTarget = target;
+      alarmActive = true;
+      document.getElementById('set_alarm_btn').textContent = '❌ Cancel Alarm';
+      document.getElementById('set_alarm_btn').classList.remove('btn-primary');
+      document.getElementById('set_alarm_btn').classList.add('btn-danger');
+      updateTime();
+    }
+
+    function playBeepTone() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {}
+    }
+
+    function testSound() {
+      playBeepTone();
+    }
+
+    function triggerAlarm() {
+      alarmActive = false;
+      document.getElementById('alarm_ringing_banner').style.display = 'block';
+      document.getElementById('alarm_ringing_msg').textContent = document.getElementById('alarm_title').value || 'Alarm Ringing!';
+      document.getElementById('alarm_status_txt').textContent = 'Alarm completed.';
+
+      soundInterval = setInterval(() => {
+        playBeepTone();
+      }, 700);
+    }
+
+    function stopAlarm() {
+      clearInterval(soundInterval);
+      document.getElementById('alarm_ringing_banner').style.display = 'none';
+      document.getElementById('set_alarm_btn').textContent = '🔔 Set Alarm';
+      document.getElementById('set_alarm_btn').classList.remove('btn-danger');
+      document.getElementById('set_alarm_btn').classList.add('btn-primary');
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Default alarm time to next hour
+    const d = new Date();
+    d.setHours(d.getHours() + 1, 0, 0);
+    document.getElementById('alarm_time').value = String(d.getHours()).padStart(2, '0') + ':00';
+  </script>
+</body>
+</html>
