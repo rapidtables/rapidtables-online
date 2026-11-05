@@ -1,0 +1,26 @@
+{
+  "ads": {
+    "enabled": false,
+    "pubId": ""
+  },
+  "scripts": {
+    "ga4Id": "",
+    "gtmId": "",
+    "headCode": "",
+    "bodyCode": ""
+  },
+  "announcement": {
+    "enabled": false,
+    "text": "",
+    "link": "",
+    "btnText": "",
+    "theme": "blue"
+  },
+  "headerFooter": {
+    "logoText": "⚡ RapidTables.online",
+    "supportEmail": "support@rapidtables.online",
+    "copyrightText": "© 2026 RapidTables.online. All rights reserved."
+  },
+  "globalNoindex": false,
+  "updatedAt": "2026-11-05T20:55:00Z"
+}

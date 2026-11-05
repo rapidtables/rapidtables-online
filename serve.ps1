@@ -43,6 +43,165 @@ try {
             $rawPath = $request.Url.LocalPath
             $urlPath = [System.Uri]::UnescapeDataString($rawPath)
 
+            # Handle API requests (CPX Super Admin & Dynamic Settings)
+            if ($urlPath -match "^/api/") {
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.Headers.Add("Access-Control-Allow-Origin", "*")
+                $response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                $response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                
+                if ($request.HttpMethod -eq "OPTIONS") {
+                    $response.StatusCode = 200
+                    $response.Close()
+                    continue
+                }
+
+                $body = ""
+                if ($request.HasEntityBody) {
+                    $reader = New-Object System.IO.StreamReader($request.InputStream, $request.ContentEncoding)
+                    $body = $reader.ReadToEnd()
+                    $reader.Close()
+                }
+
+                if ($urlPath -eq "/api/site-settings") {
+                    $settingsPath = [System.IO.Path]::Combine($root, "data", "site-settings.json")
+                    $jsonContent = if (Test-Path $settingsPath) { [System.IO.File]::ReadAllText($settingsPath) } else { "{}" }
+                    $respBytes = [System.Text.Encoding]::UTF8.GetBytes($jsonContent)
+                    $response.StatusCode = 200
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/session") {
+                    $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"user":"rapidtabless@gmail.com"}')
+                    $response.StatusCode = 200
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/pages") {
+                    $seoJsonPath = [System.IO.Path]::Combine($root, "scratch", "real_pages_seo.json")
+                    $jsonContent = if (Test-Path $seoJsonPath) { [System.IO.File]::ReadAllText($seoJsonPath) } else { "[]" }
+                    $respBytes = [System.Text.Encoding]::UTF8.GetBytes($jsonContent)
+                    $response.StatusCode = 200
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/page/update") {
+                    $data = $body | ConvertFrom-Json
+                    $fp = ($data.filepath -replace '^/','').Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+                    $targetPath = [System.IO.Path]::Combine($root, $fp)
+                    if (Test-Path $targetPath) {
+                        $html = [System.IO.File]::ReadAllText($targetPath)
+                        if ($data.title) {
+                            $html = [System.Text.RegularExpressions.Regex]::Replace($html, '(?si)<title>.*?</title>', "<title>$($data.title)</title>")
+                        }
+                        if ($data.description) {
+                            $html = [System.Text.RegularExpressions.Regex]::Replace($html, '(?si)<meta\s+name=["'']description["'']\s+content=["''].*?["'']', "<meta name=`"description`" content=`"$($data.description)`"")
+                        }
+                        if ($data.keywords) {
+                            $html = [System.Text.RegularExpressions.Regex]::Replace($html, '(?si)<meta\s+name=["'']keywords["'']\s+content=["''].*?["'']', "<meta name=`"keywords`" content=`"$($data.keywords)`"")
+                        }
+                        if ($data.canonical) {
+                            $html = [System.Text.RegularExpressions.Regex]::Replace($html, '(?si)<link\s+rel=["'']canonical["'']\s+href=["''].*?["'']', "<link rel=`"canonical`" href=`"$($data.canonical)`"")
+                        }
+                        if ($null -ne $data.isNoindex) {
+                            $tag = if ($data.isNoindex) { '<meta name="robots" content="noindex, nofollow">' } else { '<meta name="robots" content="index, follow">' }
+                            if ($html -match '(?si)<meta\s+name=["'']robots["'']') {
+                                $html = [System.Text.RegularExpressions.Regex]::Replace($html, '(?si)<meta\s+name=["'']robots["''].*?>', $tag)
+                            } else {
+                                $html = $html.Replace('<head>', "<head>`n  $tag")
+                            }
+                        }
+                        [System.IO.File]::WriteAllText($targetPath, $html, [System.Text.Encoding]::UTF8)
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"message":"Saved to disk"}')
+                        $response.StatusCode = 200
+                    } else {
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":false,"error":"File not found"}')
+                        $response.StatusCode = 404
+                    }
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/page/code") {
+                    if ($request.HttpMethod -eq "GET") {
+                        $fileParam = $request.QueryString["file"]
+                        $fp = ($fileParam -replace '^/','').Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+                        $targetPath = [System.IO.Path]::Combine($root, $fp)
+                        if (Test-Path $targetPath) {
+                            $code = [System.IO.File]::ReadAllText($targetPath)
+                            $respObj = @{ success = $true; filename = $fileParam; content = $code }
+                            $respJson = $respObj | ConvertTo-Json
+                            $respBytes = [System.Text.Encoding]::UTF8.GetBytes($respJson)
+                            $response.StatusCode = 200
+                        } else {
+                            $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":false,"error":"File not found"}')
+                            $response.StatusCode = 404
+                        }
+                    } else {
+                        $data = $body | ConvertFrom-Json
+                        $fileParam = if ($data.filename) { $data.filename } else { $data.filepath }
+                        $fp = ($fileParam -replace '^/','').Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+                        $targetPath = [System.IO.Path]::Combine($root, $fp)
+                        [System.IO.File]::WriteAllText($targetPath, $data.content, [System.Text.Encoding]::UTF8)
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"message":"Code saved to disk"}')
+                        $response.StatusCode = 200
+                    }
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/settings") {
+                    $settingsPath = [System.IO.Path]::Combine($root, "data", "site-settings.json")
+                    if ($request.HttpMethod -eq "POST") {
+                        [System.IO.File]::WriteAllText($settingsPath, $body, [System.Text.Encoding]::UTF8)
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"message":"Settings saved"}')
+                    } else {
+                        $jsonContent = if (Test-Path $settingsPath) { [System.IO.File]::ReadAllText($settingsPath) } else { "{}" }
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes($jsonContent)
+                    }
+                    $response.StatusCode = 200
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+
+                if ($urlPath -eq "/api/cpx/seo/global-noindex") {
+                    $settingsPath = [System.IO.Path]::Combine($root, "data", "site-settings.json")
+                    $robotsPath = [System.IO.Path]::Combine($root, "robots.txt")
+                    if ($request.HttpMethod -eq "POST") {
+                        $data = $body | ConvertFrom-Json
+                        $enableNoindex = [bool]$data.enableNoindex
+                        if ($enableNoindex) {
+                            [System.IO.File]::WriteAllText($robotsPath, "User-agent: *`nDisallow: /`n", [System.Text.Encoding]::UTF8)
+                        } else {
+                            [System.IO.File]::WriteAllText($robotsPath, "User-agent: *`nAllow: /`n`nSitemap: https://www.rapidtables.online/sitemap.xml`n", [System.Text.Encoding]::UTF8)
+                        }
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"message":"Robots updated"}')
+                    } else {
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes('{"success":true,"globalNoindex":false}')
+                    }
+                    $response.StatusCode = 200
+                    $response.ContentLength64 = $respBytes.Length
+                    $response.OutputStream.Write($respBytes, 0, $respBytes.Length)
+                    $response.Close()
+                    continue
+                }
+            }
+
             # 0. Canonical WWW Redirect: rapidtables.online -> https://www.rapidtables.online
             $hostHeader = $request.Headers["Host"]
             if ($hostHeader -and ($hostHeader.ToLower().Split(':')[0] -eq "rapidtables.online")) {

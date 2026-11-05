@@ -491,11 +491,7 @@ function initMobileSearch() {
   if (typeof window !== 'undefined' && !window._cpx_embed_loaded) {
     window._cpx_embed_loaded = true;
     const s = document.createElement('script');
-    // Calculate path to assets/js/cpx-embed.js relative to current page
-    const isSubdir = window.location.pathname.split('/').filter(Boolean).length > 0;
-    const depth = (window.location.pathname.match(/\//g) || []).length - 1;
-    const prefix = depth > 0 ? '../'.repeat(depth) : './';
-    s.src = `${prefix}assets/js/cpx-embed.js`;
+    s.src = '/assets/js/cpx-embed.js';
     s.defer = true;
     document.head.appendChild(s);
   }

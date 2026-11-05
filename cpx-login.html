@@ -376,7 +376,35 @@
       const email = document.getElementById('cpx_email').value.trim().toLowerCase();
       const pass = document.getElementById('cpx_password').value;
 
-      // Check stored custom password or default master password
+      // 1. Try real backend API authentication
+      try {
+        const res = await fetch('/api/cpx/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password: pass })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          resetRateLimit();
+          localStorage.setItem('cpx_token', data.token);
+          localStorage.setItem('cpx_user', data.user || email);
+          localStorage.setItem('cpx_login_time', Date.now().toString());
+
+          showAlert('Authenticated successfully. Opening Super Admin Control Panel...', true);
+          setTimeout(() => {
+            window.location.href = 'cpx-dashboard.html';
+          }, 400);
+          return;
+        } else if (res.status === 401) {
+          const errorMsg = recordFailedAttempt();
+          showAlert(data.error || errorMsg);
+          return;
+        }
+      } catch (err) {
+        // If API unreachable (e.g. offline dev), fallback to client-side credential check
+      }
+
+      // 2. Client-side fallback check
       const storedAdminEmail = (localStorage.getItem('cpx_admin_email') || DEFAULT_ADMIN.email).toLowerCase();
       const storedCustomPass = localStorage.getItem('cpx_admin_pass');
 

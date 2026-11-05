@@ -34,6 +34,10 @@
   RewriteRule ^cpx/dashboard/?$ /cpx-dashboard.html [L]
   RewriteRule ^cpx/?$ /cpx-dashboard.html [L]
 
+  # 4c. CPX Super Admin Backend API Handlers
+  RewriteRule ^api/cpx/(.*)$ /api/cpx.php?endpoint=$1 [QSA,L]
+  RewriteRule ^api/site-settings/?$ /api/cpx.php?endpoint=site-settings [QSA,L]
+
   # 5. Clean Extensionless URLs (e.g. /about/privacy -> /about/privacy.html)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}\.html -f
