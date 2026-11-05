@@ -7,22 +7,22 @@
   </url>
   <!-- Category Suites Hubs -->
   <url>
-    <loc>https://www.rapidtables.online/pdf/</loc>
+    <loc>https://www.rapidtables.online/pdf</loc>
     <priority>0.95</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://www.rapidtables.online/calc/</loc>
+    <loc>https://www.rapidtables.online/calc</loc>
     <priority>0.95</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://www.rapidtables.online/convert/</loc>
+    <loc>https://www.rapidtables.online/convert</loc>
     <priority>0.95</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://www.rapidtables.online/tools/</loc>
+    <loc>https://www.rapidtables.online/tools</loc>
     <priority>0.95</priority>
     <changefreq>weekly</changefreq>
   </url>
