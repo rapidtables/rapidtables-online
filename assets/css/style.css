@@ -2065,3 +2065,159 @@ textarea.code-box {
     grid-column: span 1 !important;
   }
 }
+
+/* ==========================================================================
+   Comprehensive Tablet & Mobile Tools Responsive Engine
+   ========================================================================== */
+
+/* Tablet & Landscape Phones (<= 992px) */
+@media (max-width: 992px) {
+  .calc-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+  .calc-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+  .qr-workspace,
+  .barcode-workspace,
+  .diff-inputs-grid,
+  .previews-grid,
+  .tool-workspace,
+  .workspace-split {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .qr-sticky-preview,
+  .barcode-workspace > div:last-child {
+    order: -1 !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Mobile Phones (<= 640px) */
+@media (max-width: 640px) {
+  /* Prevent horizontal screen blowout */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+  .layout-container,
+  .main-content,
+  .tool-box,
+  .info-card,
+  .page-title-section {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* All form grids stack to 1 column */
+  .calc-grid-2,
+  .calc-grid-3,
+  .calc-grid-4,
+  .grid-2col,
+  .input-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Inline 1fr 1fr grids */
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Quick Presets & Theme Strips: Zero overflow, smooth swipe */
+  .presets-container {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .presets-strip {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 6px !important;
+  }
+  .presets-strip::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Tool Tabs: Clean 2x2 touch grid on mobile screens so tabs 3 & 4 never get cut off */
+  .qr-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    overflow-x: visible !important;
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+  .qr-tab-btn {
+    width: 100% !important;
+    text-align: center !important;
+    white-space: normal !important;
+    padding: 9px 4px !important;
+    font-size: 12px !important;
+    line-height: 1.25 !important;
+    background: var(--bg-alt) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+  .qr-tab-btn.active {
+    background: var(--primary) !important;
+    color: #fff !important;
+    border-color: var(--primary) !important;
+  }
+
+  /* Type & Radio Selectors */
+  .qr-type-selector,
+  .radio-group-wrap {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    align-items: center !important;
+    padding: 8px 10px !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--bg-alt) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* Action Buttons: Full width so text is never truncated */
+  .calc-input-group .btn,
+  .tool-box .btn-primary,
+  .calc-grid-2 .btn,
+  .tool-actions .btn {
+    width: 100% !important;
+    white-space: normal !important;
+    text-align: center !important;
+    margin-top: 8px !important;
+  }
+
+  /* Canvas and SVG Previews */
+  canvas, svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  .canvas-wrapper {
+    max-width: 280px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Tables inside tools */
+  .table-responsive,
+  table.responsive-table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -67,6 +67,18 @@
       color: #fff;
       font-weight: 700;
       grid-column: span 2;
+    }
+    @media (max-width: 420px) {
+      .calc-grid {
+        gap: 5px;
+      }
+      .calc-btn {
+        padding: 10px 2px;
+        font-size: 13px;
+      }
+      .calc-display {
+        font-size: 22px;
+      }
     }
     .calc-btn.btn-eq:hover {
       background: var(--primary-hover);

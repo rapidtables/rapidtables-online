@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -11,10 +11,20 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
+      align-items: start;
     }
     @media (max-width: 900px) {
       .barcode-workspace {
         grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .barcode-workspace > div:last-child {
+        order: -1 !important;
+      }
+      .preview-card {
+        position: static !important;
+        min-height: auto !important;
+        padding: 16px !important;
       }
     }
     .preview-card {
@@ -185,7 +195,7 @@
 
           <h3 style="margin-top:24px; margin-bottom:16px;">2. Dimensions &amp; Typography</h3>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="calc-grid-2">
             <div class="form-group">
               <label for="bar_width">Bar Width (<span id="val_bar_width">2</span>px)</label>
               <input type="range" id="bar_width" min="1" max="4" step="0.5" value="2" oninput="document.getElementById('val_bar_width').textContent=this.value; generateBarcode();">
@@ -196,7 +206,7 @@
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="calc-grid-2">
             <div class="form-group">
               <label for="quiet_margin">Quiet Zone / Margin (<span id="val_quiet_margin">10</span>px)</label>
               <input type="range" id="quiet_margin" min="0" max="40" step="2" value="10" oninput="document.getElementById('val_quiet_margin').textContent=this.value; generateBarcode();">
@@ -207,7 +217,7 @@
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="calc-grid-2">
             <div class="form-group">
               <label>
                 <input type="checkbox" id="display_value" checked onchange="generateBarcode()"> Show Text Value
@@ -224,7 +234,7 @@
 
           <h3 style="margin-top:20px; margin-bottom:16px;">3. Color Customization</h3>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="calc-grid-2">
             <div class="form-group">
               <label for="bar_color">Bar Color</label>
               <div style="display:flex; gap:8px; align-items:center;">

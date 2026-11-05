@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -11,10 +11,76 @@
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 24px;
+      align-items: start;
     }
     @media (max-width: 900px) {
       .qr-workspace {
         grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .qr-sticky-preview {
+        order: -1 !important;
+        position: static !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 16px !important;
+        margin-bottom: 8px !important;
+      }
+    }
+    /* Quick Style Presets */
+    .presets-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .presets-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .presets-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+      min-width: 0;
+      flex: 1;
+    }
+    .presets-strip::-webkit-scrollbar {
+      display: none;
+    }
+    .preset-chip {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+    .preset-chip:hover {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      .presets-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .presets-strip {
+        width: 100%;
       }
     }
     /* Tab Navigation */
@@ -25,18 +91,24 @@
       border-bottom: 2px solid var(--border-color);
       padding-bottom: 6px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .qr-tabs::-webkit-scrollbar {
+      display: none;
     }
     .qr-tab-btn {
-      padding: 8px 16px;
+      padding: 8px 14px;
       border: none;
       background: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
       border-radius: var(--radius-sm);
       transition: all var(--transition);
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .qr-tab-btn:hover {
       color: var(--primary);
@@ -45,6 +117,46 @@
     .qr-tab-btn.active {
       color: #fff;
       background: var(--primary);
+    }
+    @media (max-width: 640px) {
+      .qr-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+        overflow-x: visible;
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .qr-tab-btn {
+        width: 100%;
+        text-align: center;
+        white-space: normal;
+        padding: 9px 4px;
+        font-size: 12px;
+        line-height: 1.25;
+        background: var(--bg-alt);
+        border: 1px solid var(--border-color);
+      }
+    }
+    /* Type Selector */
+    .qr-type-selector {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 16px;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      background: var(--bg-alt);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+    .qr-type-selector label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
     }
     /* Design Selector Grids */
     .design-grid {
@@ -194,13 +306,15 @@
       </div>
 
       <!-- Quick Style Presets -->
-      <div class="presets-strip">
-        <span style="font-size: 12px; font-weight: 700; align-self: center; color: var(--text-muted);">Quick Themes:</span>
-        <button type="button" class="preset-chip" onclick="applyPresetTheme('corporate')">💼 Corporate Blue</button>
-        <button type="button" class="preset-chip" onclick="applyPresetTheme('sunset')">🌇 Sunset Glow</button>
-        <button type="button" class="preset-chip" onclick="applyPresetTheme('emerald')">🌿 Emerald Mint</button>
-        <button type="button" class="preset-chip" onclick="applyPresetTheme('neon')">⚡ Cyberpunk Neon</button>
-        <button type="button" class="preset-chip" onclick="applyPresetTheme('classic')">🖤 Classic Black</button>
+      <div class="presets-container">
+        <span class="presets-label">Quick Themes:</span>
+        <div class="presets-strip">
+          <button type="button" class="preset-chip" onclick="applyPresetTheme('corporate')">💼 Corporate Blue</button>
+          <button type="button" class="preset-chip" onclick="applyPresetTheme('sunset')">🌇 Sunset Glow</button>
+          <button type="button" class="preset-chip" onclick="applyPresetTheme('emerald')">🌿 Emerald Mint</button>
+          <button type="button" class="preset-chip" onclick="applyPresetTheme('neon')">⚡ Cyberpunk Neon</button>
+          <button type="button" class="preset-chip" onclick="applyPresetTheme('classic')">🖤 Classic Black</button>
+        </div>
       </div>
 
       <div class="qr-workspace">
@@ -218,12 +332,10 @@
 
           <!-- TAB 1: Content -->
           <div id="pane_content">
-            <div style="margin-bottom: 14px;">
-              <label style="font-weight: 600; margin-right: 14px; font-size: 13px;">Type:</label>
+            <div class="qr-type-selector">
+              <span style="font-weight: 700; font-size: 13px; color: var(--text-muted);">Type:</span>
               <label><input type="radio" name="qr_type" value="url" checked onchange="setQrType('url')"> Website URL</label>
-              &nbsp;&nbsp;
               <label><input type="radio" name="qr_type" value="text" onchange="setQrType('text')"> Plain Text</label>
-              &nbsp;&nbsp;
               <label><input type="radio" name="qr_type" value="wifi" onchange="setQrType('wifi')"> WiFi Network</label>
             </div>
 
@@ -381,8 +493,8 @@
           </div>
 
           <div style="margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-color);">
-            <div class="calc-grid-2">
-              <div class="calc-input-group">
+            <div class="calc-grid-2" style="align-items: end;">
+              <div class="calc-input-group" style="margin-bottom: 0;">
                 <label for="export_size">Export Resolution</label>
                 <select id="export_size">
                   <option value="300">Standard Web (300 × 300 px)</option>
@@ -391,8 +503,8 @@
                   <option value="2000">Ultra HD 4K (2000 × 2000 px)</option>
                 </select>
               </div>
-              <div class="calc-input-group" style="justify-content: flex-end;">
-                <button class="btn btn-primary" onclick="downloadCustomQR()" style="margin-top: 24px;">⬇️ Download Custom QR (PNG)</button>
+              <div class="calc-input-group" style="margin-bottom: 0;">
+                <button class="btn btn-primary" onclick="downloadCustomQR()" style="width: 100%; white-space: normal; padding: 12px 14px;">⬇️ Download Custom QR (PNG)</button>
               </div>
             </div>
           </div>
