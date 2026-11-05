@@ -191,8 +191,9 @@
     if (settings.headerFooter) {
       const applyHF = () => {
         if (settings.headerFooter.logoText) {
+          const cleanLogo = settings.headerFooter.logoText.replace(/^[⚡\s]+/, '');
           document.querySelectorAll('.logo-text').forEach(el => {
-            el.innerHTML = settings.headerFooter.logoText;
+            el.innerHTML = cleanLogo;
           });
         }
         if (settings.headerFooter.copyrightText) {

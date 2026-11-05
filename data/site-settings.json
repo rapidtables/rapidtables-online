@@ -17,7 +17,7 @@
     "theme": "blue"
   },
   "headerFooter": {
-    "logoText": "⚡ RapidTables.online",
+    "logoText": "Rapid<span>Tables</span>.online",
     "supportEmail": "support@rapidtables.online",
     "copyrightText": "© 2026 RapidTables.online. All rights reserved."
   },

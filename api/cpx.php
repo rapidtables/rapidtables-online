@@ -68,7 +68,7 @@ if ($endpoint === 'site-settings' && $_SERVER['REQUEST_METHOD'] === 'GET') {
         'ads' => $settings['ads'] ?? ['enabled' => false, 'pubId' => ''],
         'scripts' => $settings['scripts'] ?? ['ga4Id' => '', 'gtmId' => '', 'headCode' => '', 'bodyCode' => ''],
         'announcement' => $settings['announcement'] ?? ['enabled' => false, 'text' => '', 'link' => '', 'btnText' => '', 'theme' => 'blue'],
-        'headerFooter' => $settings['headerFooter'] ?? ['logoText' => '⚡ RapidTables.online', 'supportEmail' => 'support@rapidtables.online', 'copyrightText' => '© 2026 RapidTables.online. All rights reserved.']
+        'headerFooter' => $settings['headerFooter'] ?? ['logoText' => 'Rapid<span>Tables</span>.online', 'supportEmail' => 'support@rapidtables.online', 'copyrightText' => '© 2026 RapidTables.online. All rights reserved.']
     ]);
 }
 
