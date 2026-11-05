@@ -298,6 +298,24 @@ const server = http.createServer(async (req, res) => {
     parsedUrl = '/cpx-login.html';
   }
 
+  // Category Suites Hubs routing & 301 redirects (/pdf/ -> /pdf.html, etc.)
+  if (['/pdf', '/pdf/', '/pdf/index.html'].includes(parsedUrl)) {
+    res.writeHead(301, { 'Location': '/pdf.html' });
+    return res.end();
+  }
+  if (['/calc', '/calc/', '/calc/index.html'].includes(parsedUrl)) {
+    res.writeHead(301, { 'Location': '/calc.html' });
+    return res.end();
+  }
+  if (['/tools', '/tools/', '/tools/index.html'].includes(parsedUrl)) {
+    res.writeHead(301, { 'Location': '/tools.html' });
+    return res.end();
+  }
+  if (['/convert', '/convert/', '/convert/index.html'].includes(parsedUrl)) {
+    res.writeHead(301, { 'Location': '/convert.html' });
+    return res.end();
+  }
+
   let filePath = path.join(PUBLIC_DIR, parsedUrl);
 
   // If directory requested, check index.html inside it
