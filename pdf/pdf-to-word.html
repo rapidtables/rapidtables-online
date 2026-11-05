@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -217,11 +217,27 @@
   <script src="../assets/js/search-index.js"></script>
   <script src="../assets/js/app.js"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    try {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    } catch (e) {
+      pdfjsLib.disableWorker = true;
+    }
 
     let currentFile = null;
-    let extractedPages = []; // array of string arrays (lines)
+    let extractedPages = []; // array of { textLines: string[], isScanned: boolean, imageDataUrl: string|null, width: number, height: number }
     let fullPlainText = '';
+
+    // Sanitizer for XML 1.0 (strips control characters forbidden by Microsoft Word)
+    function cleanXmlText(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
 
     async function handleFile(e) {
       const file = e.target.files[0];
@@ -233,143 +249,332 @@
       currentFile = file;
 
       const status = document.getElementById('status_msg');
-      status.textContent = 'Parsing text content from ' + file.name + '...';
+      status.textContent = 'Opening ' + file.name + '...';
       document.getElementById('drop_zone').style.display = 'none';
 
       try {
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const loadingTask = pdfjsLib.getDocument({
+          data: arrayBuffer,
+          cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/cmaps/',
+          cMapPacked: true
+        });
+        const pdf = await loadingTask.promise;
         const numPages = pdf.numPages;
 
         extractedPages = [];
         let totalWords = 0;
+        let totalScanned = 0;
 
         for (let i = 1; i <= numPages; i++) {
-          status.textContent = `Extracting page ${i} of ${numPages}...`;
+          status.textContent = `Analyzing page ${i} of ${numPages}...`;
           const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
+          const viewport = page.getViewport({ scale: 1.5 });
 
-          // Group text items by vertical position Y
-          const lineMap = new Map();
-          textContent.items.forEach(item => {
-            const y = Math.round(item.transform[5]);
-            if (!lineMap.has(y)) {
-              lineMap.set(y, []);
+          // 1. Extract text content
+          let pageLines = [];
+          try {
+            const textContent = await page.getTextContent({ normalizeWhitespace: true });
+            const items = textContent.items || [];
+
+            if (items.length > 0) {
+              // Group items into lines based on Y coordinate tolerance (4px)
+              const lineBuckets = [];
+              const sortedItems = items.map(it => ({
+                str: it.str || '',
+                x: it.transform ? it.transform[4] : 0,
+                y: it.transform ? it.transform[5] : 0,
+                width: it.width || 0
+              })).filter(it => it.str.trim().length > 0);
+
+              sortedItems.sort((a, b) => b.y - a.y || a.x - b.x);
+
+              let currentBucket = null;
+              sortedItems.forEach(item => {
+                if (!currentBucket) {
+                  currentBucket = { y: item.y, items: [item] };
+                  lineBuckets.push(currentBucket);
+                } else if (Math.abs(currentBucket.y - item.y) <= 4.0) {
+                  currentBucket.items.push(item);
+                } else {
+                  currentBucket = { y: item.y, items: [item] };
+                  lineBuckets.push(currentBucket);
+                }
+              });
+
+              lineBuckets.forEach(bucket => {
+                bucket.items.sort((a, b) => a.x - b.x);
+                let lineStr = '';
+                for (let k = 0; k < bucket.items.length; k++) {
+                  const cur = bucket.items[k];
+                  if (k > 0) {
+                    const prev = bucket.items[k - 1];
+                    const gap = cur.x - (prev.x + prev.width);
+                    if (gap > 1.5 && !lineStr.endsWith(' ') && !cur.str.startsWith(' ')) {
+                      lineStr += ' ';
+                    }
+                  }
+                  lineStr += cur.str;
+                }
+                const clean = lineStr.trim();
+                if (clean.length > 0) {
+                  pageLines.push(clean);
+                  totalWords += clean.split(/\s+/).length;
+                }
+              });
             }
-            lineMap.get(y).push(item);
+          } catch (textErr) {}
+
+          const textLength = pageLines.join(' ').trim().length;
+          let isScanned = (textLength < 20);
+          let imageDataUrl = null;
+
+          // 2. If page has no text or is scanned, render page canvas as image so Word document is never empty
+          if (isScanned) {
+            totalScanned++;
+            status.textContent = `Rendering high-res page ${i} (image/scan)...`;
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            imageDataUrl = canvas.toDataURL('image/png');
+          }
+
+          extractedPages.push({
+            pageNum: i,
+            textLines: pageLines,
+            isScanned: isScanned,
+            imageDataUrl: imageDataUrl,
+            width: viewport.width,
+            height: viewport.height
           });
-
-          // Sort lines top to bottom (higher Y coordinate is higher on the page in PDF)
-          const sortedYs = Array.from(lineMap.keys()).sort((a, b) => b - a);
-          const pageLines = [];
-
-          sortedYs.forEach(y => {
-            const items = lineMap.get(y);
-            // Sort items left to right
-            items.sort((a, b) => a.transform[4] - b.transform[4]);
-            const lineStr = items.map(it => it.str).join(' ').trim();
-            if (lineStr.length > 0) {
-              pageLines.push(lineStr);
-              totalWords += lineStr.split(/\s+/).length;
-            }
-          });
-
-          extractedPages.push(pageLines);
         }
 
-        fullPlainText = extractedPages.map((lines, idx) => `--- PAGE ${idx + 1} ---\n` + lines.join('\n')).join('\n\n');
+        // Build plain text summary
+        fullPlainText = extractedPages.map(p => {
+          if (p.isScanned) {
+            return `--- PAGE ${p.pageNum} (Scanned Image Document) ---`;
+          }
+          return `--- PAGE ${p.pageNum} ---\n` + p.textLines.join('\n');
+        }).join('\n\n');
 
         // Render preview
         const previewBox = document.getElementById('preview_box');
         previewBox.innerHTML = '';
-        extractedPages.forEach((lines, idx) => {
+        extractedPages.forEach(p => {
           const sep = document.createElement('div');
           sep.className = 'page-separator';
-          sep.textContent = `Page ${idx + 1} of ${numPages}`;
+          sep.textContent = `Page ${p.pageNum} of ${numPages} ${p.isScanned ? '• (Scanned Image Page)' : '• (' + p.textLines.length + ' lines extracted)'}`;
           previewBox.appendChild(sep);
 
-          const pageTextEl = document.createElement('div');
-          pageTextEl.textContent = lines.join('\n');
-          previewBox.appendChild(pageTextEl);
+          if (p.isScanned && p.imageDataUrl) {
+            const img = document.createElement('img');
+            img.src = p.imageDataUrl;
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            img.style.borderRadius = '6px';
+            img.style.border = '1px solid var(--border-color)';
+            img.style.margin = '8px 0';
+            previewBox.appendChild(img);
+          } else {
+            const pageTextEl = document.createElement('div');
+            pageTextEl.style.whiteSpace = 'pre-wrap';
+            pageTextEl.style.lineHeight = '1.6';
+            pageTextEl.textContent = p.textLines.join('\n');
+            previewBox.appendChild(pageTextEl);
+          }
         });
 
         document.getElementById('doc_info_lbl').textContent = file.name;
-        document.getElementById('doc_stats_lbl').textContent = `• ${numPages} pages, ~${totalWords} words`;
+        document.getElementById('doc_stats_lbl').textContent = `• ${numPages} pages, ~${totalWords} words ${totalScanned > 0 ? `(${totalScanned} scanned)` : ''}`;
         document.getElementById('result_bar').style.display = 'flex';
         document.getElementById('preview_container').style.display = 'block';
-        status.textContent = 'Conversion ready!';
+        status.textContent = 'Conversion ready! Click "Download Word (.docx)" below.';
       } catch (err) {
         status.textContent = 'Error converting PDF: ' + err.message;
+        document.getElementById('drop_zone').style.display = 'block';
       }
     }
 
-    function escapeXml(unsafe) {
-      return unsafe.replace(/[<>&'"]/g, function (c) {
-        switch (c) {
-          case '<': return '&lt;';
-          case '>': return '&gt;';
-          case '&': return '&amp;';
-          case '\'': return '&apos;';
-          case '"': return '&quot;';
-        }
-      });
-    }
-
     async function downloadDocx() {
-      if (!extractedPages.length) return;
+      if (!extractedPages.length || !currentFile) return;
 
+      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
       const zip = new JSZip();
 
-      // [Content_Types].xml
-      zip.file("[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      // 1. [Content_Types].xml
+      let contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-</Types>`);
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+</Types>`;
+      zip.file("[Content_Types].xml", contentTypesXml);
 
-      // _rels/.rels
-      zip.file("_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      // 2. _rels/.rels
+      let rootRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
   <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
-</Relationships>`);
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`;
+      zip.file("_rels/.rels", rootRelsXml);
 
-      // word/document.xml
-      let paragraphsXml = '';
-      extractedPages.forEach((lines, pIdx) => {
+      // 3. docProps/core.xml
+      const nowIso = new Date().toISOString();
+      let coreXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dc:title>${cleanXmlText(baseName)}</dc:title>
+  <dc:creator>RapidTables.online</dc:creator>
+  <cp:lastModifiedBy>RapidTables.online</cp:lastModifiedBy>
+  <dcterms:created xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:created>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:modified>
+</cp:coreProperties>`;
+      zip.file("docProps/core.xml", coreXml);
+
+      // 4. docProps/app.xml
+      let appXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Application>Microsoft Office Word</Application>
+  <DocSecurity>0</DocSecurity>
+  <Company>RapidTables.online</Company>
+</Properties>`;
+      zip.file("docProps/app.xml", appXml);
+
+      // 5. word/styles.xml
+      let stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Times New Roman"/>
+        <w:sz w:val="22"/>
+        <w:szCs w:val="22"/>
+        <w:color w:val="1F2937"/>
+        <w:lang w:val="en-US"/>
+      </w:rPr>
+    </w:rPrDefault>
+    <w:pPrDefault>
+      <w:pPr>
+        <w:spacing w:after="160" w:line="240" w:lineRule="auto"/>
+      </w:pPr>
+    </w:pPrDefault>
+  </w:docDefaults>
+  <w:style w:type="paragraph" w:default="1" w:styleId="Normal">
+    <w:name w:val="Normal"/>
+    <w:qFormat/>
+  </w:style>
+</w:styles>`;
+      zip.file("word/styles.xml", stylesXml);
+
+      // 6. Build document content & image media
+      let docXmlBody = '';
+      let docRels = [
+        `<Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>`
+      ];
+
+      let imgCounter = 0;
+
+      extractedPages.forEach((page, pIdx) => {
         if (pIdx > 0) {
-          // Page break
-          paragraphsXml += `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+          // Page break between pages
+          docXmlBody += `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
         }
-        lines.forEach(line => {
-          paragraphsXml += `
+
+        if (page.isScanned && page.imageDataUrl) {
+          // Embed high-resolution scanned page image
+          imgCounter++;
+          const relId = `rIdImg${imgCounter}`;
+          const imgFilename = `image${imgCounter}.png`;
+          const base64Data = page.imageDataUrl.replace(/^data:image\/png;base64,/, '');
+          zip.file(`word/media/${imgFilename}`, base64Data, { base64: true });
+
+          docRels.push(`<Relationship Id="${relId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${imgFilename}"/>`);
+
+          // Scale dimensions to Word EMUs (1 inch = 914400 EMUs, standard width ~5.8 inches = 5303520 EMUs)
+          const targetWidthEmu = 5303520;
+          const ratio = (page.height || 800) / (page.width || 600);
+          const targetHeightEmu = Math.round(targetWidthEmu * ratio);
+
+          docXmlBody += `
 <w:p>
+  <w:pPr><w:jc w:val="center"/></w:pPr>
   <w:r>
-    <w:rPr>
-      <w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/>
-      <w:sz w:val="24"/>
-    </w:rPr>
-    <w:t xml:space="preserve">${escapeXml(line)}</w:t>
+    <w:drawing>
+      <wp:inline distT="0" distB="0" distL="0" distR="0">
+        <wp:extent cx="${targetWidthEmu}" cy="${targetHeightEmu}"/>
+        <wp:docPr id="${imgCounter}" name="Page ${page.pageNum}"/>
+        <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+          <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+            <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+              <pic:nvPicPr>
+                <pic:cNvPr id="0" name="Page${page.pageNum}.png"/>
+                <pic:cNvPicPr/>
+              </pic:nvPicPr>
+              <pic:blipFill xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+                <a:blip r:embed="${relId}"/>
+                <a:stretch><a:fillRect/></a:stretch>
+              </pic:blipFill>
+              <pic:spPr>
+                <a:xfrm><a:off x="0" y="0"/><a:ext cx="${targetWidthEmu}" cy="${targetHeightEmu}"/></a:xfrm>
+                <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+              </pic:spPr>
+            </pic:pic>
+          </a:graphicData>
+        </a:graphic>
+      </wp:inline>
+    </w:drawing>
   </w:r>
 </w:p>`;
-        });
+        } else {
+          // Render editable text lines/paragraphs
+          page.textLines.forEach(line => {
+            const clean = cleanXmlText(line);
+            if (clean.length > 0) {
+              docXmlBody += `
+<w:p>
+  <w:r>
+    <w:t xml:space="preserve">${clean}</w:t>
+  </w:r>
+</w:p>`;
+            }
+          });
+        }
       });
 
+      // 7. word/_rels/document.xml.rels
+      const documentRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  ${docRels.join('\n  ')}
+</Relationships>`;
+      zip.file("word/_rels/document.xml.rels", documentRelsXml);
+
+      // 8. word/document.xml
       const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
   <w:body>
-    ${paragraphsXml}
+    ${docXmlBody}
     <w:sectPr>
       <w:pgSz w:w="12240" w:h="15840"/>
       <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/>
     </w:sectPr>
   </w:body>
 </w:document>`;
-
       zip.file("word/document.xml", documentXml);
 
-      const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-      const baseName = currentFile.name.replace(/\.[^/.]+$/, '');
+      // Generate binary .docx file
+      const blob = await zip.generateAsync({
+        type: "blob",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        compression: "DEFLATE",
+        compressionOptions: { level: 6 }
+      });
+
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
